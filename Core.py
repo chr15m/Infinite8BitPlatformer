@@ -1,7 +1,5 @@
 from random import randint
-
-import PodSix
-PodSix.engine = "pygame"
+from os import path
 
 from PodSix.Resource import *
 from PodSix.Game import Game
@@ -76,7 +74,7 @@ class MyCamera(Camera):
 class MyLevel(Level, SVGLoader):
 	def __init__(self, name):
 		Level.__init__(self, name)
-		filename = "resources/" + self.name + ".svg"
+		filename = path.join("resources", self.name + ".svg")
 		self.LoadSVG(filename)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
