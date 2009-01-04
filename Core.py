@@ -126,7 +126,7 @@ class Core(Game, EventMonitor):
 		self.colors = {"level1": [200, 200, 255], "level2": [150, 150, 150], "level3": [200, 255, 200]}
 		gfx.Caption('MinimalistPlatformer - a game prototype by Chris McCormick')
 		gfx.SetSize([640, 480])
-		gfx.UseFont("Arial", 0.025, "default")
+		gfx.LoadFont("FreeSans", 0.025, "default")
 		sfx.LoadSound("item")
 		sfx.LoadSound("portal")
 		sfx.LoadSound("die")
