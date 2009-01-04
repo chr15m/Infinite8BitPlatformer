@@ -107,6 +107,7 @@ class Message(TimedText):
 		self.game = game
 		kwargs['position'] = {"centerx": 0.5, "top": 0.05 + Message.messagetop}
 		kwargs['time'] = 0.2
+		kwargs['color'] = [150, 150, 150]
 		if kwargs.has_key('callback') and kwargs['callback']:
 			self.callback = kwargs['callback']
 		del kwargs['callback']
@@ -127,7 +128,7 @@ class Core(Game, EventMonitor):
 		self.colors = {"level1": [200, 200, 255], "level2": [150, 150, 150], "level3": [200, 255, 200]}
 		gfx.Caption('MinimalistPlatformer - a game prototype')
 		gfx.SetSize([640, 480])
-		gfx.UseFont("Arial", 0.05, "default")
+		gfx.UseFont("Arial", 0.025, "default")
 		sfx.LoadSound("item")
 		sfx.LoadSound("portal")
 		sfx.LoadSound("die")
