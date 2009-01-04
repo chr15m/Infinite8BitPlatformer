@@ -124,7 +124,7 @@ class Message(TimedText):
 class Core(Game, EventMonitor):
 	def __init__(self):
 		self.colors = {"level1": [200, 200, 255], "level2": [150, 150, 150], "level3": [200, 255, 200]}
-		gfx.Caption('MinimalistPlatformer - a game prototype')
+		gfx.Caption('MinimalistPlatformer - a game prototype by Chris McCormick')
 		gfx.SetSize([640, 480])
 		gfx.UseFont("Arial", 0.025, "default")
 		sfx.LoadSound("item")
@@ -136,7 +136,7 @@ class Core(Game, EventMonitor):
 		self.Setup("MinimalistPlatformer\n\na game prototype\nby Chris McCormick", self.Instructions)
 	
 	def Instructions(self):
-		self.AddMessage("use the arrow keys to move and enter key to use a portal")
+		self.AddMessage("use the arrow keys to move and the enter key to use a portal")
 
 	def Setup(self, message="", callback=None):
 		self.player = Player(self, [0, 0, 0.05, 0.0809])
