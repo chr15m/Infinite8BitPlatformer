@@ -8,7 +8,7 @@ import py2exe
 project_name = "MinimalistPlatformer"
 
 # extra datafiles to be copied from the resources dir
-datafiles = [path.join("resources", d) for d in listdir('resources')]
+datafiles = [path.join("resources", d) for d in listdir('resources') if not ".svn" in d]
 
 # seed the install command line with what we want
 argv += ["py2exe"]
