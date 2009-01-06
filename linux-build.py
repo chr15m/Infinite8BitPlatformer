@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from os import mkdir, listdir, path
 from shutil import copy
 

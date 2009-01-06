@@ -53,7 +53,7 @@ class Player(Character):
 		if isinstance(who, Item):
 			self.game.AddMessage("got " + who.description)
 			self.inventory.append(who)
-			if len(self.inventory) == 14:
+			if len(self.inventory) == 15:
 				self.game.Win()
 			who.container.RemoveProp(who)
 			sfx.PlaySound("item")
