@@ -29,8 +29,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.24748737"
-     inkscape:cx="943.37448"
-     inkscape:cy="-22.353963"
+     inkscape:cx="789.83129"
+     inkscape:cy="90.783124"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      width="1052.3622px"
@@ -115,7 +115,7 @@
        y="-150.60625"
        inkscape:label="portal,level2:rect2022" />
     <rect
-       inkscape:label="item,the first of three gifts of friendship"
+       inkscape:label="item,the first of three gifts"
        y="-166.72812"
        x="811.93549"
        height="31.482738"
@@ -129,9 +129,9 @@
        height="31.482738"
        x="779.56995"
        y="-251.62155"
-       inkscape:label="item,the second of three gifts of friendship" />
+       inkscape:label="item,the second of three gifts" />
     <rect
-       inkscape:label="item,the third of three gifts of friendship"
+       inkscape:label="item,the third of three gifts"
        y="-186.97174"
        x="714.92023"
        height="31.482738"
@@ -209,7 +209,7 @@
        height="96.132492"
        x="2743.3472"
        y="1413.9626"
-       inkscape:label="item,a thing that hints at something wonderful" />
+       inkscape:label="item,an item of great importance" />
     <rect
        y="74.844353"
        x="643.45795"

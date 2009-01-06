@@ -28,9 +28,9 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.24748737"
-     inkscape:cx="1722.4738"
-     inkscape:cy="-270.28348"
+     inkscape:zoom="0.175"
+     inkscape:cx="1151.0452"
+     inkscape:cy="-281.71205"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      width="1052.3622px"
@@ -193,7 +193,7 @@
        id="rect1897"
        style="opacity:1;fill:none;fill-opacity:1;stroke:black;stroke-width:3.29569268;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
-       inkscape:label="item,cool banana 3"
+       inkscape:label="item,banana 3"
        y="1158.5514"
        x="-1705.4053"
        height="96.132507"
@@ -207,9 +207,9 @@
        height="96.132507"
        x="-1641.4053"
        y="1158.5514"
-       inkscape:label="item,cool banana 2" />
+       inkscape:label="item,banana 2" />
     <rect
-       inkscape:label="item,cool banana 1"
+       inkscape:label="item,banana 1"
        y="1158.5514"
        x="-1577.4053"
        height="96.132507"
@@ -223,9 +223,9 @@
        height="39.564007"
        x="911.61066"
        y="1368.6638"
-       inkscape:label="item,a tiny item that rules" />
+       inkscape:label="item,a little item" />
     <rect
-       inkscape:label="item,another tiny item that rules"
+       inkscape:label="item,another tiny item"
        y="936.31848"
        x="3881.4592"
        height="39.564007"
@@ -247,6 +247,14 @@
        width="252.69112"
        id="rect2024"
        style="opacity:1;fill:none;fill-opacity:1;stroke:black;stroke-width:3.29569197;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       inkscape:label="item,a very small item"
+       y="231.52095"
+       x="-734.10364"
+       height="39.564007"
+       width="33.418037"
+       id="rect2218"
+       style="opacity:1;fill:yellow;fill-opacity:1;stroke:black;stroke-width:3.29569697;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
   <g
      inkscape:groupmode="layer"
