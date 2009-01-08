@@ -104,7 +104,8 @@ class Message(TimedText):
 	def __init__(self, game, *args, **kwargs):
 		self.game = game
 		kwargs['position'] = {"centerx": 0.5, "top": 0.05 + Message.messagetop}
-		kwargs['time'] = 0.2
+		if not kwargs.has_key('time') or not kwargs['time']:
+			kwargs['time'] = 0.2
 		kwargs['color'] = [150, 150, 150]
 		if kwargs.has_key('callback') and kwargs['callback']:
 			self.callback = kwargs['callback']
@@ -133,12 +134,12 @@ class Core(Game, EventMonitor):
 		sfx.LoadSound("jump")
 		Game.__init__(self)
 		EventMonitor.__init__(self)
-		self.Setup("MinimalistPlatformer\n\na game prototype\nby Chris McCormick", self.Instructions)
+		self.Setup("MinimalistPlatformer\n\na game prototype\nby Chris McCormick", self.Instructions, 0.3)
 	
 	def Instructions(self):
-		self.AddMessage("use the arrow keys to move and the enter key to use a portal")
+		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 0.8)
 
-	def Setup(self, message="", callback=None):
+	def Setup(self, message="", callback=None, time=None):
 		self.player = Player(self, [0, 0, 0.05, 0.0809])
 		self.camera = MyCamera(self.player)
 		self.levels = {}
@@ -147,10 +148,10 @@ class Core(Game, EventMonitor):
 			self.levels["level" + str(l + 1)] = MyLevel("level" + str(l + 1))
 		self.SetLevel("level1", "start")	
 		if message:
-			self.AddMessage(message, callback)
+			self.AddMessage(message, callback, time)
 	
-	def AddMessage(self, messagetxt, callback=None):
-		self.Add(Message(self, messagetxt, callback=callback))
+	def AddMessage(self, messagetxt, callback=None, time=None):
+		self.Add(Message(self, messagetxt, callback=callback, time=time))
 	
 	def RemoveMessage(self, message):
 		self.Remove(message)
