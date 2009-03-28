@@ -4,10 +4,8 @@ from os import path
 from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
-from PodSix.ArrayOps import Multiply, Subtract
 from PodSix.SVGLoader import SVGLoader
-from PodSix.TimedText import TimedText
-
+from PodSix.ArrayOps import Multiply, Subtract
 from PodSix.Platformer.Level import Level
 from PodSix.Platformer.Layer import Layer
 from PodSix.Platformer.Platform import Platform
@@ -15,7 +13,9 @@ from PodSix.Platformer.Portal import Portal
 from PodSix.Platformer.Item import Item
 from PodSix.Platformer.Camera import Camera
 from PodSix.Platformer.Prop import Prop
-from PodSix.Platformer.Character import Character
+
+from engine.Player import Player
+from engine.Notification import Notification
 
 def PropDraw(self):
 	if isinstance(self.container, Layer):
@@ -26,50 +26,6 @@ Prop.Draw = PropDraw
 Platform.color = [200, 200, 255]
 Portal.color = [200, 200, 200]
 Item.color = [255, 255, 0]
-
-class Player(Character):
-	def __init__(self, game, *args, **kwargs):
-		Character.__init__(self, *args, **kwargs)
-		self.game = game
-		self.inventory = []
-		self.portal = None
-	
-	def Die(self):
-		sfx.PlaySound("die")
-		self.game.PlayerDied()
-	
-	def Draw(self):
-		gfx.DrawRect(Multiply(Subtract(self.rectangle, self.level.camera.rectangle[:2] + [0, 0]), gfx.width), [255, 200, 200], 0)
-	
-	def Update(self):
-		Character.Update(self)
-		if self.velocity[1] > 4:
-			self.Die()
-		self.portal = None
-	
-	def Collide(self, who):
-		Character.Collide(self, who)
-		
-		if isinstance(who, Item):
-			self.game.AddMessage("got " + who.description)
-			self.inventory.append(who)
-			if len(self.inventory) == 15:
-				self.game.Win()
-			who.container.RemoveProp(who)
-			sfx.PlaySound("item")
-		
-		if isinstance(who, Portal):
-			self.portal = who
-	
-	def Do(self):
-		if self.portal:
-			sfx.PlaySound("portal")
-			self.game.Teleport(self.portal)
-			self.game.AddMessage("teleporting to " + self.portal.destination)
-
-class MyCamera(Camera):
-	def __init__(self, tracking):
-		Camera.__init__(self, [0, 0, 1.0, float(gfx.height) / gfx.width], tracking=tracking)
 
 class MyLevel(Level, SVGLoader):
 	def __init__(self, name):
@@ -96,52 +52,26 @@ class MyLevel(Level, SVGLoader):
 		
 		self.AddLayer(info[1], l)
 
-class Message(TimedText):
-	messagecount = 0
-	messagetop = 0
-	spacing = 0.06
-	
-	def __init__(self, game, *args, **kwargs):
-		self.game = game
-		kwargs['position'] = {"centerx": 0.5, "top": 0.05 + Message.messagetop}
-		if not kwargs.has_key('time') or not kwargs['time']:
-			kwargs['time'] = 0.2
-		kwargs['color'] = [150, 150, 150]
-		if kwargs.has_key('callback') and kwargs['callback']:
-			self.callback = kwargs['callback']
-		del kwargs['callback']
-		TimedText.__init__(self, *args, **kwargs)
-		Message.messagecount += 1
-		Message.messagetop += self.spacing
-	
-	def TimeOut(self):
-		Message.messagecount -= 1
-		if Message.messagecount == 0:
-			Message.messagetop = 0
-		self.game.RemoveMessage(self)
-		if hasattr(self, 'callback'):
-			self.callback()
-
 class Core(Game, EventMonitor):
 	def __init__(self):
 		self.colors = {"level1": [200, 200, 255], "level2": [150, 150, 150], "level3": [200, 255, 200]}
-		gfx.Caption('MinimalistPlatformer - a game prototype by Chris McCormick')
-		gfx.SetSize([640, 480])
-		gfx.LoadFont("FreeSans", 0.025, "default")
+		gfx.Caption('Infinite8bitPlatformer')
+		gfx.SetSize([800, 450])
+		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
 		sfx.LoadSound("item")
 		sfx.LoadSound("portal")
 		sfx.LoadSound("die")
 		sfx.LoadSound("jump")
 		Game.__init__(self)
 		EventMonitor.__init__(self)
-		self.Setup("MinimalistPlatformer\n\na game prototype\nby Chris McCormick", self.Instructions, 0.3)
+		self.Setup("Infinite8bitPlatformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
 	
 	def Instructions(self):
 		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 0.8)
-
+	
 	def Setup(self, message="", callback=None, time=None):
 		self.player = Player(self, [0, 0, 0.05, 0.0809])
-		self.camera = MyCamera(self.player)
+		self.camera = Camera([0, 0, 1.0, float(gfx.height) / gfx.width], tracking=self.player)
 		self.levels = {}
 		self.level = None
 		for l in range(3):
@@ -151,7 +81,7 @@ class Core(Game, EventMonitor):
 			self.AddMessage(message, callback, time)
 	
 	def AddMessage(self, messagetxt, callback=None, time=None):
-		self.Add(Message(self, messagetxt, callback=callback, time=time))
+		self.Add(Notification(self, messagetxt, callback=callback, time=time))
 	
 	def RemoveMessage(self, message):
 		self.Remove(message)
@@ -185,7 +115,7 @@ class Core(Game, EventMonitor):
 		EventMonitor.Pump(self)
 	
 	def Run(self):
-		gfx.SetBackgroundColor([255, 255, 255])
+		gfx.SetBackgroundColor([0, 0, 0])
 		Game.Run(self)
 		gfx.Flip()
 	

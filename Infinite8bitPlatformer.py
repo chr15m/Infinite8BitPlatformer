@@ -6,11 +6,11 @@ PodSix.engine = "pygame"
 from PodSix.Resource import *
 gfx.SetIcon(path.join("resources", "icon.gif"))
 
-from PodSix.SplashScreen import SplashScreen
-s = SplashScreen()
-s.Launch()
+#from PodSix.SplashScreen import SplashScreen
+#s = SplashScreen()
+#s.Launch()
 
-from Core import Core
+from engine.Core import Core
 c = Core()
 c.Launch()
 
