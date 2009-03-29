@@ -10,11 +10,13 @@ from PodSix.SVGLoader import SVGLoader
 class BitLevel(Level, SVGLoader):
 	def __init__(self, name):
 		Level.__init__(self, name)
+		self.layer = Layer(self)
+		self.bitmap = {}
 		filename = path.join("resources", self.name + ".svg")
 		self.LoadSVG(filename)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
-		l = Layer(self)
+		l = self.layer
 		for r in self.GetLayerRectangles():
 			if r['details'][0] == "portal":
 				p = Portal([x / size[0] for x in r['rectangle']], r['id'], r['details'][1])
@@ -31,3 +33,7 @@ class BitLevel(Level, SVGLoader):
 					self.startPoints["start"] = p
 		
 		self.AddLayer(info[1], l)
+	
+	def AddPlatform(self, coords):
+		return self.layer.AddProp(Platform(coords))
+	
