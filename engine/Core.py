@@ -1,12 +1,7 @@
-from random import randint
-from os import path
-
 from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
-from PodSix.SVGLoader import SVGLoader
 from PodSix.ArrayOps import Multiply, Subtract
-from PodSix.Platformer.Level import Level
 from PodSix.Platformer.Layer import Layer
 from PodSix.Platformer.Platform import Platform
 from PodSix.Platformer.Portal import Portal
@@ -16,6 +11,7 @@ from PodSix.Platformer.Prop import Prop
 
 from engine.Player import Player
 from engine.Notification import Notification
+from engine.BitLevel import BitLevel
 
 def PropDraw(self):
 	if isinstance(self.container, Layer):
@@ -26,31 +22,6 @@ Prop.Draw = PropDraw
 Platform.color = [200, 200, 255]
 Portal.color = [200, 200, 200]
 Item.color = [255, 255, 0]
-
-class MyLevel(Level, SVGLoader):
-	def __init__(self, name):
-		Level.__init__(self, name)
-		filename = path.join("resources", self.name + ".svg")
-		self.LoadSVG(filename)
-	
-	def Layer_backgroundboxes(self, element, size, info, dom):
-		l = Layer(self)
-		for r in self.GetLayerRectangles():
-			if r['details'][0] == "portal":
-				p = Portal([x / size[0] for x in r['rectangle']], r['id'], r['details'][1])
-				l.AddProp(p)
-				self.startPoints[r['id']] = p
-			elif r['details'][0] == "item":
-				p = Item([x / size[0] for x in r['rectangle']], r['id'], r['details'][1])
-				l.AddProp(p)
-			else:
-				p = Platform([x / size[0] for x in r['rectangle']], r['id'])
-				l.AddProp(p)
-				# platform is a start point
-				if len(r['details']) > 1 and r['details'][1] == "start":
-					self.startPoints["start"] = p
-		
-		self.AddLayer(info[1], l)
 
 class Core(Game, EventMonitor):
 	def __init__(self):
@@ -75,7 +46,7 @@ class Core(Game, EventMonitor):
 		self.levels = {}
 		self.level = None
 		for l in range(3):
-			self.levels["level" + str(l + 1)] = MyLevel("level" + str(l + 1))
+			self.levels["level" + str(l + 1)] = BitLevel("level" + str(l + 1))
 		self.SetLevel("level1", "start")	
 		if message:
 			self.AddMessage(message, callback, time)
