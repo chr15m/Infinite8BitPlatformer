@@ -1,27 +1,34 @@
 from PodSix.GUI.TimedText import TimedText
+from PodSix.Resource import *
 
 class Notification(TimedText):
-	messagecount = 0
-	messagetop = 0
-	spacing = 0.06
+	slots = {}
 	
 	def __init__(self, game, *args, **kwargs):
 		self.game = game
-		kwargs['position'] = {"centerx": 0.5, "top": 0.05 + Notification.messagetop}
+		slot = max(Notification.slots.keys() + [0]) + 1
+		top = max([Notification.slots[i].bottom for i in Notification.slots] + [0.05])
+		self.bottom = top + gfx.FontHeight() * (len(args[0].split("\n")) + 1)
+		
+		kwargs['position'] = {"centerx": 0.5, "top": top}
 		if not kwargs.has_key('time') or not kwargs['time']:
 			kwargs['time'] = 0.2
 		kwargs['color'] = [150, 150, 150]
 		if kwargs.has_key('callback') and kwargs['callback']:
 			self.callback = kwargs['callback']
 		del kwargs['callback']
+		
+		Notification.slots[slot] = self
+		self.slot = slot
 		TimedText.__init__(self, *args, **kwargs)
-		Notification.messagecount += 1
-		Notification.messagetop += self.spacing
+		self.originalColor = self.color[:]
+	
+	def Update(self):
+		self.color = [max(0, int(self.counter / self.time * x)) for x in self.originalColor]
+		TimedText.Update(self)
 	
 	def TimeOut(self):
-		Notification.messagecount -= 1
-		if Notification.messagecount == 0:
-			Notification.messagetop = 0
+		del Notification.slots[self.slot]
 		self.game.RemoveMessage(self)
 		if hasattr(self, 'callback'):
 			self.callback()

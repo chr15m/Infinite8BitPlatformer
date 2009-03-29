@@ -115,7 +115,7 @@ class Core(Game, EventMonitor):
 		EventMonitor.Pump(self)
 	
 	def Run(self):
-		gfx.SetBackgroundColor([0, 0, 0])
+		gfx.SetBackgroundColor([15, 15, 15])
 		Game.Run(self)
 		gfx.Flip()
 	
