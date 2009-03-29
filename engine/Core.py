@@ -12,6 +12,7 @@ from PodSix.Platformer.Prop import Prop
 from engine.Player import Player
 from engine.Notification import Notification
 from engine.BitLevel import BitLevel
+from engine.EditLayer import EditLayer
 
 def PropDraw(self):
 	if isinstance(self.container, Layer):
@@ -26,7 +27,7 @@ Item.color = [255, 255, 0]
 class Core(Game, EventMonitor):
 	def __init__(self):
 		self.colors = {"level1": [200, 200, 255], "level2": [150, 150, 150], "level3": [200, 255, 200]}
-		gfx.Caption('Infinite8bitPlatformer')
+		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
 		sfx.LoadSound("item")
@@ -35,7 +36,9 @@ class Core(Game, EventMonitor):
 		sfx.LoadSound("jump")
 		Game.__init__(self)
 		EventMonitor.__init__(self)
-		self.Setup("Infinite8bitPlatformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
+		self.editLayer = EditLayer()
+		self.Add(self.editLayer)
+		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
 	
 	def Instructions(self):
 		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 0.8)
@@ -65,6 +68,7 @@ class Core(Game, EventMonitor):
 		self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
 		self.Add(self.levels[self.level])
 		Platform.color = self.colors[self.level]
+		self.editLayer.SetLevel(level)
 	
 	def Win(self):
 		[self.Remove(o) for o in self.objects]
