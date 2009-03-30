@@ -11,7 +11,7 @@ def editOn(fn):
 class EditButton(TextButton):
 	def __init__(self, parent):
 		self.parent = parent
-		TextButton.__init__(self, "edit mode", pos = {"right": 0.95, "top": 0.05}, colors=[[100, 100, 100], [15, 15, 15]])
+		TextButton.__init__(self, "edit", pos = {"right": 0.99, "top": 0.01}, colors=[[100, 100, 100], [15, 15, 15]])
 	
 	def Pressed(self):
 		self.parent.ToggleMode()

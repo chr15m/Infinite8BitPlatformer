@@ -1,32 +1,15 @@
 from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
-from PodSix.ArrayOps import Multiply, Subtract
-from PodSix.Platformer.Layer import Layer
-from PodSix.Platformer.Platform import Platform
-from PodSix.Platformer.Portal import Portal
-from PodSix.Platformer.Item import Item
 from PodSix.Platformer.Camera import Camera
-from PodSix.Platformer.Prop import Prop
 
 from engine.Player import Player
 from engine.Notification import Notification
 from engine.BitLevel import BitLevel
 from engine.EditLayer import EditLayer
 
-def PropDraw(self):
-	if isinstance(self.container, Layer):
-		gfx.DrawRect(Multiply(Subtract(self.rectangle, self.container.level.camera.rectangle[:2] + [0, 0]), gfx.width), self.color, 0)
-
-Prop.Draw = PropDraw
-
-Platform.color = [200, 200, 255]
-Portal.color = [200, 200, 200]
-Item.color = [255, 255, 0]
-
 class Core(Game, EventMonitor):
 	def __init__(self):
-		self.colors = {"level1": [200, 200, 255], "level2": [150, 150, 150], "level3": [200, 255, 200]}
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
@@ -67,7 +50,6 @@ class Core(Game, EventMonitor):
 		self.level = level
 		self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
 		self.Add(self.levels[self.level])
-		Platform.color = self.colors[self.level]
 		self.editLayer.SetLevel(level)
 	
 	def Win(self):

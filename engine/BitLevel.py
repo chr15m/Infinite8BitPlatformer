@@ -5,7 +5,20 @@ from PodSix.Platformer.Layer import Layer
 from PodSix.Platformer.Platform import Platform
 from PodSix.Platformer.Portal import Portal
 from PodSix.Platformer.Item import Item
+from PodSix.Platformer.Prop import Prop
 from PodSix.SVGLoader import SVGLoader
+from PodSix.Resource import *
+from PodSix.ArrayOps import Multiply, Subtract
+
+def PropDraw(self):
+	if isinstance(self.container, Layer):
+		gfx.DrawRect(Multiply(Subtract(self.rectangle, self.container.level.camera.rectangle[:2] + [0, 0]), gfx.width), self.color, 1)
+
+Prop.Draw = PropDraw
+
+Platform.color = [255, 255, 255]
+Portal.color = [255, 0, 0]
+Item.color = [255, 255, 0]
 
 class BitLevel(Level, SVGLoader):
 	def __init__(self, name):
