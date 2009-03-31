@@ -7,3 +7,9 @@
 		* move
 		* draw
 		* fill
+* implement dying
+* graphics for edit buttons
+* graphics for player animations
+* add bitmap to level
+* add bitmap to prop
+(* new prop type that you don't hit for 'foreground' stuff) 

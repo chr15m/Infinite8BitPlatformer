@@ -11,7 +11,7 @@ from engine.EditLayer import EditLayer
 
 class Core(Game, EventMonitor):
 	def __init__(self):
-		config.gridSize = 5
+		config.gridSize = 7
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
@@ -35,7 +35,7 @@ class Core(Game, EventMonitor):
 		self.level = None
 		for l in range(3):
 			self.levels["level" + str(l + 1)] = BitLevel("level" + str(l + 1))
-		self.SetLevel("level1", "start")	
+		self.SetLevel("level1", "start")
 		if message:
 			self.AddMessage(message, callback, time)
 	
@@ -46,13 +46,32 @@ class Core(Game, EventMonitor):
 		self.Remove(message)
 	
 	def SetLevel(self, level, start):
+		self.Remove(self.editLayer)
 		if self.level:
 			self.Remove(self.levels[self.level])
 			self.levels[self.level].RemovePlayerCamera()
 		self.level = level
 		self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
 		self.Add(self.levels[self.level])
-		self.editLayer.SetLevel(level)
+		self.editLayer.SetLevel(self.levels[level])
+		self.Add(self.editLayer)
+	
+	###
+	### Concurrency
+	###
+	
+	def Pump(self):
+		Game.Pump(self)
+		EventMonitor.Pump(self)
+	
+	def Run(self):
+		gfx.SetBackgroundColor([15, 15, 15])
+		Game.Run(self)
+		gfx.Flip()
+	
+	###
+	### Platformer events
+	###
 	
 	def Win(self):
 		[self.Remove(o) for o in self.objects]
@@ -69,14 +88,9 @@ class Core(Game, EventMonitor):
 	def Teleport(self, portal):
 		self.SetLevel(*portal.destination.split(":"))
 	
-	def Pump(self):
-		Game.Pump(self)
-		EventMonitor.Pump(self)
-	
-	def Run(self):
-		gfx.SetBackgroundColor([15, 15, 15])
-		Game.Run(self)
-		gfx.Flip()
+	###
+	### Interface events
+	###
 	
 	def KeyDown(self, e):
 		#print e
@@ -84,24 +98,4 @@ class Core(Game, EventMonitor):
 	
 	def KeyDown_escape(self, e):
 		self.Quit()
-	
-	def KeyDown_right(self, e):
-		self.player.WalkRight()
-	
-	def KeyDown_left(self, e):
-		self.player.WalkLeft()
-	
-	def KeyUp_right(self, e):
-		self.player.StopRight()
-	
-	def KeyUp_left(self, e):
-		self.player.StopLeft()
-	
-	def KeyDown_up(self, e):
-		if self.player.platform:
-			sfx.PlaySound("jump")
-		self.player.Jump()
-	
-	def KeyDown_return(self, e):
-		self.player.Do()
 

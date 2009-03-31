@@ -8,11 +8,12 @@ from PodSix.Platformer.Item import Item
 from PodSix.Platformer.Prop import Prop
 from PodSix.SVGLoader import SVGLoader
 from PodSix.Resource import *
-from PodSix.ArrayOps import Multiply, Subtract
+
+from engine import TranslateCoordinates
 
 def PropDraw(self):
 	if isinstance(self.container, Layer):
-		gfx.DrawRect(Multiply(Subtract(self.rectangle, self.container.level.camera.rectangle[:2] + [0, 0]), gfx.width), self.color, 1)
+		gfx.DrawRect(TranslateCoordinates(self.rectangle, self.container.level.camera), self.color, 1)
 
 Prop.Draw = PropDraw
 
