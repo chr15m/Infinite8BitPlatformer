@@ -1,6 +1,7 @@
 from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
+from PodSix.Config import config
 from PodSix.Platformer.Camera import Camera
 
 from engine.Player import Player
@@ -10,6 +11,7 @@ from engine.EditLayer import EditLayer
 
 class Core(Game, EventMonitor):
 	def __init__(self):
+		config.gridSize = 5
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")

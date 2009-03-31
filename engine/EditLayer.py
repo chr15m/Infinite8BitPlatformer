@@ -8,6 +8,22 @@ def editOn(fn):
 			return fn(self, *args, **kwargs)
 	return newfn
 
+class FamilyButton(TextButton):
+	family = []
+	def __init__(self, name, parent):
+		self.name = name
+		self.parent = parent
+		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.1 + 0.05 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
+		self.family.append(self)
+	
+	def Select(self, on=True):
+		self.colors[0] = [100 + 150 * on, 100 + 150 * on, 100 + 150 * on]
+	
+	def Pressed(self):
+		[f.Select(False) for f in self.family]
+		self.Select()
+		#getattr(self.parent, 'Pressed_' + self.name)()
+
 class EditButton(TextButton):
 	def __init__(self, parent):
 		self.parent = parent
@@ -29,6 +45,8 @@ class EditLayer(Concurrent, EventMonitor):
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		self.Add(self.editButton)
+		for b in ['platform', 'portal', 'item', 'move', 'draw', 'fill']:
+			self.Add(FamilyButton(b, self))
 		self.down = False
 	
 	def SetLevel(self, level):
@@ -47,6 +65,12 @@ class EditLayer(Concurrent, EventMonitor):
 			EventMonitor.Pump(self)	
 		else:
 			self.editButton.Pump()
+	
+	def Update(self):
+		if self.On():
+			Concurrent.Update(self)
+		else:
+			self.editButton.Update()
 	
 	def Draw(self):
 		if self.On():
