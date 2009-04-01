@@ -24,7 +24,7 @@ class Notification(TimedText):
 		self.originalColor = self.color[:]
 	
 	def Update(self):
-		self.color = [max(0, int(self.counter / self.time * x)) for x in self.originalColor]
+		self.color = [max(15, int(self.counter / self.time * x)) for x in self.originalColor]
 		TimedText.Update(self)
 	
 	def TimeOut(self):

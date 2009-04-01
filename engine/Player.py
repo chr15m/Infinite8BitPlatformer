@@ -4,9 +4,10 @@ from PodSix.Platformer.Portal import Portal
 from PodSix.Platformer.Item import Item
 from PodSix.ArrayOps import Multiply, Subtract
 
-class Player(Character):
+class Player(Character, EventMonitor):
 	def __init__(self, game, *args, **kwargs):
 		Character.__init__(self, *args, **kwargs)
+		EventMonitor.__init__(self)
 		self.game = game
 		self.inventory = []
 		self.portal = None
@@ -23,6 +24,10 @@ class Player(Character):
 		if self.velocity[1] > 4:
 			self.Die()
 		self.portal = None
+	
+	def Pump(self):
+		Character.Pump(self)
+		EventMonitor.Pump(self)
 	
 	def Collide(self, who):
 		Character.Collide(self, who)
@@ -43,5 +48,28 @@ class Player(Character):
 			sfx.PlaySound("portal")
 			self.game.Teleport(self.portal)
 			self.game.AddMessage("teleporting to " + self.portal.destination)
-
+	
+	###
+	### Key events etc.
+	###
+	
+	def KeyDown_right(self, e):
+		self.WalkRight()
+	
+	def KeyDown_left(self, e):
+		self.WalkLeft()
+	
+	def KeyUp_right(self, e):
+		self.StopRight()
+	
+	def KeyUp_left(self, e):
+		self.StopLeft()
+	
+	def KeyDown_up(self, e):
+		if self.platform:
+			sfx.PlaySound("jump")
+		self.Jump()
+	
+	def KeyDown_return(self, e):
+		self.Do()
 

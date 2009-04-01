@@ -1,32 +1,17 @@
 from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
-from PodSix.ArrayOps import Multiply, Subtract
-from PodSix.Platformer.Layer import Layer
-from PodSix.Platformer.Platform import Platform
-from PodSix.Platformer.Portal import Portal
-from PodSix.Platformer.Item import Item
+from PodSix.Config import config
 from PodSix.Platformer.Camera import Camera
-from PodSix.Platformer.Prop import Prop
 
 from engine.Player import Player
 from engine.Notification import Notification
 from engine.BitLevel import BitLevel
 from engine.EditLayer import EditLayer
 
-def PropDraw(self):
-	if isinstance(self.container, Layer):
-		gfx.DrawRect(Multiply(Subtract(self.rectangle, self.container.level.camera.rectangle[:2] + [0, 0]), gfx.width), self.color, 0)
-
-Prop.Draw = PropDraw
-
-Platform.color = [200, 200, 255]
-Portal.color = [200, 200, 200]
-Item.color = [255, 255, 0]
-
 class Core(Game, EventMonitor):
 	def __init__(self):
-		self.colors = {"level1": [200, 200, 255], "level2": [150, 150, 150], "level3": [200, 255, 200]}
+		config.gridSize = 7
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
@@ -50,7 +35,7 @@ class Core(Game, EventMonitor):
 		self.level = None
 		for l in range(3):
 			self.levels["level" + str(l + 1)] = BitLevel("level" + str(l + 1))
-		self.SetLevel("level1", "start")	
+		self.SetLevel("level1", "start")
 		if message:
 			self.AddMessage(message, callback, time)
 	
@@ -61,14 +46,32 @@ class Core(Game, EventMonitor):
 		self.Remove(message)
 	
 	def SetLevel(self, level, start):
+		self.Remove(self.editLayer)
 		if self.level:
 			self.Remove(self.levels[self.level])
 			self.levels[self.level].RemovePlayerCamera()
 		self.level = level
 		self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
 		self.Add(self.levels[self.level])
-		Platform.color = self.colors[self.level]
-		self.editLayer.SetLevel(level)
+		self.editLayer.SetLevel(self.levels[level])
+		self.Add(self.editLayer)
+	
+	###
+	### Concurrency
+	###
+	
+	def Pump(self):
+		Game.Pump(self)
+		EventMonitor.Pump(self)
+	
+	def Run(self):
+		gfx.SetBackgroundColor([15, 15, 15])
+		Game.Run(self)
+		gfx.Flip()
+	
+	###
+	### Platformer events
+	###
 	
 	def Win(self):
 		[self.Remove(o) for o in self.objects]
@@ -85,14 +88,9 @@ class Core(Game, EventMonitor):
 	def Teleport(self, portal):
 		self.SetLevel(*portal.destination.split(":"))
 	
-	def Pump(self):
-		Game.Pump(self)
-		EventMonitor.Pump(self)
-	
-	def Run(self):
-		gfx.SetBackgroundColor([15, 15, 15])
-		Game.Run(self)
-		gfx.Flip()
+	###
+	### Interface events
+	###
 	
 	def KeyDown(self, e):
 		#print e
@@ -100,24 +98,4 @@ class Core(Game, EventMonitor):
 	
 	def KeyDown_escape(self, e):
 		self.Quit()
-	
-	def KeyDown_right(self, e):
-		self.player.WalkRight()
-	
-	def KeyDown_left(self, e):
-		self.player.WalkLeft()
-	
-	def KeyUp_right(self, e):
-		self.player.StopRight()
-	
-	def KeyUp_left(self, e):
-		self.player.StopLeft()
-	
-	def KeyDown_up(self, e):
-		if self.player.platform:
-			sfx.PlaySound("jump")
-		self.player.Jump()
-	
-	def KeyDown_return(self, e):
-		self.player.Do()
 

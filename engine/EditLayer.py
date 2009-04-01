@@ -1,6 +1,23 @@
-from PodSix.Concurrent import Concurrent
 from PodSix.Resource import *
+from PodSix.Concurrent import Concurrent
+from PodSix.Rectangle import Rectangle
+from PodSix.Config import config
 from PodSix.GUI.Button import TextButton
+
+class EditBox(Rectangle, Concurrent):
+	def __init__(self, inlist, camera):
+		inlist = [i / config.gridSize * config.gridSize for i in inlist] + [0, 0]
+		Rectangle.__init__(self, inlist)
+		Concurrent.__init__(self)
+		self.camera = camera
+		self.color = (150, 150, 150)
+	
+	def Draw(self):
+		gfx.DrawRect(self, self.color, 1)
+	
+	def Set(self, pos):
+		self.Width((pos[0] - self.Left()) / config.gridSize * config.gridSize)
+		self.Height((pos[1] - self.Top()) / config.gridSize * config.gridSize)
 
 def editOn(fn):
 	def newfn(self, *args, **kwargs):
@@ -8,10 +25,27 @@ def editOn(fn):
 			return fn(self, *args, **kwargs)
 	return newfn
 
+class FamilyButton(TextButton):
+	family = []
+	def __init__(self, name, parent):
+		self.name = name
+		self.parent = parent
+		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.1 + 0.05 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
+		self.family.append(self)
+	
+	def Select(self, on=True):
+		self.parent.selected = self.name
+		self.colors[0] = [100 + 150 * on, 100 + 150 * on, 100 + 150 * on]
+	
+	def Pressed(self):
+		[f.Select(False) for f in self.family]
+		self.Select()
+		#getattr(self.parent, 'Pressed_' + self.name)()
+
 class EditButton(TextButton):
 	def __init__(self, parent):
 		self.parent = parent
-		TextButton.__init__(self, "edit mode", pos = {"right": 0.95, "top": 0.05}, colors=[[100, 100, 100], [15, 15, 15]])
+		TextButton.__init__(self, "edit", pos = {"right": 0.99, "top": 0.01}, colors=[[100, 100, 100], [15, 15, 15]])
 	
 	def Pressed(self):
 		self.parent.ToggleMode()
@@ -29,7 +63,11 @@ class EditLayer(Concurrent, EventMonitor):
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		self.Add(self.editButton)
+		for b in ['platform', 'portal', 'item', 'move', 'draw', 'fill']:
+			self.Add(FamilyButton(b, self))
+		self.selected = ""
 		self.down = False
+		self.rect = None
 	
 	def SetLevel(self, level):
 		self.level = level
@@ -41,6 +79,10 @@ class EditLayer(Concurrent, EventMonitor):
 	def On(self):
 		return self.mode and self.level
 	
+	###
+	###	Concurrency events
+	###
+	
 	def Pump(self):
 		if self.On():
 			Concurrent.Pump(self)
@@ -48,24 +90,38 @@ class EditLayer(Concurrent, EventMonitor):
 		else:
 			self.editButton.Pump()
 	
+	def Update(self):
+		if self.On():
+			Concurrent.Update(self)
+		else:
+			self.editButton.Update()
+	
 	def Draw(self):
 		if self.On():
 			Concurrent.Draw(self)
 		else:
 			self.editButton.Draw()
 	
+	###
+	###	Interface events
+	###
+	
 	@editOn
 	def MouseDown(self, e):
 		self.down = True
-		print e
+		if self.selected in ['platform', 'portal', 'item']:
+			self.rect = EditBox(e.pos, self.level.camera)
+			self.Add(self.rect)
 	
 	@editOn
 	def MouseMove(self, e):
-		if self.down:
-			print e
+		if self.rect:
+			self.rect.Set(e.pos)
 	
 	@editOn
 	def MouseUp(self, e):
 		self.down = False
-		print e
+		if self.rect:
+			self.Remove(self.rect)
+			self.rect = None
 
