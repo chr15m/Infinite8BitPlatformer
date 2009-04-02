@@ -5,11 +5,21 @@
 		* item
 	* edit things
 		* move
+		* delete
+	* graphics things
 		* draw
 		* fill
+	* palette button
+		* choose color
+		* select palette
 * implement dying
 * graphics for edit buttons
 * graphics for player animations
 * add bitmap to level
 * add bitmap to prop
+* add chat window
+	* /new command with optional location
+	* /teleport command
+	* /quit command
+	* /help command
 (* new prop type that you don't hit for 'foreground' stuff) 
