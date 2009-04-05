@@ -3,6 +3,7 @@ from PodSix.Platformer.Character import Character
 from PodSix.Platformer.Portal import Portal
 from PodSix.Platformer.Item import Item
 from PodSix.ArrayOps import Multiply, Subtract
+from PodSix.Config import config
 
 class Player(Character, EventMonitor):
 	def __init__(self, game, *args, **kwargs):
@@ -11,17 +12,19 @@ class Player(Character, EventMonitor):
 		self.game = game
 		self.inventory = []
 		self.portal = None
+		self.hspeed = self.hspeed / config.zoom
+		self.jump = self.jump / config.zoom
 	
 	def Die(self):
 		sfx.PlaySound("die")
 		self.game.PlayerDied()
 	
 	def Draw(self):
-		gfx.DrawRect(Multiply(Subtract(self.rectangle, self.level.camera.rectangle[:2] + [0, 0]), gfx.width), [255, 200, 200], 0)
+		gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 0)
 	
 	def Update(self):
 		Character.Update(self)
-		if self.velocity[1] > 4:
+		if self.velocity[1] > 4.0 / config.zoom:
 			self.Die()
 		self.portal = None
 	

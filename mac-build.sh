@@ -1,5 +1,6 @@
 #/bin/sh
 
-py2applet MinimalistPlatformer.py
-cp -R resources/ MinimalistPlatformer.app/Contents/Resources/resources
-cp resources/icon.icns MinimalistPlatformer.app/Contents/Resources/
+name=$(pwd | xargs basename)
+py2applet $name.py
+cp -R resources/ $name.app/Contents/Resources/resources
+cp resources/icon.icns $name.app/Contents/Resources/

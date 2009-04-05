@@ -2,16 +2,16 @@ from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
 from PodSix.Config import config
-from PodSix.Platformer.Camera import Camera
 
 from engine.Player import Player
 from engine.Notification import Notification
 from engine.BitLevel import BitLevel
 from engine.EditLayer import EditLayer
+from engine.BitCamera import BitCamera
 
 class Core(Game, EventMonitor):
 	def __init__(self):
-		config.gridSize = 7
+		config.zoom = 7
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
@@ -29,8 +29,8 @@ class Core(Game, EventMonitor):
 		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 0.8)
 	
 	def Setup(self, message="", callback=None, time=None):
-		self.player = Player(self, [0, 0, 0.05, 0.0809])
-		self.camera = Camera([0, 0, 1.0, float(gfx.height) / gfx.width], tracking=self.player)
+		self.player = Player(self, [0, 0, 0.05 / config.zoom, 0.0809 / config.zoom])
+		self.camera = BitCamera([0, 0, 1.0 / config.zoom, float(gfx.height) / gfx.width / config.zoom], tracking=self.player)
 		self.levels = {}
 		self.level = None
 		for l in range(3):
