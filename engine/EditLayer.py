@@ -6,7 +6,7 @@ from PodSix.GUI.Button import TextButton
 
 class EditBox(Rectangle, Concurrent):
 	def __init__(self, inlist, camera):
-		inlist = [i / config.gridSize * config.gridSize for i in inlist] + [0, 0]
+		inlist = [i / config.zoom * config.zoom for i in inlist] + [0, 0]
 		Rectangle.__init__(self, inlist)
 		Concurrent.__init__(self)
 		self.camera = camera
@@ -16,8 +16,8 @@ class EditBox(Rectangle, Concurrent):
 		gfx.DrawRect(self, self.color, 1)
 	
 	def Set(self, pos):
-		self.Width((pos[0] - self.Left()) / config.gridSize * config.gridSize)
-		self.Height((pos[1] - self.Top()) / config.gridSize * config.gridSize)
+		self.Width((pos[0] - self.Left()) / config.zoom * config.zoom)
+		self.Height((pos[1] - self.Top()) / config.zoom * config.zoom)
 
 def editOn(fn):
 	def newfn(self, *args, **kwargs):
@@ -110,8 +110,9 @@ class EditLayer(Concurrent, EventMonitor):
 	def MouseDown(self, e):
 		self.down = True
 		if self.selected in ['platform', 'portal', 'item']:
-			self.rect = EditBox(e.pos, self.level.camera)
-			self.Add(self.rect)
+			print e
+			#self.rect = EditBox(e.pos, self.level.camera)
+			#self.Add(self.rect)
 	
 	@editOn
 	def MouseMove(self, e):

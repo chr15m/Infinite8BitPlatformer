@@ -8,12 +8,11 @@ from PodSix.Platformer.Item import Item
 from PodSix.Platformer.Prop import Prop
 from PodSix.SVGLoader import SVGLoader
 from PodSix.Resource import *
-
-from engine import TranslateCoordinates
+from PodSix.Config import config
 
 def PropDraw(self):
 	if isinstance(self.container, Layer):
-		gfx.DrawRect(TranslateCoordinates(self.rectangle, self.container.level.camera), self.color, 1)
+		gfx.DrawRect(self.container.level.camera.TranslateRectangle(self.rectangle), self.color, 1)
 
 Prop.Draw = PropDraw
 
@@ -28,19 +27,20 @@ class BitLevel(Level, SVGLoader):
 		self.bitmap = {}
 		filename = path.join("resources", self.name + ".svg")
 		self.LoadSVG(filename)
+		self.gravity = self.gravity / config.zoom
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
 		l = self.layer
 		for r in self.GetLayerRectangles():
 			if r['details'][0] == "portal":
-				p = Portal([x / size[0] for x in r['rectangle']], r['id'], r['details'][1])
+				p = Portal([x / size[0] / config.zoom for x in r['rectangle']], r['id'], r['details'][1])
 				l.AddProp(p)
 				self.startPoints[r['id']] = p
 			elif r['details'][0] == "item":
-				p = Item([x / size[0] for x in r['rectangle']], r['id'], r['details'][1])
+				p = Item([x / size[0] / config.zoom for x in r['rectangle']], r['id'], r['details'][1])
 				l.AddProp(p)
 			else:
-				p = Platform([x / size[0] for x in r['rectangle']], r['id'])
+				p = Platform([x / size[0] / config.zoom for x in r['rectangle']], r['id'])
 				l.AddProp(p)
 				# platform is a start point
 				if len(r['details']) > 1 and r['details'][1] == "start":
