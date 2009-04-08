@@ -5,7 +5,9 @@ from PodSix.Platformer.Item import Item
 from PodSix.ArrayOps import Multiply, Subtract
 from PodSix.Config import config
 
-class Player(Character, EventMonitor):
+from engine.Sprite import Sprite
+
+class Player(Character, EventMonitor, Sprite):
 	def __init__(self, game, *args, **kwargs):
 		Character.__init__(self, *args, **kwargs)
 		EventMonitor.__init__(self)
@@ -14,13 +16,18 @@ class Player(Character, EventMonitor):
 		self.portal = None
 		self.hspeed = self.hspeed / config.zoom
 		self.jump = self.jump / config.zoom
+		Sprite.__init__(self, "player", ["stand.left", "stand.right", "walk.left", "walk.right"])
+		for action in self.actions:
+			for img in self.actions[action]:
+				img.Scale(Multiply(img.Size(), config.zoom))
 	
 	def Die(self):
 		sfx.PlaySound("die")
 		self.game.PlayerDied()
 	
 	def Draw(self):
-		gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 0)
+		Sprite.Draw(self)
+		#gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 0)
 	
 	def Update(self):
 		Character.Update(self)
