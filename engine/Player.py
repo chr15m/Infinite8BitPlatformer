@@ -16,7 +16,8 @@ class Player(Character, EventMonitor, Sprite):
 		self.portal = None
 		self.hspeed = self.hspeed / config.zoom
 		self.jump = self.jump / config.zoom
-		Sprite.__init__(self, "player", ["stand.left", "stand.right", "walk.left", "walk.right"])
+		self.framerate = 25
+		Sprite.__init__(self, "player", ["stand.left", "stand.right", "walk.left", "walk.right", "jump.left", "jump.right"])
 		for action in self.actions:
 			for img in self.actions[action]:
 				img.Scale(Multiply(img.Size(), config.zoom))
