@@ -11,3 +11,7 @@ class BitCamera(Camera):
 	
 	def FromScreenCoordinates(self, pos):
 		return Add(self.rectangle[:2], Multiply(pos, 1.0 / (gfx.width * config.zoom)))
+	
+	def CameraToPixels(self):
+		return [int(x) for x in Multiply(self.rectangle, gfx.width)]
+
