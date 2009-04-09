@@ -1,9 +1,13 @@
 from PodSix.Platformer.Camera import Camera
-from PodSix.ArrayOps import Multiply, Subtract
+from PodSix.ArrayOps import Multiply, Subtract, Add
 from PodSix.Resource import *
 from PodSix.Config import config
 from PodSix.Rectangle import Rectangle
 
 class BitCamera(Camera):
 	def TranslateRectangle(self, rectangle):
-		return Rectangle(Multiply(Subtract(rectangle, self.rectangle[:2] + [0, 0]), gfx.width * config.zoom))
+		rectangle = [int(r) for r in Multiply(rectangle, gfx.width)]
+		return Rectangle(Multiply(Subtract(rectangle, Multiply(self.rectangle[:2], gfx.width) + [0, 0]), config.zoom))
+	
+	def FromScreenCoordinates(self, pos):
+		return Add(self.rectangle[:2], Multiply(pos, 1.0 / (gfx.width * config.zoom)))

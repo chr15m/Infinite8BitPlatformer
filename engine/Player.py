@@ -28,7 +28,7 @@ class Player(Character, EventMonitor, Sprite):
 	
 	def Draw(self):
 		Sprite.Draw(self)
-		#gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 0)
+		#gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 1)
 	
 	def Update(self):
 		Character.Update(self)

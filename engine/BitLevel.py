@@ -33,14 +33,14 @@ class BitLevel(Level, SVGLoader):
 		l = self.layer
 		for r in self.GetLayerRectangles():
 			if r['details'][0] == "portal":
-				p = Portal([x / size[0] / config.zoom for x in r['rectangle']], r['id'], r['details'][1])
+				p = Portal([int(x / config.zoom) / size[0] for x in r['rectangle']], r['id'], r['details'][1])
 				l.AddProp(p)
 				self.startPoints[r['id']] = p
 			elif r['details'][0] == "item":
-				p = Item([x / size[0] / config.zoom for x in r['rectangle']], r['id'], r['details'][1])
+				p = Item([int(x / config.zoom) / size[0] for x in r['rectangle']], r['id'], r['details'][1])
 				l.AddProp(p)
 			else:
-				p = Platform([x / size[0] / config.zoom for x in r['rectangle']], r['id'])
+				p = Platform([int(x / config.zoom) / size[0] for x in r['rectangle']], r['id'])
 				l.AddProp(p)
 				# platform is a start point
 				if len(r['details']) > 1 and r['details'][1] == "start":

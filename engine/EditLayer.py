@@ -6,18 +6,19 @@ from PodSix.GUI.Button import TextButton
 
 class EditBox(Rectangle, Concurrent):
 	def __init__(self, inlist, camera):
-		inlist = [i / config.zoom for i in inlist] + [0, 0]
+		inlist = camera.FromScreenCoordinates(inlist) + [0, 0]
 		Rectangle.__init__(self, inlist)
 		Concurrent.__init__(self)
 		self.camera = camera
-		self.color = (150, 150, 150)
+		self.color = (150, 150, 150)	
 	
 	def Draw(self):
-		gfx.DrawRect([s * config.zoom for s in self], self.color, 1)
+		gfx.DrawRect(self.camera.TranslateRectangle(self), self.color, 1)
 	
 	def SetCorner(self, pos):
-		self.Width((pos[0] / config.zoom - self.Left()))
-		self.Height((pos[1] / config.zoom - self.Top()))
+		pos = self.camera.FromScreenCoordinates(pos)
+		self.Width((pos[0] - self.Left()))
+		self.Height((pos[1] - self.Top()))
 
 def editOn(fn):
 	def newfn(self, *args, **kwargs):

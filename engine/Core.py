@@ -11,7 +11,7 @@ from engine.BitCamera import BitCamera
 
 class Core(Game, EventMonitor):
 	def __init__(self):
-		config.zoom = 7
+		config.zoom = 5
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
