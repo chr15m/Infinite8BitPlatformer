@@ -28,19 +28,27 @@ class BitLevel(Level, SVGLoader):
 		filename = path.join("resources", self.name + ".svg")
 		self.LoadSVG(filename)
 		self.gravity = self.gravity / config.zoom
+		self.backgroundColor = (15, 15, 15)
+		self.bitmap = Image(size=(1024, 1024))
+	
+	def Draw(self):
+		gfx.SetBackgroundColor(self.backgroundColor)
+		offset = self.camera.PixelOffset()
+		gfx.BlitImage(self.bitmap.SubImage(self.camera.ToPixels().Grow(1, 1).Clip([0, 0, 1024, 1024])).Scale((gfx.width + config.zoom, gfx.height + config.zoom)), position=(-offset[0], -offset[1]))
+		Level.Draw(self)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
 		l = self.layer
 		for r in self.GetLayerRectangles():
 			if r['details'][0] == "portal":
-				p = Portal([x / size[0] / config.zoom for x in r['rectangle']], r['id'], r['details'][1])
+				p = Portal([int(x / config.zoom) / size[0] for x in r['rectangle']], r['id'], r['details'][1])
 				l.AddProp(p)
 				self.startPoints[r['id']] = p
 			elif r['details'][0] == "item":
-				p = Item([x / size[0] / config.zoom for x in r['rectangle']], r['id'], r['details'][1])
+				p = Item([int(x / config.zoom) / size[0] for x in r['rectangle']], r['id'], r['details'][1])
 				l.AddProp(p)
 			else:
-				p = Platform([x / size[0] / config.zoom for x in r['rectangle']], r['id'])
+				p = Platform([int(x / config.zoom) / size[0] for x in r['rectangle']], r['id'])
 				l.AddProp(p)
 				# platform is a start point
 				if len(r['details']) > 1 and r['details'][1] == "start":

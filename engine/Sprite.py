@@ -21,6 +21,6 @@ class Sprite:
 		return [Image(MakeFilename(name, counter))] + others
 	
 	def Draw(self):
-		self.animframe = (self.animframe + self.Elapsed() * 50) % len(self.actions[self.animation])
-		gfx.BlitImage(self.actions[self.animation][int(self.animframe)], self.level.camera.TranslateRectangle(self.rectangle).Center())
+		self.animframe = (self.animframe + self.Elapsed() * self.framerate) % len(self.actions[self.animation])
+		gfx.BlitImage(self.actions[self.animation][int(self.animframe)], center=self.level.camera.TranslateRectangle(self.rectangle).Center())
 

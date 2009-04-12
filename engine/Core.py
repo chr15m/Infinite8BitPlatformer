@@ -11,7 +11,7 @@ from engine.BitCamera import BitCamera
 
 class Core(Game, EventMonitor):
 	def __init__(self):
-		config.zoom = 7
+		config.zoom = 5
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
@@ -24,6 +24,7 @@ class Core(Game, EventMonitor):
 		self.editLayer = EditLayer()
 		self.Add(self.editLayer)
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
+		self.bgColor = (255, 255, 255)
 	
 	def Instructions(self):
 		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 0.8)
@@ -65,7 +66,7 @@ class Core(Game, EventMonitor):
 		EventMonitor.Pump(self)
 	
 	def Run(self):
-		gfx.SetBackgroundColor([15, 15, 15])
+		gfx.SetBackgroundColor(self.bgColor)
 		Game.Run(self)
 		gfx.Flip()
 	
