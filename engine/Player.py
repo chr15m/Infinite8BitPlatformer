@@ -22,23 +22,13 @@ class Player(Character, EventMonitor, Sprite):
 			for img in self.actions[action]:
 				img.Scale(Multiply(img.Size(), config.zoom))
 	
+	###
+	### Game events
+	###
+	
 	def Die(self):
 		sfx.PlaySound("die")
 		self.game.PlayerDied()
-	
-	def Draw(self):
-		Sprite.Draw(self)
-		#gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 1)
-	
-	def Update(self):
-		Character.Update(self)
-		if self.velocity[1] > 4.0 / config.zoom:
-			self.Die()
-		self.portal = None
-	
-	def Pump(self):
-		Character.Pump(self)
-		EventMonitor.Pump(self)
 	
 	def Collide(self, who):
 		Character.Collide(self, who)
@@ -61,9 +51,28 @@ class Player(Character, EventMonitor, Sprite):
 			self.game.AddMessage("teleporting to " + self.portal.destination)
 	
 	###
-	### Key events etc.
+	### Concurrency related methods
 	###
 	
+	def Draw(self):
+		Sprite.Draw(self)
+		#gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 1)
+	
+	def Update(self):
+		Character.Update(self)
+		if self.velocity[1] > 4.0 / config.zoom:
+			self.Die()
+		self.portal = None
+	
+	def Pump(self):
+		Character.Pump(self)
+		EventMonitor.Pump(self)
+	
+	###
+	### Input events etc.
+	###
+	
+	# key events
 	def KeyDown_right(self, e):
 		self.WalkRight()
 	
@@ -83,4 +92,23 @@ class Player(Character, EventMonitor, Sprite):
 	
 	def KeyDown_return(self, e):
 		self.Do()
+	
+	# joystick buttons
+	def JoystickDown_right(self, e):
+		self.KeyDown_right(e)
+	
+	def JoystickDown_left(self, e):
+		self.KeyDown_left(e)
+	
+	def JoystickUp_right(self, e):
+		self.KeyUp_right(e)
+	
+	def JoystickUp_left(self, e):
+		self.KeyUp_left(e)
+	
+	def JoystickDown_up(self, e):
+		self.KeyDown_up(e)
+	
+	def JoyButtonDown(self, e):
+		self.KeyDown_return(e)
 

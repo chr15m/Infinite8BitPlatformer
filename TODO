@@ -14,17 +14,40 @@
 	* palette button
 		* choose color
 		* select palette
+	* background buttons
+		* color palette to choose background color
 	* other
 		* undo
-* implement dying
+* palettes and palette mapping code
+	<http://en.wikipedia.org/wiki/8-bit_color>
+	<http://en.wikipedia.org/wiki/List_of_8-bit_computer_hardware_palettes> 
+		* Apple II
+		* C-64
+		* ZX Spectrum
+		* MSX
+		* CGA
+	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
+		* Atari 2600
+		* NES
+		* Sega Master System
+* joystick control
+* implement dying - zap to last platform
 * graphics for edit buttons
-* graphics for player animations
-* add bitmap to level
-* add bitmap to prop
+* add bitmap to props
 * add chat box
 	* /new command with optional location
-	* /teleport command
+	* /teleport command with location
 	* /quit command
 	* /help command
 * new prop type that you don't hit for 'foreground' stuff
-* zooming
+> zooming
+
+Server Side
+-----------
+* write unused levels to disk
+
+done
+----
++ graphics for player animations
++ add bitmap to level
+
