@@ -14,7 +14,7 @@ def PropDraw(self):
 	if isinstance(self.container, Layer):
 		gfx.DrawRect(self.container.level.camera.TranslateRectangle(self.rectangle), self.color, 1)
 
-Prop.Draw = PropDraw
+#Prop.Draw = PropDraw
 
 Platform.color = [255, 255, 255]
 Portal.color = [255, 0, 0]
@@ -29,13 +29,21 @@ class BitLevel(Level, SVGLoader):
 		self.LoadSVG(filename)
 		self.gravity = self.gravity / config.zoom
 		self.backgroundColor = (15, 15, 15)
-		self.bitmap = Image(size=(1024, 1024))
+		self.bitmap = Image(size=(1024, 1024), depth=8)
 	
 	def Draw(self):
 		gfx.SetBackgroundColor(self.backgroundColor)
 		offset = self.camera.PixelOffset()
 		gfx.BlitImage(self.bitmap.SubImage(self.camera.ToPixels().Grow(1, 1).Clip([0, 0, 1024, 1024])).Scale((gfx.width + config.zoom, gfx.height + config.zoom)), position=(-offset[0], -offset[1]))
 		Level.Draw(self)
+	
+	def SetEditMode(self, mode):
+		if mode:
+			Prop.Draw = PropDraw
+		else:
+			if hasattr(Prop, "Draw"):
+				#del Prop.Draw
+				Prop.Draw = lambda x: x
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
 		l = self.layer

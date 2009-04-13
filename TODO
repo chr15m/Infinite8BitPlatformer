@@ -4,33 +4,33 @@
 		* portal
 		* item
 	* edit things
-		* move
 		* delete
-		* clone
+		> move
+		> clone
 	* graphics things
 		* draw
-		* fill
-		* line
+		> fill
+		> line
 	* palette button
 		* choose color
 		* select palette
 	* background buttons
 		* color palette to choose background color
 	* other
-		* undo
+		> undo
 * palettes and palette mapping code
 	<http://en.wikipedia.org/wiki/8-bit_color>
 	<http://en.wikipedia.org/wiki/List_of_8-bit_computer_hardware_palettes> 
-		* Apple II
-		* C-64
-		* ZX Spectrum
-		* MSX
-		* CGA
+		> Apple II
+		> C-64
+		> ZX Spectrum
+		> MSX
+		> CGA
 	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
 		* Atari 2600
 		* NES
-		* Sega Master System
-* joystick control
+		> Sega Master System
+* server emulation - save to disk but using everything farmed out into a proxy class
 * implement dying - zap to last platform
 * graphics for edit buttons
 * add bitmap to props
@@ -39,15 +39,23 @@
 	* /teleport command with location
 	* /quit command
 	* /help command
-* new prop type that you don't hit for 'foreground' stuff
+> new prop type that you don't hit for 'foreground' stuff
 > zooming
 
 Server Side
 -----------
-* write unused levels to disk
+* level serialising
+> write unused levels to disk
+> version management - send client version number
+
+Bugs
+----
+* 'sliding bitmap' bug
++ fix propagation of mouse clicks through buttons in edit mode
 
 done
 ----
 + graphics for player animations
 + add bitmap to level
++ joystick control
 

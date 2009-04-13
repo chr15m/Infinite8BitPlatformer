@@ -31,6 +31,7 @@ class FamilyButton(TextButton):
 	def __init__(self, name, parent):
 		self.name = name
 		self.parent = parent
+		self.triggered = False
 		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.1 + 0.05 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
 		self.family.append(self)
 	
@@ -41,7 +42,8 @@ class FamilyButton(TextButton):
 	def Pressed(self):
 		[f.Select(False) for f in self.family]
 		self.Select()
-		#getattr(self.parent, 'Pressed_' + self.name)()
+		self.triggered = True
+		self.CallMethod("Pressed_" + self.name)
 
 class EditButton(TextButton):
 	def __init__(self, parent):
@@ -72,14 +74,26 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	def SetLevel(self, level):
 		self.level = level
+		self.SetLevelEditMode()
 	
 	def ToggleMode(self):
 		self.mode = not self.mode
 		self.editButton.colors[0] = [100 + 150 * self.mode, 100 + 150 * self.mode, 100 + 150 * self.mode]
+		self.SetLevelEditMode()
+	
+	def SetLevelEditMode(self):
+		self.level.SetEditMode(self.mode)
 	
 	def On(self):
 		return self.mode and self.level
 	
+	###
+	###	Things the user can do
+	###
+	def Paint(self, pos):
+		p = [int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(pos)]
+		self.level.bitmap.Pixel(p, (150, 150, 150, 255))
+
 	###
 	###	Concurrency events
 	###
@@ -109,18 +123,20 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	@editOn
 	def MouseDown(self, e):
-		self.down = True
-		if self.selected in ['platform', 'portal', 'item']:
-			self.rect = EditBox(e.pos, self.level.camera)
-			self.Add(self.rect)
-		elif self.selected == 'draw':
-			p = [int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)]
-			self.level.bitmap.Pixel(p, (150, 150, 150, 255))
+		if not len([o for o in self.objects if hasattr(o, 'triggered') and o.triggered]):
+			self.down = True
+			if self.selected in ['platform', 'portal', 'item']:
+				self.rect = EditBox(e.pos, self.level.camera)
+				self.Add(self.rect)
+			elif self.selected == 'draw':
+				self.Paint(e.pos)
 	
 	@editOn
 	def MouseMove(self, e):
 		if self.rect:
 			self.rect.SetCorner(e.pos)
+		elif self.selected == 'draw' and self.down:
+			self.Paint(e.pos)
 	
 	@editOn
 	def MouseUp(self, e):
