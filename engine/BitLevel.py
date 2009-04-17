@@ -57,7 +57,7 @@ class BitLevel(Level, SVGLoader):
 		return [(o.__class__.__name__, dict([(s, o.__dict__[s]) for s in ("id", "destination", "rectangle", "description") if s in o.__dict__])) for o in self.layer.GetAll()]
 	
 	def SerialStructure(self):
-		return {"level": {"bitmap": [self.bitmap, (1024, 1024)], "history": self.history, "entities": self.GetEntities()}}
+		return {"level": {"bitmap": [self.bitmap.ToString(), (1024, 1024)], "history": self.history, "entities": self.GetEntities()}}
 	
 	def UnpackSerial(self, data):
 		self.history = data["level"]["history"]
@@ -83,5 +83,4 @@ class BitLevel(Level, SVGLoader):
 					self.startPoints["start"] = p
 		
 		self.AddLayer(info[1], l)
-		print self.SerialStructure()
-	
+
