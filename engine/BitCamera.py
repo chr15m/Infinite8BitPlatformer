@@ -16,7 +16,7 @@ class BitCamera(Camera):
 		return Rectangle([int(x) for x in Multiply(self.rectangle, gfx.width)])
 	
 	def PixelOffset(self):
-		return [x % 1.0 * config.zoom + 1 for x in Multiply(self.rectangle[:2], gfx.width)]
+		return [(x < 0 and x or x % 1.0) * config.zoom + 1 for x in Multiply(self.rectangle[:2], gfx.width)]
 	
 	def CameraToPixels(self):
 		return [int(x) for x in Multiply(self.rectangle, gfx.width)]

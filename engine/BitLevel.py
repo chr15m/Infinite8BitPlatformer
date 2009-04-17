@@ -33,8 +33,10 @@ class BitLevel(Level, SVGLoader):
 	
 	def Draw(self):
 		gfx.SetBackgroundColor(self.backgroundColor)
-		offset = self.camera.PixelOffset()
-		gfx.BlitImage(self.bitmap.SubImage(self.camera.ToPixels().Grow(1, 1).Clip([0, 0, 1024, 1024])).Scale((gfx.width + config.zoom, gfx.height + config.zoom)), position=(-offset[0], -offset[1]))
+		subPixOffset = self.camera.PixelOffset()
+		pixelBoxSize = self.camera.ToPixels().Grow(1, 1)
+		box = pixelBoxSize.Clip([0, 0, 1024, 1024])
+		gfx.BlitImage(self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom)), position=(-subPixOffset[0], -subPixOffset[1]))
 		Level.Draw(self)
 	
 	def SetEditMode(self, mode):

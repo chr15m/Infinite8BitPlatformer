@@ -50,8 +50,9 @@ Server Side
 
 Bugs
 ----
-* 'sliding bitmap' bug
++ 'sliding bitmap' bug
 + fix propagation of mouse clicks through buttons in edit mode
+* edit mode boxes should stay within max level size
 
 done
 ----
