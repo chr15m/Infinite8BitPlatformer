@@ -1,5 +1,7 @@
 from os import path
 
+from simplejson import dumps, loads
+
 from PodSix.Platformer.Level import Level
 from PodSix.Platformer.Layer import Layer
 from PodSix.Platformer.Platform import Platform
@@ -21,14 +23,13 @@ Item.color = [255, 255, 0]
 class BitLevel(Level, SVGLoader):
 	def __init__(self, name):
 		Level.__init__(self, name)
+		self.basefilename = path.join("resources", "levels", self.name)
 		self.layer = Layer(self)
 		self.bitmap = {}
-		filename = path.join("resources", self.name + ".svg")
 		self.gravity = self.gravity / config.zoom
 		self.backgroundColor = (15, 15, 15)
 		self.bitmap = Image(size=(1024, 1024), depth=8)
 		self.history = []
-		self.LoadSVG(filename)
 	
 	###
 	###	UI/Bitmap routines
@@ -56,16 +57,31 @@ class BitLevel(Level, SVGLoader):
 	def GetEntities(self):
 		return [(o.__class__.__name__, dict([(s, o.__dict__[s]) for s in ("id", "destination", "rectangle", "description") if s in o.__dict__])) for o in self.layer.GetAll()]
 	
-	def SerialStructure(self):
-		return {"level": {"bitmap": [self.bitmap.ToString(), (1024, 1024)], "history": self.history, "entities": self.GetEntities()}}
+	def PackSerial(self):
+		return {"level": {"history": self.history, "entities": self.GetEntities(), "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
 	
 	def UnpackSerial(self, data):
 		self.history = data["level"]["history"]
-		self.bitmap = Image().FromString(*data['level']['bitmap'])
 		for s in data['level']['entities']:
 			getattr(self, "Create" + s[0], lambda x: x)(s[1])
+		sp = data["level"]["startpoints"]
+		self.startPoints = dict([(s, self.layer.names[sp[s]]) for s in sp])
+	
+	def Save(self):
+		""" Writes this level to disk """
+		out = file(self.basefilename + ".json", "w")
+		out.write(dumps(self.PackSerial()))
+		out.close()
+		self.bitmap.Save(self.basefilename + ".png")
+	
+	def Load(self):
+		""" Reads this level from disk """
+		self.UnpackSerial(loads(file(self.basefilename + ".json").read()))
+		self.bitmap = Image(self.basefilename + ".png")
+		self.AddLayer(self.name, self.layer)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
+		""" Legacy SVG level loading code. """
 		l = self.layer
 		for r in self.GetLayerRectangles():
 			if r['details'][0] == "portal":
@@ -83,4 +99,12 @@ class BitLevel(Level, SVGLoader):
 					self.startPoints["start"] = p
 		
 		self.AddLayer(info[1], l)
-
+	
+	def CreatePlatform(self, data):
+		self.layer.AddProp(Platform(data["rectangle"], data["id"]))
+	
+	def CreatePortal(self, data):
+		self.layer.AddProp(Portal(data["rectangle"], data["id"], data["destination"]))
+	
+	def CreateItem(self, data):
+		self.layer.AddProp(Item(data["rectangle"], data["id"], data["description"]))

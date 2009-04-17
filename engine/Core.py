@@ -21,10 +21,10 @@ class Core(Game, EventMonitor, LevelManager):
 		sfx.LoadSound("jump")
 		Game.__init__(self)
 		EventMonitor.__init__(self)
-		LevelManager.__init__(self)
 		self.editLayer = EditLayer()
 		self.Add(self.editLayer)
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
+		LevelManager.__init__(self)
 		self.bgColor = (255, 255, 255)
 	
 	def Instructions(self):
@@ -33,9 +33,6 @@ class Core(Game, EventMonitor, LevelManager):
 	def Setup(self, message="", callback=None, time=None):
 		self.player = Player(self, [0, 0, 11.0 / gfx.width, 12.0 / gfx.width])
 		self.camera = BitCamera([0, 0, 1.0 / config.zoom, float(gfx.height) / gfx.width / config.zoom], tracking=self.player)
-		for l in range(3):
-			self.LoadLevel(str(l + 1))
-		self.SetLevel("level1", "start")
 		if message:
 			self.AddMessage(message, callback, time)
 	
