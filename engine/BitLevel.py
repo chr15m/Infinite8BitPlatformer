@@ -14,8 +14,6 @@ def PropDraw(self):
 	if isinstance(self.container, Layer):
 		gfx.DrawRect(self.container.level.camera.TranslateRectangle(self.rectangle), self.color, 1)
 
-#Prop.Draw = PropDraw
-
 Platform.color = [255, 255, 255]
 Portal.color = [255, 0, 0]
 Item.color = [255, 255, 0]
@@ -26,10 +24,15 @@ class BitLevel(Level, SVGLoader):
 		self.layer = Layer(self)
 		self.bitmap = {}
 		filename = path.join("resources", self.name + ".svg")
-		self.LoadSVG(filename)
 		self.gravity = self.gravity / config.zoom
 		self.backgroundColor = (15, 15, 15)
 		self.bitmap = Image(size=(1024, 1024), depth=8)
+		self.history = []
+		self.LoadSVG(filename)
+	
+	###
+	###	UI/Bitmap routines
+	###
 	
 	def Draw(self):
 		gfx.SetBackgroundColor(self.backgroundColor)
@@ -44,8 +47,23 @@ class BitLevel(Level, SVGLoader):
 			Prop.Draw = PropDraw
 		else:
 			if hasattr(Prop, "Draw"):
-				#del Prop.Draw
 				Prop.Draw = lambda x: x
+	
+	###
+	###	Level data routines
+	###
+	
+	def GetEntities(self):
+		return [(o.__class__.__name__, dict([(s, o.__dict__[s]) for s in ("id", "destination", "rectangle", "description") if s in o.__dict__])) for o in self.layer.GetAll()]
+	
+	def SerialStructure(self):
+		return {"level": {"bitmap": [self.bitmap, (1024, 1024)], "history": self.history, "entities": self.GetEntities()}}
+	
+	def UnpackSerial(self, data):
+		self.history = data["level"]["history"]
+		self.bitmap = Image().FromString(*data['level']['bitmap'])
+		for s in data['level']['entities']:
+			getattr(self, "Create" + s[0], lambda x: x)(s[1])
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
 		l = self.layer
@@ -65,7 +83,5 @@ class BitLevel(Level, SVGLoader):
 					self.startPoints["start"] = p
 		
 		self.AddLayer(info[1], l)
-	
-	def AddPlatform(self, coords):
-		return self.layer.AddProp(Platform(coords))
+		print self.SerialStructure()
 	
