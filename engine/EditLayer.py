@@ -74,15 +74,10 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	def SetLevel(self, level):
 		self.level = level
-		self.SetLevelEditMode()
 	
 	def ToggleMode(self):
 		self.mode = not self.mode
 		self.editButton.colors[0] = [100 + 150 * self.mode, 100 + 150 * self.mode, 100 + 150 * self.mode]
-		self.SetLevelEditMode()
-	
-	def SetLevelEditMode(self):
-		self.level.SetEditMode(self.mode)
 	
 	def On(self):
 		return self.mode and self.level
@@ -114,6 +109,8 @@ class EditLayer(Concurrent, EventMonitor):
 	def Draw(self):
 		if self.On():
 			Concurrent.Draw(self)
+			if self.mode:
+				[o.DrawEdit() for o in self.level.layer.GetAll()]
 		else:
 			self.editButton.Draw()
 	

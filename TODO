@@ -11,12 +11,11 @@
 		* draw
 		> fill
 		> line
+		> rectangle
 	* palette button
 		* choose color
 		* select palette
-	* background buttons
-		* color palette to choose background color
-	* other
+	> other
 		> undo
 * palettes and palette mapping code
 	<http://en.wikipedia.org/wiki/8-bit_color>
@@ -30,8 +29,13 @@
 		* Atari 2600
 		* NES
 		> Sega Master System
+* add bitmap image to
+	* portal
+	* platform
+	* item
 * server emulation - save to disk but using everything farmed out into a proxy class
 * implement dying - zap to last platform
+* implement maximum falling speed
 * graphics for edit buttons
 * add bitmap to props
 * add chat box
@@ -44,7 +48,7 @@
 
 Server Side
 -----------
-* level serialising
++ level serialising
 > write unused levels to disk
 > version management - send client version number
 
@@ -59,4 +63,3 @@ done
 + graphics for player animations
 + add bitmap to level
 + joystick control
-

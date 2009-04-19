@@ -25,7 +25,7 @@ class Core(Game, EventMonitor, LevelManager):
 		self.Add(self.editLayer)
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
 		LevelManager.__init__(self)
-		self.bgColor = (255, 255, 255)
+		self.bgColor = (150, 150, 150)
 	
 	def Instructions(self):
 		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 0.8)
