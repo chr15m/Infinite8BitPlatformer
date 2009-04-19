@@ -71,6 +71,7 @@ class EditLayer(Concurrent, EventMonitor):
 		self.selected = ""
 		self.down = False
 		self.rect = None
+		self.currentSurface = None
 	
 	def SetLevel(self, level):
 		self.level = level
@@ -85,9 +86,6 @@ class EditLayer(Concurrent, EventMonitor):
 	###
 	###	Things the user can do
 	###
-	def Paint(self, pos):
-		p = [int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(pos)]
-		self.level.bitmap.Pixel(p, (150, 150, 150, 255))
 
 	###
 	###	Concurrency events
@@ -109,8 +107,8 @@ class EditLayer(Concurrent, EventMonitor):
 	def Draw(self):
 		if self.On():
 			Concurrent.Draw(self)
-			if self.mode:
-				[o.DrawEdit() for o in self.level.layer.GetAll()]
+			if self.mode and self.level.camera:
+				[o.DrawEdit() for o in self.level.layer.GetAll() if o in self.level.camera.GetVisible()]
 		else:
 			self.editButton.Draw()
 	
@@ -126,14 +124,22 @@ class EditLayer(Concurrent, EventMonitor):
 				self.rect = EditBox(e.pos, self.level.camera)
 				self.Add(self.rect)
 			elif self.selected == 'draw':
-				self.Paint(e.pos)
+				p = self.level.camera.FromScreenCoordinates(e.pos)
+				props = [o for o in self.level.layer.GetAll() if o.TestPoint(p)]
+				props.reverse()
+				pos = [int(x * gfx.width) for x in p]
+				if len(props):
+					self.currentSurface = props[0]
+				else:
+					self.currentSurface = self.level
+				self.currentSurface.Paint(pos)
 	
 	@editOn
 	def MouseMove(self, e):
 		if self.rect:
 			self.rect.SetCorner(e.pos)
-		elif self.selected == 'draw' and self.down:
-			self.Paint(e.pos)
+		elif self.selected == 'draw' and self.down and self.currentSurface:
+			self.currentSurface.Paint([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
 	
 	@editOn
 	def MouseUp(self, e):
@@ -141,4 +147,5 @@ class EditLayer(Concurrent, EventMonitor):
 		if self.rect:
 			self.Remove(self.rect)
 			self.rect = None
+		self.currentSurface = None
 

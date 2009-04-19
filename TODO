@@ -33,7 +33,6 @@
 * implement dying - zap to last platform
 * implement maximum falling speed
 * graphics for edit buttons
-* optimise graphics - culling
 * add chat box
 	* /new command with optional location
 	* /teleport command with location
@@ -64,3 +63,4 @@ done
 	+ portal
 	+ platform
 	+ item
++ optimise graphics - culling

@@ -14,7 +14,9 @@ from BitProps.BitPlatform import BitPlatform
 from BitProps.BitItem import BitItem
 from BitProps.BitPortal import BitPortal
 
-class BitLevel(Level, SVGLoader):
+from Paintable import Paintable
+
+class BitLevel(Level, SVGLoader, Paintable):
 	def __init__(self, name):
 		Level.__init__(self, name)
 		self.basefilename = path.join("resources", "levels", self.name)
