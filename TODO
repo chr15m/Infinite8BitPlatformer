@@ -29,15 +29,11 @@
 		* Atari 2600
 		* NES
 		> Sega Master System
-* add bitmap image to
-	* portal
-	* platform
-	* item
 * server emulation - save to disk but using everything farmed out into a proxy class
 * implement dying - zap to last platform
 * implement maximum falling speed
 * graphics for edit buttons
-* add bitmap to props
+* optimise graphics - culling
 * add chat box
 	* /new command with optional location
 	* /teleport command with location
@@ -63,3 +59,8 @@ done
 + graphics for player animations
 + add bitmap to level
 + joystick control
++ add bitmap to props
++ add bitmap image to
+	+ portal
+	+ platform
+	+ item

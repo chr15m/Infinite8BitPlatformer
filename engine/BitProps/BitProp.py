@@ -12,9 +12,12 @@ class BitProp(Prop):
 		self.bitmap.surface.set_at((0, 0), (255, 255, 255))
 	
 	def Draw(self):
-		self.box = box = self.container.level.camera.TranslateRectangle(self.rectangle)
 		if isinstance(self.container, Layer):
+			self.box = box = self.container.level.camera.TranslateRectangle(self.rectangle)
 			gfx.BlitImage(self.bitmap.Scale((box.Width(), box.Height())), position=(box[0], box[1]))
+		else:
+			self.box = None	
 	
 	def DrawEdit(self):
-		gfx.DrawRect(self.box, self.color, 1)
+		if self.box:
+			gfx.DrawRect(self.box, self.color, 1)

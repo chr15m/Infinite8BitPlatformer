@@ -60,7 +60,7 @@ class Player(Character, EventMonitor, Sprite):
 	
 	def Update(self):
 		Character.Update(self)
-		if self.velocity[1] > 4.0 / config.zoom:
+		if self.velocity[1] > 3.0 / config.zoom:
 			self.Die()
 		self.portal = None
 	
