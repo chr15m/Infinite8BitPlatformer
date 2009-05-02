@@ -1,3 +1,4 @@
+* make object collection not delete the object from level, but just flag it hidden
 * edit mode menu
 	* new things
 		* platform

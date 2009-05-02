@@ -1,4 +1,7 @@
-from os import path
+from os import path, rmdir, unlink
+import tempfile
+import zipfile
+from cStringIO import StringIO
 
 from simplejson import dumps, loads
 
@@ -23,7 +26,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.layer = Layer(self)
 		self.bitmap = {}
 		self.gravity = self.gravity / config.zoom
-		self.bitmap = Image(size=(1024, 1024), depth=8)
+		self.bitmap = Image(size=(1024, 768))
 		self.history = []
 	
 	###
@@ -33,7 +36,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def Draw(self):
 		subPixOffset = self.camera.PixelOffset()
 		pixelBoxSize = self.camera.ToPixels().Grow(1, 1)
-		box = pixelBoxSize.Clip([0, 0, 1024, 1024])
+		box = pixelBoxSize.Clip([0, 0, 1024, 768])
 		gfx.BlitImage(self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom)), position=(-subPixOffset[0], -subPixOffset[1]))
 		Level.Draw(self)
 	
@@ -50,21 +53,40 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def UnpackSerial(self, data):
 		self.history = data["level"]["history"]
 		for s in data['level']['entities']:
-			getattr(self, "Create" + s[0], lambda x: x)(s[1])
+			getattr(self, "Create" + s[0][0].capitalize() + s[0][1:], lambda x: x)(s[1])
 		sp = data["level"]["startpoints"]
 		self.startPoints = dict([(s, self.layer.names[sp[s]]) for s in sp])
 	
+	def ToString(self):
+		""" Turns this level into a zipfile blob """
+		data = StringIO()
+		zip = zipfile.ZipFile(data, "w")
+		tmpfile = tempfile.mkstemp(suffix=".png")[1]
+		zip.writestr(path.join(self.name, "level.json"), dumps(self.PackSerial()))
+		self.bitmap.Save(tmpfile)
+		zip.write(tmpfile, path.join(self.name, "level.png"))
+		zip.close()
+		return data.getvalue()
+	
 	def Save(self):
-		""" Writes this level to disk """
-		out = file(self.basefilename + ".json", "w")
-		out.write(dumps(self.PackSerial()))
+		out = file(self.basefilename + ".zip", "w")
+		out.write(self.ToString())
 		out.close()
-		self.bitmap.Save(self.basefilename + ".png")
 	
 	def Load(self):
-		""" Reads this level from disk """
-		self.UnpackSerial(loads(file(self.basefilename + ".json").read()))
-		self.bitmap = Image(self.basefilename + ".png")
+		self.FromString(file(self.basefilename + ".zip", "r").read())
+	
+	def FromString(self, data):
+		zip = zipfile.ZipFile(StringIO(data), "r")
+		self.UnpackSerial(loads(zip.read(path.join(self.name, "level.json"))))
+		tmpdir = tempfile.mkdtemp()
+		zip.extract(path.join(self.name, "level.png"), tmpdir)
+		imgfile = path.join(tmpdir, self.name, "level.png")
+		self.bitmap = Image(imgfile)
+		# remove created temp files
+		unlink(imgfile)
+		rmdir(imgfile[:-len(path.basename(imgfile))])
+		rmdir(tmpdir)
 		self.AddLayer(self.name, self.layer)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
@@ -84,7 +106,6 @@ class BitLevel(Level, SVGLoader, Paintable):
 				# platform is a start point
 				if len(r['details']) > 1 and r['details'][1] == "start":
 					self.startPoints["start"] = p
-		
 		self.AddLayer(info[1], l)
 	
 	def CreatePlatform(self, data):

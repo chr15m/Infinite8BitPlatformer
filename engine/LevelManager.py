@@ -17,14 +17,13 @@ class LevelManager:
 	
 	def LoadLevel(self, name):
 		newlevel = BitLevel(name)
-		#newlevel.LoadSVG(path.join("resources", "level" + name + ".svg"))
-		#newlevel.Save()
 		newlevel.Load()
 		self.levels["level" + name] = newlevel
 	
 	def SetLevel(self, level, start):
 		self.Remove(self.editLayer)
 		if self.level:
+			self.SaveCurrentLevel()
 			self.Remove(self.levels[self.level])
 			self.levels[self.level].RemovePlayerCamera()
 		self.level = level
@@ -36,4 +35,7 @@ class LevelManager:
 	def UnSetLevel(self):
 		self.Remove(self.levels[self.level])
 		self.levels[self.level].RemovePlayerCamera()
+	
+	def SaveCurrentLevel(self):
+		self.levels[self.level].Save()
 

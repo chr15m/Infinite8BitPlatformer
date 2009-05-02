@@ -42,6 +42,10 @@ class Core(Game, EventMonitor, LevelManager):
 	def RemoveMessage(self, message):
 		self.Remove(message)
 	
+	def Quit(self):
+		self.SaveCurrentLevel()
+		Game.Quit(self)
+	
 	###
 	### Concurrency
 	###
