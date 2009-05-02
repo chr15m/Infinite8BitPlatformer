@@ -10,8 +10,8 @@
 		> clone
 	* graphics things
 		* draw
-		> fill
-		> line
+		* fill
+		* line
 		> rectangle
 	* palette button
 		* choose color
@@ -30,9 +30,7 @@
 		* Atari 2600
 		* NES
 		> Sega Master System
-* server emulation - save to disk but using everything farmed out into a proxy class
 * implement dying - zap to last platform
-* implement maximum falling speed
 * graphics for edit buttons
 * add chat box
 	* /new command with optional location
@@ -65,3 +63,5 @@ done
 	+ platform
 	+ item
 + optimise graphics - culling
++ server emulation - save to disk but using everything farmed out into a proxy class
++ implement maximum falling speed

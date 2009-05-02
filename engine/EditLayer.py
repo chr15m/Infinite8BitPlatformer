@@ -72,9 +72,11 @@ class EditLayer(Concurrent, EventMonitor):
 		self.down = False
 		self.rect = None
 		self.currentSurface = None
+		self.color = (150, 150, 150, 255)
 	
 	def SetLevel(self, level):
 		self.level = level
+		self.level.SetEditLayer(self)
 	
 	def ToggleMode(self):
 		self.mode = not self.mode
@@ -147,5 +149,7 @@ class EditLayer(Concurrent, EventMonitor):
 		if self.rect:
 			self.Remove(self.rect)
 			self.rect = None
-		self.currentSurface = None
+		if self.currentSurface:
+			self.currentSurface.MouseUp()
+			self.currentSurface = None
 

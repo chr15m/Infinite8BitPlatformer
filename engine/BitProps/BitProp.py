@@ -8,7 +8,7 @@ from engine.Paintable import Paintable
 class BitProp(Paintable):
 	editmode = False
 	def __init__(self, *args, **kwargs):
-		#EventMonitor.__init__(self)
+		Paintable.__init__(self)
 		rect = args[0]
 		size=(int(rect[2] * gfx.width), int(rect[3] * gfx.width))
 		self.bitmap = Image(size=size, depth=8)

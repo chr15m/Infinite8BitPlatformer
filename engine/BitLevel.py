@@ -20,7 +20,8 @@ from BitProps.BitPortal import BitPortal
 from Paintable import Paintable
 
 class BitLevel(Level, SVGLoader, Paintable):
-	def __init__(self, name):
+	def __init__(self, name, editLayer):
+		Paintable.__init__(self, editLayer)
 		Level.__init__(self, name)
 		self.basefilename = path.join("resources", "levels", self.name)
 		self.layer = Layer(self)
@@ -119,12 +120,16 @@ class BitLevel(Level, SVGLoader, Paintable):
 					self.startPoints["start"] = p
 		self.AddLayer(info[1], l)
 	
+	def AddProp(self, prop):
+		self.layer.AddProp(prop)
+		prop.SetEditLayer(self.editLayer)
+	
 	def CreatePlatform(self, data):
-		self.layer.AddProp(BitPlatform(data["rectangle"], data["id"]))
+		self.AddProp(BitPlatform(data["rectangle"], data["id"]))
 	
 	def CreatePortal(self, data):
-		self.layer.AddProp(BitPortal(data["rectangle"], data["id"], data["destination"]))
+		self.AddProp(BitPortal(data["rectangle"], data["id"], data["destination"]))
 	
 	def CreateItem(self, data):
-		self.layer.AddProp(BitItem(data["rectangle"], data["id"], data["description"]))
+		self.AddProp(BitItem(data["rectangle"], data["id"], data["description"]))
 

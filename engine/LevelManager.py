@@ -16,7 +16,7 @@ class LevelManager:
 		self.SetLevel("level1", "start")
 	
 	def LoadLevel(self, name):
-		newlevel = BitLevel(name)
+		newlevel = BitLevel(name, self.editLayer)
 		newlevel.Load()
 		self.levels["level" + name] = newlevel
 	
