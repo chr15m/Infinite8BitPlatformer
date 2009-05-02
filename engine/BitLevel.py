@@ -69,12 +69,12 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return data.getvalue()
 	
 	def Save(self):
-		out = file(self.basefilename + ".zip", "w")
+		out = file(self.basefilename + ".level.zip", "w")
 		out.write(self.ToString())
 		out.close()
 	
 	def Load(self):
-		self.FromString(file(self.basefilename + ".zip", "r").read())
+		self.FromString(file(self.basefilename + ".level.zip", "r").read())
 	
 	def FromString(self, data):
 		zip = zipfile.ZipFile(StringIO(data), "r")
