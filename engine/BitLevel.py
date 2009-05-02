@@ -65,6 +65,10 @@ class BitLevel(Level, SVGLoader, Paintable):
 		zip.writestr(path.join(self.name, "level.json"), dumps(self.PackSerial()))
 		self.bitmap.Save(tmpfile)
 		zip.write(tmpfile, path.join(self.name, "level.png"))
+		for e in self.layer.GetAll():
+			if e.bitmap:
+				e.bitmap.Save(tmpfile)
+				zip.write(tmpfile, path.join(self.name, e.id + ".png"))
 		zip.close()
 		return data.getvalue()
 	
@@ -85,6 +89,13 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.bitmap = Image(imgfile)
 		# remove created temp files
 		unlink(imgfile)
+		for t, e in self.GetEntities():
+			baseimgfile = path.join(self.name, e['id'] + ".png")
+			if baseimgfile in zip.namelist():
+				zip.extract(baseimgfile, tmpdir)
+				imgfile = path.join(tmpdir, baseimgfile)
+				self.layer.names[e['id']].bitmap = Image(imgfile)
+				unlink(imgfile)
 		rmdir(imgfile[:-len(path.basename(imgfile))])
 		rmdir(tmpdir)
 		self.AddLayer(self.name, self.layer)
