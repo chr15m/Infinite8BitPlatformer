@@ -33,12 +33,12 @@ class Player(Character, EventMonitor, Sprite):
 	def Collide(self, who):
 		Character.Collide(self, who)
 		
-		if isinstance(who, Item):
+		if isinstance(who, Item) and who.visible:
 			self.game.AddMessage("got " + who.description)
 			self.inventory.append(who)
 			if len(self.inventory) == 15:
 				self.game.Win()
-			who.container.RemoveProp(who)
+			who.Hide()
 			sfx.PlaySound("item")
 		
 		if isinstance(who, Portal):
@@ -47,8 +47,8 @@ class Player(Character, EventMonitor, Sprite):
 	def Do(self):
 		if self.portal:
 			sfx.PlaySound("portal")
-			self.game.Teleport(self.portal)
-			self.game.AddMessage("teleporting to " + self.portal.destination)
+			if self.game.Teleport(self.portal):
+				self.game.AddMessage("teleporting to " + self.portal.destination)
 	
 	###
 	### Concurrency related methods

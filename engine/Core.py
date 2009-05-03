@@ -78,6 +78,7 @@ class Core(Game, EventMonitor, LevelManager):
 		parts = portal.destination.split(":")
 		if len(parts) == 2:
 			self.SetLevel(*parts)
+			return True
 	
 	###
 	### Interface events
