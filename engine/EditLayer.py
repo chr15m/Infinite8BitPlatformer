@@ -123,6 +123,14 @@ class EditLayer(Concurrent, EventMonitor):
 	###	Interface events
 	###
 	
+	def GetPropUnderMouse(self, p):
+		props = [o for o in self.level.layer.GetAll() if o.TestPoint(p)]
+		props.reverse()
+		if len(props):
+			return props[0]
+		else:
+			return self.level
+	
 	@editOn
 	def MouseDown(self, e):
 		if not len([o for o in self.objects if hasattr(o, 'triggered') and o.triggered]):
@@ -130,16 +138,16 @@ class EditLayer(Concurrent, EventMonitor):
 			if self.selected in ['platform', 'portal', 'item']:
 				self.rect = EditBox(e.pos, self.level.camera)
 				self.Add(self.rect)
-			elif self.selected == 'draw':
-				p = self.level.camera.FromScreenCoordinates(e.pos)
-				props = [o for o in self.level.layer.GetAll() if o.TestPoint(p)]
-				props.reverse()
-				pos = [int(x * gfx.width) for x in p]
-				if len(props):
-					self.currentSurface = props[0]
-				else:
-					self.currentSurface = self.level
-				self.currentSurface.Paint(pos)
+			else:
+				p = self.level.camera.FromScreenCoordinates(e.pos)	
+				if self.selected == 'draw':
+					self.currentSurface = self.GetPropUnderMouse(p)
+					pos = [int(x * gfx.width) for x in p]
+					self.currentSurface.Paint(pos)
+				elif self.selected == 'move':
+					self.currentSurface = self.GetPropUnderMouse(p)
+				elif self.selected == 'delete':
+					self.level.layer.RemoveProp(self.GetPropUnderMouse(p))
 	
 	@editOn
 	def MouseMove(self, e):
