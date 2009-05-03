@@ -146,8 +146,11 @@ class EditLayer(Concurrent, EventMonitor):
 					self.currentSurface.Paint(pos)
 				elif self.selected == 'move':
 					self.currentSurface = self.GetPropUnderMouse(p)
+					if self.currentSurface != self.level:
+						self.currentSurface.Drag(p)
 				elif self.selected == 'delete':
-					self.level.layer.RemoveProp(self.GetPropUnderMouse(p))
+					if self.GetPropUnderMouse(p) != self.level:
+						self.level.layer.RemoveProp(self.GetPropUnderMouse(p))
 	
 	@editOn
 	def MouseMove(self, e):
@@ -155,12 +158,15 @@ class EditLayer(Concurrent, EventMonitor):
 			self.rect.SetCorner(e.pos)
 		elif self.selected == 'draw' and self.down and self.currentSurface:
 			self.currentSurface.Paint([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
+		elif self.selected == 'move' and self.down and self.currentSurface and self.currentSurface != self.level:
+			self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
 	
 	@editOn
 	def MouseUp(self, e):
 		self.down = False
 		if self.rect:
 			if self.selected in ['platform', 'portal', 'item']:
+				self.rect.Absolute()
 				self.level.Create(self.selected, {'rectangle': list(self.rect)})
 			self.Remove(self.rect)
 			self.rect = None

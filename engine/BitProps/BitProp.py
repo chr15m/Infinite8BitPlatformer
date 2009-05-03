@@ -14,6 +14,7 @@ class BitProp(Paintable):
 		self.bitmap = Image(size=size, depth=8)
 		self.bitmap.surface.set_at((0, 0), (255, 255, 255))
 		self.box = None
+		self.lastDrag = None
 	
 	def Draw(self):
 		if isinstance(self.container, Layer):
@@ -29,3 +30,14 @@ class BitProp(Paintable):
 	def TestPoint(self, p):
 		return  self.rectangle.PointInRect(p)
 	
+	def Drag(self, pos):
+		if self.lastDrag:
+			self.rectangle.Left(self.rectangle.Left() + (pos[0] - self.lastDrag[0]))
+			self.rectangle.Top(self.rectangle.Top() + (pos[1] - self.lastDrag[1]))
+		self.lastDrag = pos
+	
+	def MouseUp(self):
+		if self.lastDrag:
+			self.lastDrag = None
+		else:
+			Paintable.MouseUp(self)

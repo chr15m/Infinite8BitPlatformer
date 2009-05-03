@@ -1,15 +1,48 @@
-* make object collection not delete the object from level, but just flag it hidden
+* fill button
+* palette button
+	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
+	* choose colour to draw with
+	* choose palette (NES or Atari 2600)
+* clone button
+* move buttons closer together
+* make props transparent by default
+* clicking on the portal - edit box [name, level, portal]
+* name of current level in the top right corner
+* use 8 bit palette
+* use transparent colour
+* implement dying - fade then zap to last platform
+* graphics for edit buttons
+* add chat box
+	* /help command
+	* /new command with location name
+	* /teleport command with location
+	* /quit command
+	* /help command
+* do some edit mode icons
+
+Bugs
+----
+* edit mode boxes should stay within max level size
+
+Server Side
+-----------
+> level serialising
+> write unused levels to disk
+> version management - send client version number
+
+Later
+-----
 * edit mode menu
 	* new things
-		* platform
-		* portal
-		* item
+		+ platform
+		+ portal
+		+ item
 	* edit things
-		* delete
-		* move
+		+ delete
+		+ move
 		> clone
 	* graphics things
-		* draw
+		+ draw
 		* fill
 		> line
 		> rectangle
@@ -18,6 +51,8 @@
 		* select palette
 	> other
 		> undo
+> new prop type that you don't hit for 'foreground' stuff
+> zooming
 * palettes and palette mapping code
 	<http://en.wikipedia.org/wiki/8-bit_color>
 	<http://en.wikipedia.org/wiki/List_of_8-bit_computer_hardware_palettes> 
@@ -30,30 +65,12 @@
 		* Atari 2600
 		* NES
 		> Sega Master System
-* implement dying - zap to last platform
-* graphics for edit buttons
-* add chat box
-	* /new command with optional location
-	* /teleport command with location
-	* /quit command
-	* /help command
-> new prop type that you don't hit for 'foreground' stuff
-> zooming
-
-Server Side
------------
-+ level serialising
-> write unused levels to disk
-> version management - send client version number
-
-Bugs
-----
-+ 'sliding bitmap' bug
-+ fix propagation of mouse clicks through buttons in edit mode
-* edit mode boxes should stay within max level size
 
 done
 ----
++ 'sliding bitmap' bug
++ fix propagation of mouse clicks through buttons in edit mode
++ make object collection not delete the object from level, but just flag it hidden
 + graphics for player animations
 + add bitmap to level
 + joystick control
