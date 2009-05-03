@@ -35,6 +35,10 @@ class FamilyButton(TextButton):
 		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.1 + 0.05 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
 		self.family.append(self)
 	
+	def Draw(self):
+		if self.name != '---':
+			TextButton.Draw(self)
+	
 	def Select(self, on=True):
 		self.parent.selected = self.name
 		self.colors[0] = [100 + 150 * on, 100 + 150 * on, 100 + 150 * on]
@@ -66,7 +70,8 @@ class EditLayer(Concurrent, EventMonitor):
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		self.Add(self.editButton)
-		for b in ['platform', 'portal', 'item', 'move', 'draw', 'fill']:
+		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', '---', 'draw', 'fill']:
+			
 			self.Add(FamilyButton(b, self))
 		self.selected = ""
 		self.down = False
@@ -147,6 +152,8 @@ class EditLayer(Concurrent, EventMonitor):
 	def MouseUp(self, e):
 		self.down = False
 		if self.rect:
+			if self.selected in ['platform', 'portal', 'item']:
+				self.level.Create(self.selected, {'rectangle': list(self.rect)})
 			self.Remove(self.rect)
 			self.rect = None
 		if self.currentSurface:

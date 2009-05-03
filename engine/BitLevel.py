@@ -54,7 +54,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def UnpackSerial(self, data):
 		self.history = data["level"]["history"]
 		for s in data['level']['entities']:
-			getattr(self, "Create" + s[0][0].capitalize() + s[0][1:], lambda x: x)(s[1])
+			self.Create(s[0], s[1])
 		sp = data["level"]["startpoints"]
 		self.startPoints = dict([(s, self.layer.names[sp[s]]) for s in sp])
 	
@@ -124,12 +124,15 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.layer.AddProp(prop)
 		prop.SetEditLayer(self.editLayer)
 	
+	def Create(self, which, data):
+		getattr(self, "Create" + which[0].capitalize() + which[1:], lambda x: x)(data)	
+	
 	def CreatePlatform(self, data):
-		self.AddProp(BitPlatform(data["rectangle"], data["id"]))
+		self.AddProp(BitPlatform(data["rectangle"], data.get("id", None)))
 	
 	def CreatePortal(self, data):
-		self.AddProp(BitPortal(data["rectangle"], data["id"], data["destination"]))
+		self.AddProp(BitPortal(data["rectangle"], data.get("id", None), data.get("destination", "")))
 	
 	def CreateItem(self, data):
-		self.AddProp(BitItem(data["rectangle"], data["id"], data["description"]))
+		self.AddProp(BitItem(data["rectangle"], data.get("id", None), data.get("description", "")))
 

@@ -75,7 +75,9 @@ class Core(Game, EventMonitor, LevelManager):
 		self.Setup("oops!")
 	
 	def Teleport(self, portal):
-		self.SetLevel(*portal.destination.split(":"))
+		parts = portal.destination.split(":")
+		if len(parts) == 2:
+			self.SetLevel(*parts)
 	
 	###
 	### Interface events

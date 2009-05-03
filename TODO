@@ -6,12 +6,12 @@
 		* item
 	* edit things
 		* delete
-		> move
+		* move
 		> clone
 	* graphics things
 		* draw
 		* fill
-		* line
+		> line
 		> rectangle
 	* palette button
 		* choose color
