@@ -22,6 +22,7 @@
 
 Bugs
 ----
+* props all get the same ID
 * edit mode boxes should stay within max level size
 
 Server Side

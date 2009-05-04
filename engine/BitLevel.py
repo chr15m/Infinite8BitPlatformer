@@ -123,16 +123,22 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def AddProp(self, prop):
 		self.layer.AddProp(prop)
 		prop.SetEditLayer(self.editLayer)
+		return prop
+	
+	def Clone(self, which):
+		new = self.Create(which.type, {"rectangle": list(which.rectangle)})
+		new.bitmap = Image(image=which.bitmap)
+		return new
 	
 	def Create(self, which, data):
-		getattr(self, "Create" + which[0].capitalize() + which[1:], lambda x: x)(data)	
+		return getattr(self, "Create" + which[0].capitalize() + which[1:], lambda x: x)(data)	
 	
 	def CreatePlatform(self, data):
-		self.AddProp(BitPlatform(data["rectangle"], data.get("id", None)))
+		return self.AddProp(BitPlatform(data["rectangle"], data.get("id", None)))
 	
 	def CreatePortal(self, data):
-		self.AddProp(BitPortal(data["rectangle"], data.get("id", None), data.get("destination", "")))
+		return self.AddProp(BitPortal(data["rectangle"], data.get("id", None), data.get("destination", "")))
 	
 	def CreateItem(self, data):
-		self.AddProp(BitItem(data["rectangle"], data.get("id", None), data.get("description", "")))
+		return self.AddProp(BitItem(data["rectangle"], data.get("id", None), data.get("description", "")))
 

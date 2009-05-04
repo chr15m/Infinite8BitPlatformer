@@ -32,7 +32,7 @@ class FamilyButton(TextButton):
 		self.name = name
 		self.parent = parent
 		self.triggered = False
-		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.1 + 0.05 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
+		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.05 + 0.045 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
 		self.family.append(self)
 	
 	def Draw(self):
@@ -70,8 +70,7 @@ class EditLayer(Concurrent, EventMonitor):
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		self.Add(self.editButton)
-		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', '---', 'draw', 'fill']:
-			
+		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone', '---', 'draw', 'fill']:
 			self.Add(FamilyButton(b, self))
 		self.selected = ""
 		self.down = False
@@ -148,6 +147,11 @@ class EditLayer(Concurrent, EventMonitor):
 					self.currentSurface = self.GetPropUnderMouse(p)
 					if self.currentSurface != self.level:
 						self.currentSurface.Drag(p)
+				elif self.selected == 'clone':
+					self.currentSurface = self.GetPropUnderMouse(p)
+					if self.currentSurface != self.level:
+						self.currentSurface = self.level.Clone(self.currentSurface)
+						self.currentSurface.Drag(p)
 				elif self.selected == 'delete':
 					if self.GetPropUnderMouse(p) != self.level:
 						self.level.layer.RemoveProp(self.GetPropUnderMouse(p))
@@ -158,7 +162,7 @@ class EditLayer(Concurrent, EventMonitor):
 			self.rect.SetCorner(e.pos)
 		elif self.selected == 'draw' and self.down and self.currentSurface:
 			self.currentSurface.Paint([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
-		elif self.selected == 'move' and self.down and self.currentSurface and self.currentSurface != self.level:
+		elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
 			self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
 	
 	@editOn
