@@ -1,4 +1,4 @@
-from os import path, rmdir, unlink
+from os import path, rmdir, unlink, makedirs
 import tempfile
 import zipfile
 from cStringIO import StringIO
@@ -18,6 +18,18 @@ from BitProps.BitItem import BitItem
 from BitProps.BitPortal import BitPortal
 
 from Paintable import Paintable
+
+if not hasattr(zipfile.ZipFile, "extract"):
+	def extract(self, name, dest):
+		destdir = path.join(dest, name)
+		destdir = destdir[:-len(path.basename(destdir))]
+		if not path.exists(destdir):
+			makedirs(destdir)
+		data = self.read(name)
+		out = file(path.join(dest, name), "wb")
+		out.write(data)
+		out.close()
+	zipfile.ZipFile.extract = extract	
 
 class BitLevel(Level, SVGLoader, Paintable):
 	def __init__(self, name, editLayer):

@@ -1,10 +1,12 @@
-from os import path
-from sys import platform
+import os
+from sys import platform, path
+
+os.chdir(path[0])
 
 import PodSix
 PodSix.engine = "pygame"
 from PodSix.Resource import *
-gfx.SetIcon(path.join("resources", "icon.gif"))
+gfx.SetIcon(os.path.join("resources", "icon.gif"))
 
 #from PodSix.SplashScreen import SplashScreen
 #s = SplashScreen()
