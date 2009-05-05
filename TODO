@@ -1,12 +1,11 @@
-* fill button
+* use 8 bit palette
+* use transparent colour
+* make props transparent by default
 * palette button
 	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
 	* choose colour to draw with
 	* choose palette (NES or Atari 2600)
 --- RELEASE + ask people to make levels ---
-* use 8 bit palette
-* use transparent colour
-* make props transparent by default
 * clicking on the portal - edit box [name, level, portal]
 * name of current level in the top right corner
 * add chat box
@@ -69,6 +68,7 @@ Later
 
 done
 ----
++ fill button
 + clone button
 + move buttons closer together
 + 'sliding bitmap' bug
