@@ -3,22 +3,22 @@
 	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
 	* choose colour to draw with
 	* choose palette (NES or Atari 2600)
-* clone button
-* move buttons closer together
+--- RELEASE + ask people to make levels ---
+* use 8 bit palette
+* use transparent colour
 * make props transparent by default
 * clicking on the portal - edit box [name, level, portal]
 * name of current level in the top right corner
-* use 8 bit palette
-* use transparent colour
-* implement dying - fade then zap to last platform
-* graphics for edit buttons
 * add chat box
 	* /help command
 	* /new command with location name
 	* /teleport command with location
 	* /quit command
 	* /help command
-* do some edit mode icons
+* implement dying - fade then zap to last platform
+* graphics for edit buttons
+--- RELEASE ---
+Do first minigame content
 
 Bugs
 ----
@@ -69,6 +69,8 @@ Later
 
 done
 ----
++ clone button
++ move buttons closer together
 + 'sliding bitmap' bug
 + fix propagation of mouse clicks through buttons in edit mode
 + make object collection not delete the object from level, but just flag it hidden
