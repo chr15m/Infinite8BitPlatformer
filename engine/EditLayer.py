@@ -77,6 +77,14 @@ class EditLayer(Concurrent, EventMonitor):
 		self.rect = None
 		self.currentSurface = None
 		self.color = (150, 150, 150, 255)
+		self.palettes = {
+			"NES": 		((255, 0, 255), (15, 15, 15), (150, 150, 150), (255, 255, 255)),
+			"Atari 2600": 	((255, 0, 255), (15, 15, 15), (140, 140, 160), (200, 200, 200)),
+		}
+		self.palette = "NES"
+	
+	def Palette(self):
+		return self.palettes[self.palette]
 	
 	def SetLevel(self, level):
 		self.level = level

@@ -39,7 +39,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.layer = Layer(self)
 		self.bitmap = {}
 		self.gravity = self.gravity / config.zoom
-		self.bitmap = Image(size=(1024, 768))
+		self.bitmap = Image(size=(1024, 768), depth=8)
 		self.history = []
 	
 	###
