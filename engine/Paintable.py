@@ -9,11 +9,9 @@ class Paintable:
 	def SetEditLayer(self, editLayer):
 		self.editLayer = editLayer
 		self.bitmap.surface = self.bitmap.surface.convert(8)
-		print self.bitmap.surface.get_bitsize()
-		print self.bitmap.surface.get_bytesize()
+		self.bitmap.TransparentColor((255, 0, 255))
 		self.bitmap.Palette(self.editLayer.Palette())
-		self.bitmap.TransparentColor(0)
-		self.bitmap.Fill(0)
+		#self.bitmap.Fill(0)
 	
 	def MouseUp(self):
 		self.brushdown = False

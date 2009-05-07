@@ -18,7 +18,9 @@ class BitProp(Paintable):
 	def Draw(self):
 		if isinstance(self.container, Layer):
 			self.box = box = self.container.level.camera.TranslateRectangle(self.rectangle)
-			gfx.BlitImage(self.bitmap.Copy().Scale((box.Width(), box.Height())), position=(box[0], box[1]))
+			bigmap = self.bitmap.Copy().Scale((box.Width(), box.Height()))
+			bigmap.surface.set_colorkey((255, 0, 255))
+			gfx.BlitImage(bigmap, position=(box[0], box[1]))
 		else:
 			self.box = None	
 	
