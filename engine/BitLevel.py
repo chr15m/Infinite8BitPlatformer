@@ -146,11 +146,11 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return getattr(self, "Create" + which[0].capitalize() + which[1:], lambda x: x)(data)	
 	
 	def CreatePlatform(self, data):
-		return self.AddProp(BitPlatform(data["rectangle"], data.get("id", None)))
+		return self.AddProp(BitPlatform(data["rectangle"], data.get("id", None), editLayer=self.editLayer))
 	
 	def CreatePortal(self, data):
-		return self.AddProp(BitPortal(data["rectangle"], data.get("id", None), data.get("destination", "")))
+		return self.AddProp(BitPortal(data["rectangle"], data.get("id", None), data.get("destination", ""), editLayer=self.editLayer))
 	
 	def CreateItem(self, data):
-		return self.AddProp(BitItem(data["rectangle"], data.get("id", None), data.get("description", "")))
+		return self.AddProp(BitItem(data["rectangle"], data.get("id", None), data.get("description", ""), editLayer=self.editLayer))
 

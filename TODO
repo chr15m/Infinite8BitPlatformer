@@ -1,6 +1,3 @@
-* use 8 bit palette
-* use transparent colour
-* make props transparent by default
 * palette button
 	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
 	* choose colour to draw with
@@ -21,7 +18,6 @@ Do first minigame content
 
 Bugs
 ----
-* props all get the same ID
 * edit mode boxes should stay within max level size
 
 Server Side
@@ -68,6 +64,10 @@ Later
 
 done
 ----
++ use 8 bit palette
++ use transparent colour
++ make props transparent by default
++ bug: props all get the same ID
 + fill button
 + clone button
 + move buttons closer together

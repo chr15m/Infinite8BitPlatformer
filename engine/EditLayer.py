@@ -1,3 +1,5 @@
+from random import randint
+from sys import maxint
 from PodSix.Resource import *
 from PodSix.Concurrent import Concurrent
 from PodSix.Rectangle import Rectangle
@@ -10,7 +12,7 @@ class EditBox(Rectangle, Concurrent):
 		Rectangle.__init__(self, inlist)
 		Concurrent.__init__(self)
 		self.camera = camera
-		self.color = (150, 150, 150)	
+		self.color = (255, 255, 255)	
 	
 	def Draw(self):
 		gfx.DrawRect(self.camera.TranslateRectangle(self), self.color, 1)
@@ -82,6 +84,12 @@ class EditLayer(Concurrent, EventMonitor):
 			"Atari 2600": 	((255, 0, 255), (15, 15, 15), (140, 140, 160), (200, 200, 200)),
 		}
 		self.palette = "NES"
+	
+	def MakeId(self):
+		x = None
+		while not x or "prop-%d" % x in self.level.layer.names.keys():
+			x = randint(1, maxint)
+		return "prop-%d" % x
 	
 	def Palette(self):
 		return self.palettes[self.palette]

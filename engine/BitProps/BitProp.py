@@ -1,19 +1,20 @@
 from PodSix.Resource import *
 from PodSix.Config import config
-from PodSix.Platformer.Prop import Prop
 from PodSix.Platformer.Layer import Layer
 
 from engine.Paintable import Paintable
 
 class BitProp(Paintable):
-	editmode = False
 	def __init__(self, *args, **kwargs):
-		Paintable.__init__(self)
+		Paintable.__init__(self, kwargs['editLayer'])
 		rect = args[0]
 		size=(int(rect[2] * gfx.width), int(rect[3] * gfx.width))
 		self.bitmap = Image(size=size, depth=8)
 		self.box = None
 		self.lastDrag = None
+	
+	def NewID(self):
+		return self.editLayer.MakeId()
 	
 	def Draw(self):
 		if isinstance(self.container, Layer):
