@@ -1,3 +1,4 @@
+* make the palette be stored per-level and be set in editLayer when the level changes
 * palette button
 	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
 	* choose colour to draw with
@@ -18,6 +19,7 @@ Do first minigame content
 
 Bugs
 ----
+* switching between levels makes the transparency fail
 * edit mode boxes should stay within max level size
 
 Server Side

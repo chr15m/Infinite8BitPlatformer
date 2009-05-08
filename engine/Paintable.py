@@ -8,10 +8,8 @@ class Paintable:
 	
 	def SetEditLayer(self, editLayer):
 		self.editLayer = editLayer
-		self.bitmap.surface = self.bitmap.surface.convert(8)
-		self.bitmap.TransparentColor((255, 0, 255))
+		# TODO: this should be set per level, not in the editLayer
 		self.bitmap.Palette(self.editLayer.Palette())
-		#self.bitmap.Fill(0)
 	
 	def MouseUp(self):
 		self.brushdown = False

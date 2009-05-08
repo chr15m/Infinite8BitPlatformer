@@ -18,6 +18,7 @@ from BitProps.BitItem import BitItem
 from BitProps.BitPortal import BitPortal
 
 from Paintable import Paintable
+from BitImage import BitImage
 
 if not hasattr(zipfile.ZipFile, "extract"):
 	def extract(self, name, dest):
@@ -39,7 +40,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.layer = Layer(self)
 		self.bitmap = {}
 		self.gravity = self.gravity / config.zoom
-		self.bitmap = Image(size=(1024, 768), depth=8)
+		self.bitmap = BitImage(size=(1024, 768), depth=8)
 		self.history = []
 	
 	###
@@ -99,7 +100,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		tmpdir = tempfile.mkdtemp()
 		zip.extract(path.join(self.name, "level.png"), tmpdir)
 		imgfile = path.join(tmpdir, self.name, "level.png")
-		self.bitmap = Image(imgfile)
+		self.bitmap = BitImage(imgfile)
 		# remove created temp files
 		unlink(imgfile)
 		for t, e in self.GetEntities():
@@ -107,7 +108,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 			if baseimgfile in zip.namelist():
 				zip.extract(baseimgfile, tmpdir)
 				imgfile = path.join(tmpdir, baseimgfile)
-				self.layer.names[e['id']].bitmap = Image(imgfile)
+				self.layer.names[e['id']].bitmap = BitImage(imgfile)
 				unlink(imgfile)
 		rmdir(imgfile[:-len(path.basename(imgfile))])
 		rmdir(tmpdir)
@@ -139,7 +140,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 	
 	def Clone(self, which):
 		new = self.Create(which.type, {"rectangle": list(which.rectangle)})
-		new.bitmap = Image(image=which.bitmap)
+		new.bitmap = BitImage(image=which.bitmap)
 		return new
 	
 	def Create(self, which, data):
