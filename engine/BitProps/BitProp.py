@@ -21,10 +21,10 @@ class BitProp(Paintable):
 		if isinstance(self.container, Layer):
 			self.box = box = self.container.level.camera.TranslateRectangle(self.rectangle)
 			bigmap = self.bitmap.Copy().Scale((box.Width(), box.Height()))
-			bigmap.TransparentColor((255, 0, 255))
+			bigmap.ResetTransparency()
 			gfx.BlitImage(bigmap, position=(box[0], box[1]))
 		else:
-			self.box = None	
+			self.box = None
 	
 	def DrawEdit(self):
 		if self.box:
@@ -44,3 +44,4 @@ class BitProp(Paintable):
 			self.lastDrag = None
 		else:
 			Paintable.MouseUp(self)
+

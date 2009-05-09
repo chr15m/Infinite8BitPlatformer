@@ -1,4 +1,4 @@
-from os import path
+from os import path, listdir
 
 from simplejson import dumps
 
@@ -11,8 +11,7 @@ class LevelManager:
 	def __init__(self):
 		self.levels = {}
 		self.level = None
-		for l in range(3):
-			self.LoadLevel(str(l + 1))
+		[self.LoadLevel(x[:-10]) for x in listdir(path.join("resources", "levels")) if x[-10:] == ".level.zip"]
 		self.SetLevel("level1", "start")
 	
 	def LoadLevel(self, name):

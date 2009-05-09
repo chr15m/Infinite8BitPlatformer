@@ -38,7 +38,6 @@ class BitLevel(Level, SVGLoader, Paintable):
 		Level.__init__(self, name)
 		self.basefilename = path.join("resources", "levels", self.name)
 		self.layer = Layer(self)
-		self.bitmap = {}
 		self.gravity = self.gravity / config.zoom
 		self.bitmap = BitImage(size=(1024, 768), depth=8)
 		self.history = []
@@ -51,7 +50,9 @@ class BitLevel(Level, SVGLoader, Paintable):
 		subPixOffset = self.camera.PixelOffset()
 		pixelBoxSize = self.camera.ToPixels().Grow(1, 1)
 		box = pixelBoxSize.Clip([0, 0, 1024, 768])
-		gfx.BlitImage(self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom)), position=(-subPixOffset[0], -subPixOffset[1]))
+		newbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom))
+		newbitmap.ResetTransparency()
+		gfx.BlitImage(newbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
 		Level.Draw(self)
 	
 	###

@@ -19,8 +19,8 @@ Do first minigame content
 
 Bugs
 ----
-* switching between levels makes the transparency fail
-* edit mode boxes should stay within max level size
+* props should stay within max level size
+* don't allow zero sized props
 
 Server Side
 -----------
@@ -66,6 +66,7 @@ Later
 
 done
 ----
++ switching between levels makes the transparency fail
 + use 8 bit palette
 + use transparent colour
 + make props transparent by default

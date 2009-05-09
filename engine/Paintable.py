@@ -10,6 +10,7 @@ class Paintable:
 		self.editLayer = editLayer
 		# TODO: this should be set per level, not in the editLayer
 		self.bitmap.Palette(self.editLayer.Palette())
+		self.bitmap.ResetTransparency()
 	
 	def MouseUp(self):
 		self.brushdown = False
