@@ -21,7 +21,6 @@ class BitProp(Paintable):
 		if isinstance(self.container, Layer):
 			self.box = box = self.container.level.camera.TranslateRectangle(self.rectangle)
 			bigmap = self.bitmap.Copy().Scale((box.Width(), box.Height()))
-			bigmap.ResetTransparency()
 			gfx.BlitImage(bigmap, position=(box[0], box[1]))
 		else:
 			self.box = None

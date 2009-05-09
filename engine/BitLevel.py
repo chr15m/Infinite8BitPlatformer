@@ -51,7 +51,6 @@ class BitLevel(Level, SVGLoader, Paintable):
 		pixelBoxSize = self.camera.ToPixels().Grow(1, 1)
 		box = pixelBoxSize.Clip([0, 0, 1024, 768])
 		newbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom))
-		newbitmap.ResetTransparency()
 		gfx.BlitImage(newbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
 		Level.Draw(self)
 	
