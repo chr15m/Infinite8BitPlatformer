@@ -20,6 +20,8 @@ from BitProps.BitPortal import BitPortal
 from Paintable import Paintable
 from BitImage import BitImage
 
+import palettes
+
 if not hasattr(zipfile.ZipFile, "extract"):
 	def extract(self, name, dest):
 		destdir = path.join(dest, name)
@@ -39,8 +41,14 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.basefilename = path.join("resources", "levels", self.name)
 		self.layer = Layer(self)
 		self.gravity = self.gravity / config.zoom
+		self.palette = "NES"
 		self.bitmap = BitImage(size=(1024, 768), depth=8)
 		self.history = []
+	
+	def ApplyPalette(self):
+		palette = palettes.all[self.palette]
+		self.bitmap.Palette(palette)
+		[o.bitmap.Palette(palette) for o in self.layer.GetAll()]
 	
 	###
 	###	UI/Bitmap routines
@@ -62,10 +70,11 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return [(o.type, dict([(s, o.__dict__[s]) for s in ("id", "destination", "rectangle", "description") if s in o.__dict__])) for o in self.layer.GetAll()]
 	
 	def PackSerial(self):
-		return {"level": {"history": self.history, "entities": self.GetEntities(), "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
+		return {"level": {"history": self.history, "entities": self.GetEntities(), "palette": self.palette, "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
 	
 	def UnpackSerial(self, data):
 		self.history = data["level"]["history"]
+		self.palette = data["level"].get("palette", "NES")
 		for s in data['level']['entities']:
 			self.Create(s[0], s[1])
 		sp = data["level"]["startpoints"]
@@ -77,10 +86,12 @@ class BitLevel(Level, SVGLoader, Paintable):
 		zip = zipfile.ZipFile(data, "w")
 		tmpfile = tempfile.mkstemp(suffix=".png")[1]
 		zip.writestr(path.join(self.name, "level.json"), dumps(self.PackSerial()))
+		self.bitmap.surface.convert(16)
 		self.bitmap.Save(tmpfile)
 		zip.write(tmpfile, path.join(self.name, "level.png"))
 		for e in self.layer.GetAll():
 			if e.bitmap:
+				e.bitmap.surface.convert(16)
 				e.bitmap.Save(tmpfile)
 				zip.write(tmpfile, path.join(self.name, e.id + ".png"))
 		zip.close()
@@ -112,6 +123,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 				unlink(imgfile)
 		rmdir(imgfile[:-len(path.basename(imgfile))])
 		rmdir(tmpdir)
+		# set the palette on everything
+		self.ApplyPalette()
 		self.AddLayer(self.name, self.layer)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
@@ -144,7 +157,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return new
 	
 	def Create(self, which, data):
-		return getattr(self, "Create" + which[0].capitalize() + which[1:], lambda x: x)(data)	
+		newthing = getattr(self, "Create" + which[0].capitalize() + which[1:], lambda x: x)(data)
+		newthing.bitmap.Palette(palettes.all[self.palette])
 	
 	def CreatePlatform(self, data):
 		return self.AddProp(BitPlatform(data["rectangle"], data.get("id", None), editLayer=self.editLayer))

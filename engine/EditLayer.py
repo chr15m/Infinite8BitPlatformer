@@ -1,10 +1,13 @@
 from random import randint
 from sys import maxint
+
 from PodSix.Resource import *
 from PodSix.Concurrent import Concurrent
 from PodSix.Rectangle import Rectangle
 from PodSix.Config import config
 from PodSix.GUI.Button import TextButton
+
+from ColorPicker import ColorPicker
 
 class EditBox(Rectangle, Concurrent):
 	def __init__(self, inlist, camera):
@@ -34,7 +37,7 @@ class FamilyButton(TextButton):
 		self.name = name
 		self.parent = parent
 		self.triggered = False
-		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.05 + 0.045 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
+		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.05 + 0.042 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
 		self.family.append(self)
 	
 	def Draw(self):
@@ -49,7 +52,7 @@ class FamilyButton(TextButton):
 		[f.Select(False) for f in self.family]
 		self.Select()
 		self.triggered = True
-		self.CallMethod("Pressed_" + self.name)
+		self.parent.CallMethod("Pressed_" + self.name)
 
 class EditButton(TextButton):
 	def __init__(self, parent):
@@ -79,20 +82,14 @@ class EditLayer(Concurrent, EventMonitor):
 		self.rect = None
 		self.currentSurface = None
 		self.color = (255, 255, 255)
-		self.palettes = {
-			"NES": 		[(255, 0, 255), (15, 15, 15), (150, 150, 150), (255, 255, 255)] + [(0, 255, 0)] * 251,
-			"Atari 2600": 	[(255, 0, 255), (15, 15, 15), (140, 140, 160), (200, 200, 200)] + [(0, 255, 0)] * 251,
-		}
-		self.palette = "NES"
+		self.colorPicker = ColorPicker(self)
+		self.Add(self.colorPicker)
 	
 	def MakeId(self):
 		x = None
 		while not x or "prop-%d" % x in self.level.layer.names.keys():
 			x = randint(1, maxint)
 		return "prop-%d" % x
-	
-	def Palette(self):
-		return self.palettes[self.palette]
 	
 	def SetLevel(self, level):
 		self.level = level
@@ -105,10 +102,6 @@ class EditLayer(Concurrent, EventMonitor):
 	def On(self):
 		return self.mode and self.level
 	
-	###
-	###	Things the user can do
-	###
-
 	###
 	###	Concurrency events
 	###
@@ -187,7 +180,7 @@ class EditLayer(Concurrent, EventMonitor):
 	@editOn
 	def MouseUp(self, e):
 		self.down = False
-		if self.rect:
+		if self.rect and self.rect[2] > 1 and self.rect[3] > 1:
 			if self.selected in ['platform', 'portal', 'item']:
 				self.rect.Absolute()
 				self.level.Create(self.selected, {'rectangle': list(self.rect)})

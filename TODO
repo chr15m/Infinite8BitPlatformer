@@ -1,8 +1,4 @@
-* make the palette be stored per-level and be set in editLayer when the level changes
-* palette button
-	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
-	* choose colour to draw with
-	* choose palette (NES or Atari 2600)
+* palette chooser
 --- RELEASE + ask people to make levels ---
 * clicking on the portal - edit box [name, level, portal]
 * name of current level in the top right corner
@@ -20,7 +16,8 @@ Do first minigame content
 Bugs
 ----
 * props should stay within max level size
-* don't allow zero sized props
+* don't allow zero sized props - semi fixed - destroy rect
+* palette cycling breakage blah!
 
 Server Side
 -----------
@@ -66,6 +63,11 @@ Later
 
 done
 ----
++ make the palette be stored per-level and be set in editLayer when the level changes
++ palette button
+	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
+	+ choose colour to draw with
+	+ choose palette (NES or Atari 2600)
 + switching between levels makes the transparency fail
 + use 8 bit palette
 + use transparent colour
