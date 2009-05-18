@@ -28,6 +28,7 @@ class ColorPicker(Concurrent, EventMonitor):
 		if e.pos[0] > gfx.width - (sz[0] + 16) and e.pos[1] > gfx.height - sz[1]: 
 			if e.pos[0] > gfx.width - sz[0]:
 				self.parent.color = self.bm.Pixel((e.pos[0] - gfx.width + sz[0], e.pos[1] - gfx.height + sz[1]))
+				print self.parent.color
 				self.triggered = True
 			elif e.pos[1] > gfx.height - 16:
 				self.parent.color = (255, 0, 255)

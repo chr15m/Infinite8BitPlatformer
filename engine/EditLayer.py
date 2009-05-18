@@ -180,12 +180,13 @@ class EditLayer(Concurrent, EventMonitor):
 	@editOn
 	def MouseUp(self, e):
 		self.down = False
-		if self.rect and self.rect[2] > 1 and self.rect[3] > 1:
-			if self.selected in ['platform', 'portal', 'item']:
-				self.rect.Absolute()
-				self.level.Create(self.selected, {'rectangle': list(self.rect)})
+		if self.rect:
+			if self.rect[2] > 0.001 and self.rect[3] > 0.001:
+				if self.selected in ['platform', 'portal', 'item']:
+					self.rect.Absolute()
+					self.level.Create(self.selected, {'rectangle': list(self.rect)})
 			self.Remove(self.rect)
-			self.rect = None
+		self.rect = None
 		if self.currentSurface:
 			self.currentSurface.MouseUp()
 			self.currentSurface = None

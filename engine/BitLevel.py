@@ -42,13 +42,13 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.layer = Layer(self)
 		self.gravity = self.gravity / config.zoom
 		self.palette = "NES"
-		self.bitmap = BitImage(size=(1024, 768), depth=8)
+		self.bitmap = BitImage(size=(1024, 768))
 		self.history = []
 	
 	def ApplyPalette(self):
 		palette = palettes.all[self.palette]
-		self.bitmap.Palette(palette)
-		[o.bitmap.Palette(palette) for o in self.layer.GetAll()]
+		#self.bitmap.Palette(palette)
+		#[o.bitmap.Palette(palette) for o in self.layer.GetAll()]
 	
 	###
 	###	UI/Bitmap routines
@@ -86,12 +86,10 @@ class BitLevel(Level, SVGLoader, Paintable):
 		zip = zipfile.ZipFile(data, "w")
 		tmpfile = tempfile.mkstemp(suffix=".png")[1]
 		zip.writestr(path.join(self.name, "level.json"), dumps(self.PackSerial()))
-		self.bitmap.surface.convert(16)
 		self.bitmap.Save(tmpfile)
 		zip.write(tmpfile, path.join(self.name, "level.png"))
 		for e in self.layer.GetAll():
 			if e.bitmap:
-				e.bitmap.surface.convert(16)
 				e.bitmap.Save(tmpfile)
 				zip.write(tmpfile, path.join(self.name, e.id + ".png"))
 		zip.close()
@@ -158,7 +156,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 	
 	def Create(self, which, data):
 		newthing = getattr(self, "Create" + which[0].capitalize() + which[1:], lambda x: x)(data)
-		newthing.bitmap.Palette(palettes.all[self.palette])
+		#newthing.bitmap.Palette(palettes.all[self.palette])
+		return newthing
 	
 	def CreatePlatform(self, data):
 		return self.AddProp(BitPlatform(data["rectangle"], data.get("id", None), editLayer=self.editLayer))

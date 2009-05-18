@@ -21,7 +21,8 @@ class Paintable:
 		if self.brushdown and self.brushdown != new:
 			self.bitmap.Line([self.brushdown, new], self.editLayer.color)
 		else:
-			self.bitmap.Pixel(new, self.editLayer.color)
+			#self.bitmap.Pixel(new, self.editLayer.color)
+			self.bitmap.Line([new, new], self.editLayer.color)
 		self.brushdown = new
 	
 	def Fill(self, pos):
