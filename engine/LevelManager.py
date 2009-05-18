@@ -35,6 +35,7 @@ class LevelManager:
 	def UnSetLevel(self):
 		self.Remove(self.levels[self.level])
 		self.levels[self.level].RemovePlayerCamera()
+		self.level = None
 	
 	def SaveCurrentLevel(self):
 		self.levels[self.level].Save()

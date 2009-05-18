@@ -71,8 +71,13 @@ class Core(Game, EventMonitor, LevelManager):
 		self.Quit()
 	
 	def PlayerDied(self):
+		self.QueueLater(100, self.Restart, self.level, self.player.lastplatform.id)
 		self.UnSetLevel()
 		self.Setup("oops!")
+	
+	def Restart(self, level, start):
+		print 'yes'
+		self.SetLevel(level, start)
 	
 	def Teleport(self, portal):
 		parts = portal.destination.split(":")
