@@ -38,5 +38,6 @@ class LevelManager:
 		self.level = None
 	
 	def SaveCurrentLevel(self):
-		self.levels[self.level].Save()
+		if self.level:
+			self.levels[self.level].Save()
 
