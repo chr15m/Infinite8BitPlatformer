@@ -1,4 +1,7 @@
-* palette chooser
+* make the back ground non-fillable
+* mac build
+* linux build
+* win build
 --- RELEASE + ask people to make levels ---
 * clicking on the portal - edit box [name, level, portal]
 * name of current level in the top right corner
@@ -63,6 +66,7 @@ Later
 
 done
 ----
++ palette chooser
 + make the palette be stored per-level and be set in editLayer when the level changes
 + palette button
 	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
