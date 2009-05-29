@@ -28,7 +28,7 @@ class Core(Game, EventMonitor, LevelManager):
 		self.bgColor = (150, 150, 150)
 	
 	def Instructions(self):
-		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 0.8)
+		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 5.0)
 	
 	def Setup(self, message="", callback=None, time=None):
 		self.player = Player(self, [0, 0, 11.0 / gfx.width, 12.0 / gfx.width])

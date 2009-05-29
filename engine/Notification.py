@@ -23,9 +23,9 @@ class Notification(TimedText):
 		TimedText.__init__(self, *args, **kwargs)
 		self.originalColor = self.color[:]
 	
-	def Update(self):
-		self.color = [max(15, int(self.counter / self.time * x)) for x in self.originalColor]
-		TimedText.Update(self)
+	#def Update(self):
+	#	self.color = [max(15, int(self.counter / self.time * x)) for x in self.originalColor]
+	#	TimedText.Update(self)
 	
 	def TimeOut(self):
 		del Notification.slots[self.slot]

@@ -154,7 +154,9 @@ class EditLayer(Concurrent, EventMonitor):
 					self.currentSurface.Paint(pos)
 				elif self.selected == 'fill':
 					pos = [int(x * gfx.width) for x in p]
-					self.GetPropUnderMouse(p).Fill(pos)
+					fillsrf = self.GetPropUnderMouse(p)
+					if fillsrf != self.level:
+						fillsrf.Fill(pos)
 				elif self.selected == 'move':
 					self.currentSurface = self.GetPropUnderMouse(p)
 					if self.currentSurface != self.level:
