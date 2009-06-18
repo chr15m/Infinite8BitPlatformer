@@ -91,7 +91,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		for e in self.layer.GetAll():
 			if e.bitmap:
 				e.bitmap.Save(tmpfile)
-				zip.write(tmpfile, self.name + "/" + e.id + ".png")
+				zip.write(tmpfile, (self.name + "/" + e.id + ".png").encode('ascii'))
 		zip.close()
 		return data.getvalue()
 	
