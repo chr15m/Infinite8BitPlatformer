@@ -3,9 +3,10 @@ from sys import argv
 from os import path, listdir, mkdir
 import shutil
 import py2exe
+from os import getcwd
 
-# change me
-project_name = "MinimalistPlatformer"
+# get the name of this directory for the project_name
+project_name = path.basename(getcwd())
 
 # extra datafiles to be copied from the resources dir
 datafiles = [path.join("resources", d) for d in listdir('resources') if not ".svn" in d]
