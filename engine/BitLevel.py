@@ -83,31 +83,31 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def ToString(self):
 		""" Turns this level into a zipfile blob """
 		data = StringIO()
-		zip = zipfile.ZipFile(data, "w")
+		zip = zipfile.ZipFile(data, "wb")
 		tmpfile = tempfile.mkstemp(suffix=".png")[1]
-		zip.writestr(path.join(self.name, "level.json"), dumps(self.PackSerial()))
+		zip.writestr(self.name + "/level.json", dumps(self.PackSerial()))
 		self.bitmap.Save(tmpfile)
-		zip.write(tmpfile, path.join(self.name, "level.png"))
+		zip.write(tmpfile, self.name + "/level.png")
 		for e in self.layer.GetAll():
 			if e.bitmap:
 				e.bitmap.Save(tmpfile)
-				zip.write(tmpfile, path.join(self.name, e.id + ".png"))
+				zip.write(tmpfile, self.name + "/" + e.id + ".png")
 		zip.close()
 		return data.getvalue()
 	
 	def Save(self):
-		out = file(self.basefilename + ".level.zip", "w")
+		out = file(self.basefilename + ".level.zip", "wb")
 		out.write(self.ToString())
 		out.close()
 	
 	def Load(self):
-		self.FromString(file(self.basefilename + ".level.zip", "r").read())
+		self.FromString(file(self.basefilename + ".level.zip", "rb").read())
 	
 	def FromString(self, data):
-		zip = zipfile.ZipFile(StringIO(data), "r")
-		self.UnpackSerial(loads(zip.read(path.join(self.name, "level.json"))))
+		zip = zipfile.ZipFile(StringIO(data), "rb")
+		self.UnpackSerial(loads(zip.read(self.name + "/level.json")))
 		tmpdir = tempfile.mkdtemp()
-		zip.extract(path.join(self.name, "level.png"), tmpdir)
+		zip.extract(self.name + "/level.png", tmpdir)
 		imgfile = path.join(tmpdir, self.name, "level.png")
 		self.bitmap = BitImage(imgfile)
 		# remove created temp files
