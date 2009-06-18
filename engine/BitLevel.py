@@ -113,7 +113,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		# remove created temp files
 		unlink(imgfile)
 		for t, e in self.GetEntities():
-			baseimgfile = path.join(self.name, e['id'] + ".png")
+			baseimgfile = self.name + "/" + e['id'] + ".png"
 			if baseimgfile in zip.namelist():
 				zip.extract(baseimgfile, tmpdir)
 				imgfile = path.join(tmpdir, baseimgfile)
