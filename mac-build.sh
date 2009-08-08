@@ -1,5 +1,6 @@
 #/bin/sh
 
+rm -rf PodSix/tests/
 name=$(pwd | xargs basename)
 /System/Library/Frameworks/Python.framework/Versions/2.5/Extras/bin/py2applet Infinite8bitPlatformer.py resources/
 #py2applet $name.py
