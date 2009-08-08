@@ -1,7 +1,14 @@
 import os
 from sys import platform, path
 
-os.chdir(path[0])
+import psyco
+psyco.full()
+
+if platform == "win32":
+	# one level up from library.zip
+	os.chdir(os.sep.join(path[0].split(os.sep)[:-1]))
+else:
+	os.chdir(path[0])
 
 import PodSix
 PodSix.engine = "pygame"
