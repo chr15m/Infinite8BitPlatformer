@@ -1,5 +1,5 @@
 import os
-from sys import platform, path
+from sys import platform, path, argv
 
 import psyco
 psyco.full()
@@ -22,7 +22,9 @@ gfx.SetIcon(os.path.join("resources", "icon.gif"))
 from engine.Core import Core
 c = Core()
 
-import cProfile as profile
-profile.run('c.Launch()')
-#c.Launch()
+if len(argv) == 2 and argv[1] == "profile":
+	import cProfile as profile
+	profile.run('c.Launch()')
+else:
+	c.Launch()
 
