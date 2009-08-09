@@ -1,17 +1,28 @@
-* mac build
-* linux build
-* win build
---- RELEASE + ask people to make levels ---
-* clicking on the portal - edit box [name, level, portal]
+* save icon saves level
+* portal mouse hover to edit info
+	* edit name
+	* edit destination level
+	* edit destination portal
+* item mouse hover to edit name
 * name of current level in the top right corner
+	* hover to edit
+* save button
+* back button
+* new level button
+* graphics for edit buttons
+--- RELEASE ---
+* clicking on the portal - edit box [name, level, portal]
 * add chat box
 	* /help command
 	* /new command with location name
 	* /teleport command with location
 	* /quit command
 	* /help command
-* implement dying - fade then zap to last platform
-* graphics for edit buttons
+* improve dying - fade then zap to last platform
+	* if there is no last platform, pick one from the level
+	* if the level has no platforms, create one in the center of the level
+* choose background colour button
+* rollovers for edit buttons
 --- RELEASE ---
 Do first minigame content
 
@@ -19,7 +30,7 @@ Bugs
 ----
 * props should stay within max level size
 * don't allow zero sized props - semi fixed - destroy rect
-* palette cycling breakage blah!
+* off-by-one bug
 
 Server Side
 -----------
@@ -37,10 +48,10 @@ Later
 	* edit things
 		+ delete
 		+ move
-		> clone
+		+ clone
 	* graphics things
 		+ draw
-		* fill
+		+ fill
 		> line
 		> rectangle
 	* palette button
@@ -93,3 +104,4 @@ done
 + optimise graphics - culling
 + server emulation - save to disk but using everything farmed out into a proxy class
 + implement maximum falling speed
++ palette cycling breakage blah!

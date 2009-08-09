@@ -21,5 +21,8 @@ gfx.SetIcon(os.path.join("resources", "icon.gif"))
 
 from engine.Core import Core
 c = Core()
-c.Launch()
+
+import cProfile as profile
+profile.run('c.Launch()')
+#c.Launch()
 
