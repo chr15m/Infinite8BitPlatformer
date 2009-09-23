@@ -1,0 +1,4 @@
+QA (lan centres?) - Shanon Loughton <autobot@iinet.net.au>
+Windows? - Brendan Ragan <lordmortis@gmail.com>
+Graphics + optimisation - Scott Kerr <sedkerr@gmail.com>
+General - retrogradeorbit@gmail.com
