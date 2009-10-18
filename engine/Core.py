@@ -43,7 +43,6 @@ class Core(Game, EventMonitor, LevelManager):
 		self.Remove(message)
 	
 	def Quit(self):
-		self.SaveCurrentLevel()
 		Game.Quit(self)
 	
 	###
@@ -72,7 +71,6 @@ class Core(Game, EventMonitor, LevelManager):
 	
 	def PlayerDied(self):
 		self.QueueLater(100, self.Restart, self.level, self.player.lastplatform.id)
-		self.SaveCurrentLevel()
 		self.UnSetLevel()
 		self.Setup("oops!")
 	

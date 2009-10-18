@@ -53,6 +53,14 @@ class FamilyButton(ImageRadioButton):
 		self.parent.selected = self.name
 		self.parent.CallMethod("Pressed_" + self.name)
 
+class SaveButton(ImageButton):
+	def __init__(self, parent):
+		self.parent = parent
+		ImageButton.__init__(self, [Image(path.join("resources", "icons", "save.png")), Image(path.join("resources", "icons", "save-invert.png"))], [gfx.width - 60, 24])
+	
+	def Pressed(self):
+		self.parent.SaveLevel()
+
 class EditButton(ImageButton):
 	def __init__(self, parent):
 		self.parent = parent
@@ -80,6 +88,9 @@ class EditLayer(Concurrent, EventMonitor):
 		self.Add(self.buttonGroup)
 		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone', '---', 'draw', 'fill']:
 			FamilyButton(b, self, self.buttonGroup)
+		# the save button
+		self.Add(SaveButton(self))
+		# other stuff
 		self.selected = ""
 		self.down = False
 		self.rect = None
@@ -100,6 +111,9 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	def ToggleMode(self):
 		self.mode = self.editButton.down
+	
+	def SaveLevel(self):
+		self.level.Save()
 	
 	def On(self):
 		return self.mode and self.level

@@ -23,7 +23,6 @@ class LevelManager:
 		if level in self.levels.keys() and (start == "start" or start in self.levels[level].layer.names.keys()):
 			self.Remove(self.editLayer)
 			if self.level:
-				self.SaveCurrentLevel()
 				self.Remove(self.levels[self.level])
 				self.levels[self.level].RemovePlayerCamera()
 			self.level = level
@@ -36,8 +35,4 @@ class LevelManager:
 		self.Remove(self.levels[self.level])
 		self.levels[self.level].RemovePlayerCamera()
 		self.level = None
-	
-	def SaveCurrentLevel(self):
-		if self.level:
-			self.levels[self.level].Save()
 
