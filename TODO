@@ -1,6 +1,4 @@
-* button - save level
-
-* button - create new level
+* button - create new level (new level has a single platform)
 
 * add chat box
 	* /help command
@@ -24,27 +22,31 @@
 
 * back button jumps to the last level
 
+* network client
+	* world icon shows if a connection is made
+	* send movements to the client
+	* check version number against server
+
+* network server
+	* level store
+	* mirror commands to all users on the same level
+	* check version number against clients
+
 * improve dying - fade then zap to last platform
 	* if there is no last platform, pick one from the level
 	* if the level has no platforms, create one in the center of the level
 
-* choose background colour button
+* button - choose background colour
 
 * rollovers for edit buttons
 
-* All level operations are proxied through the levelmanager
+* All level operations proxied through the levelmanager
 
 Bugs
 ----
 * props should stay within max level size
-* don't allow zero sized props - semi fixed - destroy rect
-* off-by-one bug
-
-Server Side
------------
-> level serialising
-> write unused levels to disk
-> version management - send client version number
+* don't allow zero sized props - semi fixed - destroy rect after failing
+* off-by-one graphics bug
 
 Later
 -----
@@ -115,4 +117,5 @@ done
 + implement maximum falling speed
 + palette cycling breakage blah!
 + graphics for edit buttons
++ button - save level
 
