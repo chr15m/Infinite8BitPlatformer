@@ -1,11 +1,12 @@
 from random import randint
 from sys import maxint
+from os import path
 
 from PodSix.Resource import *
 from PodSix.Concurrent import Concurrent
 from PodSix.Rectangle import Rectangle
 from PodSix.Config import config
-from PodSix.GUI.Button import TextButton
+from PodSix.GUI.Button import TextButton, ImageButton, ImageRadioButton, ImageRadioButtonGroup
 
 from ColorPicker import ColorPicker
 
@@ -31,33 +32,31 @@ def editOn(fn):
 			return fn(self, *args, **kwargs)
 	return newfn
 
-class FamilyButton(TextButton):
-	family = []
-	def __init__(self, name, parent):
-		self.name = name
+class FamilyButton(ImageRadioButton):
+	btncount = 0
+	def __init__(self, name, parent, buttonGroup):
 		self.parent = parent
-		self.triggered = False
-		TextButton.__init__(self, name, pos = {"right": 0.99, "top": 0.05 + 0.042 * len(self.family)}, colors=[[100, 100, 100], [15, 15, 15]])
-		self.family.append(self)
+		if name != "---":
+			ImageRadioButton.__init__(self,
+				[Image(path.join("resources", "icons", name + ".png")), Image(path.join("resources", "icons", name + "-invert.png"))],
+				[gfx.width - 24, self.__class__.btncount * 36 + 64],
+				name, buttonGroup)
+			self.__class__.btncount += 1
+		else:
+			self.__class__.btncount += 0.5
 	
 	def Draw(self):
 		if self.name != '---':
-			TextButton.Draw(self)
-	
-	def Select(self, on=True):
-		self.parent.selected = self.name
-		self.colors[0] = [100 + 150 * on, 100 + 150 * on, 100 + 150 * on]
+			ImageButton.Draw(self)
 	
 	def Pressed(self):
-		[f.Select(False) for f in self.family]
-		self.Select()
-		self.triggered = True
+		self.parent.selected = self.name
 		self.parent.CallMethod("Pressed_" + self.name)
 
-class EditButton(TextButton):
+class EditButton(ImageButton):
 	def __init__(self, parent):
 		self.parent = parent
-		TextButton.__init__(self, "edit", pos = {"right": 0.99, "top": 0.01}, colors=[[100, 100, 100], [15, 15, 15]])
+		ImageButton.__init__(self, [Image(path.join("resources", "icons", "edit.png")), Image(path.join("resources", "icons", "edit-invert.png"))], [gfx.width - 24, 24], toggle=True)
 	
 	def Pressed(self):
 		self.parent.ToggleMode()
@@ -74,9 +73,13 @@ class EditLayer(Concurrent, EventMonitor):
 		self.editButton = EditButton(self)
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
+		# edit button turns on the other buttons
 		self.Add(self.editButton)
+		# all the other buttons
+		self.buttonGroup = ImageRadioButtonGroup()
+		self.Add(self.buttonGroup)
 		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone', '---', 'draw', 'fill']:
-			self.Add(FamilyButton(b, self))
+			FamilyButton(b, self, self.buttonGroup)
 		self.selected = ""
 		self.down = False
 		self.rect = None
@@ -96,8 +99,7 @@ class EditLayer(Concurrent, EventMonitor):
 		self.level.SetEditLayer(self)
 	
 	def ToggleMode(self):
-		self.mode = not self.mode
-		self.editButton.colors[0] = [100 + 150 * self.mode, 100 + 150 * self.mode, 100 + 150 * self.mode]
+		self.mode = self.editButton.down
 	
 	def On(self):
 		return self.mode and self.level

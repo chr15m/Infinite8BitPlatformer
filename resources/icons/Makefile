@@ -1,11 +1,12 @@
 XCFS=$(wildcard *.xcf)
-GIFS=$(XCFS:.xcf=.gif)
+PNGS=$(XCFS:.xcf=.png)
 
-all: $(GIFS)
+all: $(PNGS)
 
-%.gif: %.xcf
-	convert $< $@
+%.png: %.xcf
+	convert $< -scale 32 -background none -layers merge $@
+	convert $< -scale 32 -background none -layers merge -fill black -opaque red $(@:.png=-invert.png)
 
 clean:
-	rm *.gif
+	rm *.png
 

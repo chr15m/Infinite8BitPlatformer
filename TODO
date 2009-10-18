@@ -1,30 +1,40 @@
-* save icon saves level
-* portal mouse hover to edit info
-	* edit name
-	* edit destination level
-	* edit destination portal
-* item mouse hover to edit name
-* name of current level in the top right corner
-	* hover to edit
-* save button
-* back button
-* new level button
 * graphics for edit buttons
---- RELEASE ---
-* clicking on the portal - edit box [name, level, portal]
+
+* button - save level
+
+* button - create new level
+
 * add chat box
 	* /help command
 	* /new command with location name
 	* /teleport command with location
 	* /quit command
 	* /help command
+	* /back command
+
+* name of current level in the top right corner
+	* hover to edit
+
+* portal - mouse hover to edit info
+	* edit name
+	* edit destination level
+	* edit destination portal
+
+* item - mouse hover to edit name
+
+* new prop type that you don't hit for 'foreground' stuff
+
+* back button jumps to the last level
+
 * improve dying - fade then zap to last platform
 	* if there is no last platform, pick one from the level
 	* if the level has no platforms, create one in the center of the level
+
 * choose background colour button
+
 * rollovers for edit buttons
---- RELEASE ---
-Do first minigame content
+
+* All level operations are proxied through the levelmanager
 
 Bugs
 ----
@@ -59,8 +69,9 @@ Later
 		* select palette
 	> other
 		> undo
-> new prop type that you don't hit for 'foreground' stuff
+
 > zooming
+
 * palettes and palette mapping code
 	<http://en.wikipedia.org/wiki/8-bit_color>
 	<http://en.wikipedia.org/wiki/List_of_8-bit_computer_hardware_palettes> 
