@@ -1,5 +1,3 @@
-* graphics for edit buttons
-
 * button - save level
 
 * button - create new level
@@ -116,3 +114,5 @@ done
 + server emulation - save to disk but using everything farmed out into a proxy class
 + implement maximum falling speed
 + palette cycling breakage blah!
++ graphics for edit buttons
+
