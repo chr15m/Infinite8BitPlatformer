@@ -1,12 +1,13 @@
 * button - create new level (new level has a single platform)
+	* finish NewLevel TODO - engine/EditLayer.py line 130
 
-* add chat box
-	* /help command
-	* /new command with location name
-	* /teleport command with location
-	* /quit command
-	* /help command
-	* /back command
+* back button jumps to the last level
+
+* deleting a prop adds a new prop in the center if it's the last one to go
+
+* improve dying - fade then zap to last platform
+	* if there is no last platform, pick one from the level
+	* if the level has no platforms, create one in the center of the level
 
 * name of current level in the top right corner
 	* hover to edit
@@ -18,9 +19,15 @@
 
 * item - mouse hover to edit name
 
-* new prop type that you don't hit for 'foreground' stuff
+* button - choose background colour
 
-* back button jumps to the last level
+* add chat box
+	* /help command
+	* /new command with location name
+	* /teleport command with location
+	* /quit command
+	* /help command
+	* /back command
 
 * network client
 	* world icon shows if a connection is made
@@ -32,11 +39,7 @@
 	* mirror commands to all users on the same level
 	* check version number against clients
 
-* improve dying - fade then zap to last platform
-	* if there is no last platform, pick one from the level
-	* if the level has no platforms, create one in the center of the level
-
-* button - choose background colour
+* new prop type that you don't hit for 'foreground' stuff
 
 * rollovers for edit buttons
 

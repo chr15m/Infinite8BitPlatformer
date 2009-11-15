@@ -9,6 +9,7 @@ from PodSix.Config import config
 from PodSix.GUI.Button import TextButton, ImageButton, ImageRadioButton, ImageRadioButtonGroup
 
 from ColorPicker import ColorPicker
+from BitLevel import BitLevel
 
 class EditBox(Rectangle, Concurrent):
 	def __init__(self, inlist, camera):
@@ -61,6 +62,14 @@ class SaveButton(ImageButton):
 	def Pressed(self):
 		self.parent.SaveLevel()
 
+class NewButton(ImageButton):
+	def __init__(self, parent):
+		self.parent = parent
+		ImageButton.__init__(self, [Image(path.join("resources","icons", "new.png")), Image(path.join("resources", "icons", "new-invert.png"))], [gfx.width - 94, 24])
+	
+	def Pressed(self):
+		self.parent.NewLevel()
+
 class EditButton(ImageButton):
 	def __init__(self, parent):
 		self.parent = parent
@@ -74,8 +83,9 @@ class EditLayer(Concurrent, EventMonitor):
 	This layer holds the GUI for editing levels.
 	The edit button always shows, but toggling it shows or hides the other stuff.
 	"""
-	def __init__(self):
+	def __init__(self, levelmanager):
 		# whether edit mode is showing or not
+		self.levelmanager = levelmanager
 		self.mode = False
 		self.level = None
 		self.editButton = EditButton(self)
@@ -90,6 +100,7 @@ class EditLayer(Concurrent, EventMonitor):
 			FamilyButton(b, self, self.buttonGroup)
 		# the save button
 		self.Add(SaveButton(self))
+		self.Add(NewButton(self))
 		# other stuff
 		self.selected = ""
 		self.down = False
@@ -106,6 +117,7 @@ class EditLayer(Concurrent, EventMonitor):
 		return "prop-%d" % x
 	
 	def SetLevel(self, level):
+		""" Called by LevelManager. """
 		self.level = level
 		self.level.SetEditLayer(self)
 	
@@ -113,7 +125,16 @@ class EditLayer(Concurrent, EventMonitor):
 		self.mode = self.editButton.down
 	
 	def SaveLevel(self):
-		self.level.Save()
+		self.levelmanager.SaveLevel()
+	
+	def NewLevel(self):
+		# TODO: create portals and startPoint going both ways
+		#self.level.Create("portal", {'destination': "", 'rectangle': list()})
+		newlevel = self.levelmanager.NewLevel()
+		newlevel.Initialise()
+		dest = newlevel.Create("platform", {'rectangle': list([0.48, 0.495, 0.04, 0.01])})
+		self.levelmanager.SetLevel("level" + newlevel.name, dest.id)
+		#self.level.Create("portal", {'destination': "level2:rect2794"
 	
 	def On(self):
 		return self.mode and self.level

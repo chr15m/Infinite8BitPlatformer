@@ -19,6 +19,15 @@ class LevelManager:
 		newlevel.Load()
 		self.levels["level" + name] = newlevel
 	
+	def NewLevel(self):
+		newlevel = BitLevel("New", self.editLayer)
+		self.levels["level" + "New"] = newlevel
+		return newlevel
+	
+	def SaveLevel(self):
+		if self.level:
+			self.levels[self.level].Save()
+	
 	def SetLevel(self, level, start):
 		if level in self.levels.keys() and (start == "start" or start in self.levels[level].layer.names.keys()):
 			self.Remove(self.editLayer)

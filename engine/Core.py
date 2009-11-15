@@ -21,7 +21,7 @@ class Core(Game, EventMonitor, LevelManager):
 		sfx.LoadSound("jump")
 		Game.__init__(self)
 		EventMonitor.__init__(self)
-		self.editLayer = EditLayer()
+		self.editLayer = EditLayer(self)
 		self.Add(self.editLayer)
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
 		LevelManager.__init__(self)

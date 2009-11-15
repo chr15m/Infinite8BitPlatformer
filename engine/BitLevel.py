@@ -44,6 +44,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.palette = "NES"
 		self.bitmap = BitImage(size=(1024, 768))
 		self.history = []
+		self.startPoints = {}
 	
 	def ApplyPalette(self):
 		palette = palettes.all[self.palette]
@@ -102,6 +103,11 @@ class BitLevel(Level, SVGLoader, Paintable):
 	
 	def Load(self):
 		self.FromString(file(self.basefilename + ".level.zip", "rb").read())
+	
+	def Initialise(self):
+		""" Initialise a completely blank new level. """
+		self.ApplyPalette()
+		self.AddLayer(self.name, self.layer)
 	
 	def FromString(self, data):
 		zip = zipfile.ZipFile(StringIO(data), "rb")
