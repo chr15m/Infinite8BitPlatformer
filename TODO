@@ -1,7 +1,6 @@
-* button - create new level (new level has a single platform)
-	* finish NewLevel TODO - engine/EditLayer.py line 130
-
 * back button jumps to the last level
+
+* negative sized rectangles can still make portals etc.
 
 * deleting a prop adds a new prop in the center if it's the last one to go
 

@@ -129,12 +129,15 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	def NewLevel(self):
 		# TODO: create portals and startPoint going both ways
-		#self.level.Create("portal", {'destination': "", 'rectangle': list()})
 		newlevel = self.levelmanager.NewLevel()
 		newlevel.Initialise()
-		dest = newlevel.Create("platform", {'rectangle': list([0.48, 0.495, 0.04, 0.01])})
-		self.levelmanager.SetLevel("level" + newlevel.name, dest.id)
-		#self.level.Create("portal", {'destination': "level2:rect2794"
+		dest = newlevel.Create("platform", {'rectangle': [0.48, 0.495, 0.04, 0.01]})
+		player = self.levelmanager.player
+		srcportal = self.level.Create("portal", {'destination': "level" + newlevel.name + ":" + dest.id, 'rectangle': [player.rectangle.CenterX() - 0.01, player.GetBottom() - 0.03, 0.02, 0.03]})
+		destportal = newlevel.Create("portal", {'destination': "level" + self.level.name + ":" + srcportal.id, 'rectangle': [0.49, 0.465, 0.02, 0.03]})
+		srcportal.destination = "level" + newlevel.name + ":" + destportal.id
+		#sfx.PlaySound("portal")
+		#self.levelmanager.SetLevel("level" + newlevel.name, dest.id)
 	
 	def On(self):
 		return self.mode and self.level

@@ -14,14 +14,20 @@ class LevelManager:
 		[self.LoadLevel(x[:-10]) for x in listdir(path.join("resources", "levels")) if x[-10:] == ".level.zip"]
 		self.SetLevel("level1", "start")
 	
+	def GetNewID(self):
+		for i in xrange(1, 10000):
+			if not "level" + str(i) in self.levels.keys():
+				return str(i)
+	
 	def LoadLevel(self, name):
 		newlevel = BitLevel(name, self.editLayer)
 		newlevel.Load()
 		self.levels["level" + name] = newlevel
 	
 	def NewLevel(self):
-		newlevel = BitLevel("New", self.editLayer)
-		self.levels["level" + "New"] = newlevel
+		id = self.GetNewID()
+		newlevel = BitLevel(id, self.editLayer)
+		self.levels["level" + id] = newlevel
 		return newlevel
 	
 	def SaveLevel(self):
