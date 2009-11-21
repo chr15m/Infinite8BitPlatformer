@@ -1,3 +1,5 @@
+* add a level history to the LevelManager
+
 * back button jumps to the last level
 
 * refactor editLayer UI to belong to a single array, and put it infront of the boxes
