@@ -6,6 +6,7 @@ from PodSix.Config import config
 from engine.Player import Player
 from engine.Notification import Notification
 from engine.EditLayer import EditLayer
+from engine.Hud import Hud
 from engine.BitCamera import BitCamera
 from engine.LevelManager import LevelManager
 
@@ -23,6 +24,8 @@ class Core(Game, EventMonitor, LevelManager):
 		EventMonitor.__init__(self)
 		self.editLayer = EditLayer(self)
 		self.Add(self.editLayer)
+		self.hud = Hud(self)
+		self.Add(self.hud)
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
 		LevelManager.__init__(self)
 		self.bgColor = (150, 150, 150)
@@ -57,6 +60,9 @@ class Core(Game, EventMonitor, LevelManager):
 		gfx.SetBackgroundColor(self.bgColor)
 		Game.Run(self)
 		gfx.Flip()
+	
+	def Update(self):
+		Concurrent.Update(self)
 	
 	###
 	### Platformer events

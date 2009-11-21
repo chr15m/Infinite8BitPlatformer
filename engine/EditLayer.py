@@ -62,6 +62,7 @@ class SaveButton(ImageButton):
 	def Pressed(self):
 		self.parent.SaveLevel()
 
+
 class NewButton(ImageButton):
 	def __init__(self, parent):
 		self.parent = parent
@@ -91,6 +92,8 @@ class EditLayer(Concurrent, EventMonitor):
 		self.editButton = EditButton(self)
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
+		# make sure we are placed in front of other things
+		self.priority = 2
 		# edit button turns on the other buttons
 		self.Add(self.editButton)
 		# all the other buttons

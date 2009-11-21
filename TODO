@@ -1,5 +1,7 @@
 * back button jumps to the last level
 
+* refactor editLayer UI to belong to a single array, and put it infront of the boxes
+
 * negative sized rectangles can still make portals etc.
 
 * deleting a prop adds a new prop in the center if it's the last one to go
@@ -20,7 +22,9 @@
 
 * button - choose background colour
 
-* add chat box
+* add chat box for editing level name etc
+
+* chat box functionality
 	* /help command
 	* /new command with location name
 	* /teleport command with location
@@ -28,15 +32,23 @@
 	* /help command
 	* /back command
 
+* add a history to the editing of a level
+
 * network client
+	* make all LevelManager commands be proxied to the server
 	* world icon shows if a connection is made
 	* send movements to the client
 	* check version number against server
+	* send chat events to the server
+	* send level editing events to the server
 
 * network server
 	* level store
 	* mirror commands to all users on the same level
-	* check version number against clients
+		* chat events
+		* level editing events
+		* 
+	* check protocol version number against clients
 
 * new prop type that you don't hit for 'foreground' stuff
 
