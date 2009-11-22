@@ -86,8 +86,11 @@ class Core(Game, EventMonitor, LevelManager):
 	def Teleport(self, portal):
 		parts = portal.destination.split(":")
 		if len(parts) == 2:
-			self.SetLevel(*parts)
+			self.SetLevel(portal=portal, *parts)
 			return True
+	
+	def Back(self):
+		LevelManager.Back(self)
 	
 	###
 	### Interface events

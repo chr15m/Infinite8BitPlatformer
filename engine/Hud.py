@@ -41,4 +41,5 @@ class Hud(Concurrent, EventMonitor):
 		Concurrent.Draw(self)
 	
 	def Back(self):
-		print 'back'
+		self.game.Back()
+

@@ -13,6 +13,8 @@ class LevelManager:
 		self.level = None
 		[self.LoadLevel(x[:-10]) for x in listdir(path.join("resources", "levels")) if x[-10:] == ".level.zip"]
 		self.SetLevel("level1", "start")
+		# list of levels the user has visited
+		self.levelHistory = []
 	
 	def GetNewID(self):
 		for i in xrange(1, 10000):
@@ -34,10 +36,16 @@ class LevelManager:
 		if self.level:
 			self.levels[self.level].Save()
 	
-	def SetLevel(self, level, start):
+	def Back(self):
+		if self.levelHistory:
+			self.SetLevel(*self.levelHistory.pop())
+			self.levelHistory.pop()
+	
+	def SetLevel(self, level, start, portal=None):
 		if level in self.levels.keys() and (start == "start" or start in self.levels[level].layer.names.keys()):
 			self.Remove(self.editLayer)
 			if self.level:
+				self.levelHistory.append([self.level, (portal and portal.id) or (self.player.platform and self.player.platform.id) or (self.player.lastplatform and self.player.lastplatform.id) or "start"])
 				self.Remove(self.levels[self.level])
 				self.levels[self.level].RemovePlayerCamera()
 			self.level = level
