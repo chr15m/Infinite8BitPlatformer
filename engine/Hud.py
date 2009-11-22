@@ -4,6 +4,8 @@ from PodSix.Resource import *
 from PodSix.Concurrent import Concurrent
 from PodSix.GUI.Button import ImageButton
 
+from engine.ChatBox import ChatBox
+
 class EditButton(ImageButton):
 	def __init__(self, parent):
 		self.parent = parent
@@ -20,10 +22,12 @@ class Hud(Concurrent, EventMonitor):
 		# whether edit mode is showing or not
 		self.game = game
 		self.editButton = EditButton(self)
+		self.chatBox = ChatBox(self)
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		# edit button turns on the other buttons
 		self.Add(self.editButton)
+		self.Add(self.chatBox)
 		self.priority = 2
 	
 	###
