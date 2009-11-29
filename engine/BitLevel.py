@@ -1,4 +1,5 @@
 from os import path, rmdir, unlink, makedirs
+from sys import platform
 import tempfile
 import zipfile
 from cStringIO import StringIO
@@ -97,7 +98,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return data.getvalue()
 	
 	def Save(self):
-		out = file(self.basefilename + ".level.zip", "wb")
+		mode = (platform == "win32" and "wb" or "w")
+		out = file(self.basefilename + ".level.zip", mode)
 		out.write(self.ToString())
 		out.close()
 	
@@ -110,7 +112,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.AddLayer(self.name, self.layer)
 	
 	def FromString(self, data):
-		zip = zipfile.ZipFile(StringIO(data), "rb")
+		mode = (platform == "win32" and "rb" or "r")
+		zip = zipfile.ZipFile(StringIO(data), mode)
 		self.UnpackSerial(loads(zip.read(self.name + "/level.json")))
 		tmpdir = tempfile.mkdtemp()
 		zip.extract(self.name + "/level.png", tmpdir)
