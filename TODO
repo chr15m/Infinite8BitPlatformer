@@ -1,10 +1,8 @@
-* add a level history to the LevelManager
-
-* back button jumps to the last level
-
 * refactor editLayer UI to belong to a single array, and put it infront of the boxes
 
 * negative sized rectangles can still make portals etc.
+
+* change font in the textbox to FreeSans.ttf (multilingual glyphs)
 
 * deleting a prop adds a new prop in the center if it's the last one to go
 
