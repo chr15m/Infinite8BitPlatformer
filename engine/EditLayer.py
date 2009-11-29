@@ -79,6 +79,9 @@ class EditButton(ImageButton):
 	def Pressed(self):
 		self.parent.ToggleMode()
 
+class EditInterface(Concurrent):
+	pass
+
 class EditLayer(Concurrent, EventMonitor):
 	"""
 	This layer holds the GUI for editing levels.
@@ -98,12 +101,14 @@ class EditLayer(Concurrent, EventMonitor):
 		self.Add(self.editButton)
 		# all the other buttons
 		self.buttonGroup = ImageRadioButtonGroup()
-		self.Add(self.buttonGroup)
+		# hold on to all the buttons
+		self.editInterface = EditInterface()
+		self.editInterface.Add(self.buttonGroup)
 		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone', '---', 'draw', 'fill']:
 			FamilyButton(b, self, self.buttonGroup)
 		# the save button
-		self.Add(SaveButton(self))
-		self.Add(NewButton(self))
+		self.editInterface.Add(SaveButton(self))
+		self.editInterface.Add(NewButton(self))
 		# other stuff
 		self.selected = ""
 		self.down = False
@@ -111,7 +116,7 @@ class EditLayer(Concurrent, EventMonitor):
 		self.currentSurface = None
 		self.color = (255, 255, 255)
 		self.colorPicker = ColorPicker(self)
-		self.Add(self.colorPicker)
+		self.editInterface.Add(self.colorPicker)
 	
 	def MakeId(self):
 		x = None
@@ -151,6 +156,7 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	def Pump(self):
 		if self.On():
+			self.editInterface.Pump()
 			Concurrent.Pump(self)
 			EventMonitor.Pump(self)	
 		else:
@@ -158,6 +164,7 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	def Update(self):
 		if self.On():
+			self.editInterface.Update()
 			Concurrent.Update(self)
 		else:
 			self.editButton.Update()
@@ -167,6 +174,8 @@ class EditLayer(Concurrent, EventMonitor):
 			Concurrent.Draw(self)
 			if self.mode and self.level.camera:
 				[o.DrawEdit() for o in self.level.layer.GetAll() if o in self.level.camera.GetVisible()]
+			self.editInterface.Draw()
+			self.editButton.Draw()
 		else:
 			self.editButton.Draw()
 	
