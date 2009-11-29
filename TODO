@@ -2,8 +2,6 @@
 
 * negative sized rectangles can still make portals etc.
 
-* change font in the textbox to FreeSans.ttf (multilingual glyphs)
-
 * deleting a prop adds a new prop in the center if it's the last one to go
 
 * improve dying - fade then zap to last platform
