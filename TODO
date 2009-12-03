@@ -1,5 +1,3 @@
-* negative sized rectangles can still make portals etc.
-
 * chatbox
 	* key repeat
 	* fix arrow keys

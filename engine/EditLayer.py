@@ -235,7 +235,7 @@ class EditLayer(Concurrent, EventMonitor):
 	def MouseUp(self, e):
 		self.down = False
 		if self.rect:
-			if self.rect[2] > 0.001 and self.rect[3] > 0.001:
+			if abs(self.rect[2]) > 0.002 and abs(self.rect[3]) > 0.002:
 				if self.selected in ['platform', 'portal', 'item']:
 					self.rect.Absolute()
 					self.level.Create(self.selected, {'rectangle': list(self.rect)})
