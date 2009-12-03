@@ -3,6 +3,8 @@
 * chatbox
 	* key repeat
 	* fix arrow keys
+	* make it fade away if the mouse moves off it
+	* make it fade in if the mouse moves over it
 
 * deleting a prop adds a new prop in the center if it's the last one to go
 
@@ -98,6 +100,14 @@ Later
 		* Atari 2600
 		* NES
 		> Sega Master System
+
+* splash screen
+
+* animation editor
+	* character animations
+	* animated objects
+
+* multiple bounding boxes per frame
 
 done
 ----
