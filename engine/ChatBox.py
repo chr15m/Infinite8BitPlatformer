@@ -11,6 +11,8 @@ class ChatBox(TextInput):
 		self.lastPos = [0, 0]
 		# whether to draw this or not
 		self.visible = True
+		# history of commands we have typed
+		self.history = []
 		
 		TextInput.__init__(self, {"left": 0.01, "bottom": 0.55}, 0.8, "/help", dict([(x, chr(x)) for x in range(97, 122)]), font="chat")
 		# remember the drawn rectangle
@@ -24,15 +26,20 @@ class ChatBox(TextInput):
 		# remember the original position
 		self.oldPos = self.pos
 	
+	def Update(self):
+		if self.visible:
+			TextInput.Update(self)
+	
 	def Draw(self):
 		if self.visible:
 			TextInput.Draw(self)
 	
 	def KeyDown(self, e):
-		self.Draw()
-		if self.textWidth < self.width * gfx.width  - self.letterWidth and not e.key in self.specials:
-			#print e.key
-			self.text += e.unicode
+		if self.visible:
+			self.Draw()
+			if self.textWidth < self.width * gfx.width  - self.letterWidth and not e.key in self.specials:
+				#print e.key
+				self.text += e.unicode
 	
 	def MouseMove(self, e):
 		inNew = self.oldRect.PointInRect(e.pos)
