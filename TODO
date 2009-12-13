@@ -1,11 +1,10 @@
 * chatbox
 	* 'hover' mode
 	(replaces the text temporarily while the mouse is over something else)
+	* if it's invisible, ignore keypresses
 	* key repeat
 	* fix arrow keys
 	* cursor
-	* make it fade away if the mouse moves off it
-	* make it fade in if the mouse moves over it
 
 * name of current level in the top right corner
 	* hover to edit
@@ -15,7 +14,6 @@
 * improve dying - fade then zap to last platform
 	* if there is no last platform, pick one from the level
 	* if the level has no platforms, create one in the center of the level
-
 
 * portal - mouse hover to edit info
 	* edit name
@@ -63,7 +61,6 @@
 Bugs
 ----
 * props should stay within max level size
-* don't allow zero sized props - semi fixed - destroy rect after failing
 * off-by-one graphics bug
 
 Later
