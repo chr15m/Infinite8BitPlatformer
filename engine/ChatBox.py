@@ -25,6 +25,7 @@ class ChatBox(TextInput):
 		self.oldRect = Rectangle(self.oldRect)
 		# remember the original position
 		self.oldPos = self.pos
+		self.oldText = ""
 	
 	def Update(self):
 		if self.visible:
@@ -33,6 +34,18 @@ class ChatBox(TextInput):
 	def Draw(self):
 		if self.visible:
 			TextInput.Draw(self)
+	
+	def ShowText(self, text):
+		if not self.oldText:
+			self.oldText = self.text
+		self.text = text
+		self.visible = True
+	
+	def RevertText(self):
+		if self.oldText:
+			self.text = self.oldText
+			self.oldText = ""
+		self.visible = False
 	
 	def KeyDown(self, e):
 		if self.visible:

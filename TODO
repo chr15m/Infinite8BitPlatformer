@@ -1,7 +1,7 @@
 * chatbox
 	* 'hover' mode
 	(replaces the text temporarily while the mouse is over something else)
-	* if it's invisible, ignore all keypresses
+	* hover mode callbacks (when you hit enter it commits the change)
 	* key repeat
 	* cursor
 	* fix arrow keys to move around in edit box
