@@ -2,9 +2,11 @@
 	* 'hover' mode
 	(replaces the text temporarily while the mouse is over something else)
 	* hover mode callbacks (when you hit enter it commits the change)
-	* key repeat
+
+* TextInput class (PodSix)
 	* cursor
 	* fix arrow keys to move around in edit box
+	* key repeat
 
 * name of current level in the top right corner
 	* hover to edit
@@ -20,7 +22,8 @@
 	* edit destination level
 	* edit destination portal
 
-* item - mouse hover to edit name
+* item
+	* mouse hover to edit name
 
 * clicking fill on transparent background changes the background color
 
