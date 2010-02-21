@@ -7,6 +7,7 @@ from PodSix.Concurrent import Concurrent
 from PodSix.Rectangle import Rectangle
 from PodSix.Config import config
 from PodSix.GUI.Button import TextButton, ImageButton, ImageRadioButton, ImageRadioButtonGroup
+from PodSix.Platformer.Item import Item
 
 from ColorPicker import ColorPicker
 from BitLevel import BitLevel
@@ -117,6 +118,7 @@ class EditLayer(Concurrent, EventMonitor):
 		self.color = (255, 255, 255)
 		self.colorPicker = ColorPicker(self)
 		self.editInterface.Add(self.colorPicker)
+		self.lastHover = None
 	
 	def MakeId(self):
 		x = None
@@ -136,7 +138,6 @@ class EditLayer(Concurrent, EventMonitor):
 		self.levelmanager.SaveLevel()
 	
 	def NewLevel(self):
-		# TODO: create portals and startPoint going both ways
 		newlevel = self.levelmanager.NewLevel()
 		newlevel.Initialise()
 		dest = newlevel.Create("platform", {'rectangle': [0.48, 0.495, 0.04, 0.01]})
@@ -230,6 +231,16 @@ class EditLayer(Concurrent, EventMonitor):
 			self.currentSurface.Paint([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
 		elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
 			self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
+		
+		# do the hover mode thing - show the names of objects
+		p = self.level.camera.FromScreenCoordinates(e.pos)
+		hover = self.GetPropUnderMouse(p)
+		# if we have moused over a new edit layer thing
+		if hover != self.lastHover:
+			# remove the edit-field on the chatbox
+			if isinstance(hover, Item):
+				print hover
+		self.lastHover = hover
 	
 	@editOn
 	def MouseUp(self, e):
