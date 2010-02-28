@@ -60,6 +60,7 @@ class ChatBox(TextInput):
 				self.text += e.unicode
 			elif e.key == 13 and self.callback:
 				self.callback(self.text)
+			self.triggered = True
 	
 	def MouseMove(self, e):
 		inNew = self.oldRect.PointInRect(e.pos)

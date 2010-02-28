@@ -2,9 +2,7 @@
 	* cursor
 	* fix arrow keys to move around in edit box
 	* key repeat
-
-* name of current level in the top right corner
-	* hover to edit
+	* stop events propagating to the game (triggered = True)
 
 * deleting a prop adds a new prop in the center if it's the last one to go
 

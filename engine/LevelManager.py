@@ -62,4 +62,5 @@ class LevelManager:
 	
 	def SetLevelName(self, name):
 		self.levels[self.level].displayName = name
+		self.hud.levelLabel.text = name
 

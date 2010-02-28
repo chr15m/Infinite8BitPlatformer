@@ -27,7 +27,7 @@ class LevelNameLabel(Label):
 		self.parent.chatBox.RevertText()
 	
 	def UpdateLevelName(self, name):
-		print name
+		self.parent.game.SetLevelName(name)
 
 class Hud(Concurrent, EventMonitor):
 	"""
