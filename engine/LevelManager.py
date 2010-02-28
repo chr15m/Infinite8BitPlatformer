@@ -53,9 +53,13 @@ class LevelManager:
 			self.Add(self.levels[self.level])
 			self.editLayer.SetLevel(self.levels[level])
 			self.Add(self.editLayer)
+			self.hud.levelLabel.text = self.levels[self.level].displayName
 	
 	def UnSetLevel(self):
 		self.Remove(self.levels[self.level])
 		self.levels[self.level].RemovePlayerCamera()
 		self.level = None
+	
+	def SetLevelName(self, name):
+		self.levels[self.level].displayName = name
 

@@ -6,7 +6,7 @@ class ChatBox(TextInput):
 	def __init__(self, parent):
 		self.parent = parent
 		# special keys we want to ignore
-		self.specials = [8, 9, 13]
+		self.specials = range(0, 10) + range(11, 32) + range(127, 160) + range(0x111, 0x211)
 		# last mouse position
 		self.lastPos = [0, 0]
 		# whether to draw this or not
@@ -26,6 +26,8 @@ class ChatBox(TextInput):
 		# remember the original position
 		self.oldPos = self.pos
 		self.oldText = ""
+		# what to run when enter is pressed
+		self.callback = None
 	
 	def Update(self):
 		if self.visible:
@@ -35,24 +37,29 @@ class ChatBox(TextInput):
 		if self.visible:
 			TextInput.Draw(self)
 	
-	def ShowText(self, text):
+	def ShowText(self, text, callback=None):
 		if not self.oldText:
 			self.oldText = self.text
 		self.text = text
 		self.visible = True
+		self.callback = callback
 	
 	def RevertText(self):
 		if self.oldText:
 			self.text = self.oldText
 			self.oldText = ""
 		self.visible = False
+		self.callback = None
 	
 	def KeyDown(self, e):
 		if self.visible:
 			self.Draw()
+			#print e.key
+			#print e
 			if self.textWidth < self.width * gfx.width  - self.letterWidth and not e.key in self.specials:
-				#print e.key
 				self.text += e.unicode
+			elif e.key == 13 and self.callback:
+				self.callback(self.text)
 	
 	def MouseMove(self, e):
 		inNew = self.oldRect.PointInRect(e.pos)

@@ -46,6 +46,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.bitmap = BitImage(size=(1024, 768))
 		self.history = []
 		self.startPoints = {}
+		self.displayname = name
 	
 	def ApplyPalette(self):
 		palette = palettes.all[self.palette]
@@ -72,9 +73,10 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return [(o.type, dict([(s, o.__dict__[s]) for s in ("id", "destination", "rectangle", "description") if s in o.__dict__])) for o in self.layer.GetAll()]
 	
 	def PackSerial(self):
-		return {"level": {"history": self.history, "entities": self.GetEntities(), "palette": self.palette, "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
+		return {"level": {"name": self.displayName, "history": self.history, "entities": self.GetEntities(), "palette": self.palette, "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
 	
 	def UnpackSerial(self, data):
+		self.displayName = data["level"]["name"]
 		self.history = data["level"]["history"]
 		self.palette = data["level"].get("palette", "NES")
 		for s in data['level']['entities']:

@@ -3,6 +3,7 @@ from os import path
 from PodSix.Resource import *
 from PodSix.Concurrent import Concurrent
 from PodSix.GUI.Button import ImageButton
+from PodSix.GUI.Label import Label
 
 from engine.ChatBox import ChatBox
 
@@ -14,6 +15,20 @@ class EditButton(ImageButton):
 	def Pressed(self):
 		self.parent.Back()
 
+class LevelNameLabel(Label):
+	def __init__(self, parent):
+		self.parent = parent
+		Label.__init__(self, "Loading...", pos={"left": 0.06, "top": 0.02}, color=[255, 255, 255])
+	
+	def MouseOver(self, e):
+		self.parent.chatBox.ShowText(self.text, self.UpdateLevelName)
+	
+	def MouseOut(self, e):
+		self.parent.chatBox.RevertText()
+	
+	def UpdateLevelName(self, name):
+		print name
+
 class Hud(Concurrent, EventMonitor):
 	"""
 	This layer holds the GUI for the player.
@@ -21,13 +36,15 @@ class Hud(Concurrent, EventMonitor):
 	def __init__(self, game):
 		# whether edit mode is showing or not
 		self.game = game
-		self.editButton = EditButton(self)
-		self.chatBox = ChatBox(self)
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
+		self.editButton = EditButton(self)
+		self.chatBox = ChatBox(self)
+		self.levelLabel = LevelNameLabel(self)
 		# edit button turns on the other buttons
 		self.Add(self.editButton)
 		self.Add(self.chatBox)
+		self.Add(self.levelLabel)
 		self.priority = 2
 	
 	###

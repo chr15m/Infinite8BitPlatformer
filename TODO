@@ -1,8 +1,3 @@
-* chatbox
-	* 'hover' mode
-	(replaces the text temporarily while the mouse is over something else)
-	* hover mode callbacks (when you hit enter it commits the change)
-
 * TextInput class (PodSix)
 	* cursor
 	* fix arrow keys to move around in edit box
