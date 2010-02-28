@@ -1,9 +1,10 @@
 * destination portal selector (click on a portal to select it)
-OR
-* portal - mouse hover to edit info
-	* edit name
-	* edit destination level
-	* edit destination portal
+	* create portal links to last portal selected
+	* if no last portal selected, throw a message
+
+* portal mouse hover to edit name
+
+* item mouse hover to edit name
 
 * TextInput class (PodSix)
 	* cursor
@@ -11,14 +12,11 @@ OR
 	* key repeat
 	* stop events propagating to the game, like enter for portals, arrow keys, etc. (triggered = True)
 
-* item
-	* mouse hover to edit name
+* deleting a prop adds a new prop in the center if it's the last one to go
 
 * improve dying - fade then zap to last platform
 	* if there is no last platform, pick one from the level
 	* if the level has no platforms, create one in the center of the level
-
-* deleting a prop adds a new prop in the center if it's the last one to go
 
 * clicking fill on transparent background changes the background color
 
@@ -28,8 +26,6 @@ OR
 	* /teleport command with location
 	* /quit command
 	* /back command
-
-* add a history to the editing of a level
 
 * All level operations proxied through the levelmanager
 
@@ -50,7 +46,7 @@ OR
 		* 
 	* check protocol version number against clients
 
---- RELEASE ---
+--- FIRST PUBLIC RELEASE ---
 
 Bugs
 ----
@@ -59,6 +55,8 @@ Bugs
 
 Later
 -----
+* add a history to the editing of a level
+
 * rollovers for edit buttons
 
 * new prop type that you don't hit for 'foreground' stuff
