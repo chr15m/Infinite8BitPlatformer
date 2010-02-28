@@ -1,39 +1,41 @@
-* TextInput class (PodSix)
-	* cursor
-	* fix arrow keys to move around in edit box
-	* key repeat
-	* stop events propagating to the game (triggered = True)
-
-* deleting a prop adds a new prop in the center if it's the last one to go
-
-* improve dying - fade then zap to last platform
-	* if there is no last platform, pick one from the level
-	* if the level has no platforms, create one in the center of the level
-
+* destination portal selector (click on a portal to select it)
+OR
 * portal - mouse hover to edit info
 	* edit name
 	* edit destination level
 	* edit destination portal
 
+* TextInput class (PodSix)
+	* cursor
+	* fix arrow keys to move around in edit box
+	* key repeat
+	* stop events propagating to the game, like enter for portals, arrow keys, etc. (triggered = True)
+
 * item
 	* mouse hover to edit name
 
-* clicking fill on transparent background changes the background color
+* improve dying - fade then zap to last platform
+	* if there is no last platform, pick one from the level
+	* if the level has no platforms, create one in the center of the level
 
-* add chat box for editing level name etc
+* deleting a prop adds a new prop in the center if it's the last one to go
+
+* clicking fill on transparent background changes the background color
 
 * chat box functionality
 	* /help command
 	* /new command with location name
 	* /teleport command with location
 	* /quit command
-	* /help command
 	* /back command
 
 * add a history to the editing of a level
 
+* All level operations proxied through the levelmanager
+
 * network client
 	* make all LevelManager commands be proxied to the server
+	* don't allow LevelManager commands if not connected
 	* world icon shows if a connection is made
 	* send movements to the client
 	* check version number against server
@@ -48,11 +50,7 @@
 		* 
 	* check protocol version number against clients
 
-* new prop type that you don't hit for 'foreground' stuff
-
-* rollovers for edit buttons
-
-* All level operations proxied through the levelmanager
+--- RELEASE ---
 
 Bugs
 ----
@@ -61,6 +59,10 @@ Bugs
 
 Later
 -----
+* rollovers for edit buttons
+
+* new prop type that you don't hit for 'foreground' stuff
+
 * edit mode menu
 	* new things
 		+ platform
@@ -103,38 +105,3 @@ Later
 	* animated objects
 
 * multiple bounding boxes per frame
-
-done
-----
-+ palette chooser
-+ make the palette be stored per-level and be set in editLayer when the level changes
-+ palette button
-	<http://en.wikipedia.org/wiki/List_of_videogame_consoles_palettes>
-	+ choose colour to draw with
-	+ choose palette (NES or Atari 2600)
-+ switching between levels makes the transparency fail
-+ use 8 bit palette
-+ use transparent colour
-+ make props transparent by default
-+ bug: props all get the same ID
-+ fill button
-+ clone button
-+ move buttons closer together
-+ 'sliding bitmap' bug
-+ fix propagation of mouse clicks through buttons in edit mode
-+ make object collection not delete the object from level, but just flag it hidden
-+ graphics for player animations
-+ add bitmap to level
-+ joystick control
-+ add bitmap to props
-+ add bitmap image to
-	+ portal
-	+ platform
-	+ item
-+ optimise graphics - culling
-+ server emulation - save to disk but using everything farmed out into a proxy class
-+ implement maximum falling speed
-+ palette cycling breakage blah!
-+ graphics for edit buttons
-+ button - save level
-
