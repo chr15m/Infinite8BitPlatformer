@@ -48,7 +48,7 @@ class Player(Character, EventMonitor, Sprite):
 		if self.portal:
 			sfx.PlaySound("portal")
 			if self.game.Teleport(self.portal):
-				self.game.AddMessage("teleporting to " + self.portal.destination)
+				self.game.AddMessage("teleporting to " + self.portal.destination.split(":")[0])
 	
 	###
 	### Concurrency related methods
