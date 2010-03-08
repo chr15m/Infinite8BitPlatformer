@@ -23,10 +23,14 @@ class EditBox(Rectangle, Concurrent):
 	def Draw(self):
 		gfx.DrawRect(self.camera.TranslateRectangle(self), self.color, 1)
 	
-	def SetCorner(self, pos):
+	def SetCorner(self, pos, bounds=None):
 		pos = self.camera.FromScreenCoordinates(pos)
-		self.Width((pos[0] - self.Left()))
-		self.Height((pos[1] - self.Top()))
+		if bounds:
+			self.Width(max(-bounds[0], min(pos[0] - self.Left(), bounds[0])))
+			self.Height(max(-bounds[1], min(pos[1] - self.Top(), bounds[1])))
+		else:
+			self.Width((pos[0] - self.Left()))
+			self.Height((pos[1] - self.Top()))
 
 def editOn(fn):
 	def newfn(self, *args, **kwargs):
@@ -226,7 +230,11 @@ class EditLayer(Concurrent, EventMonitor):
 	@editOn
 	def MouseMove(self, e):
 		if self.rect:
-			self.rect.SetCorner(e.pos)
+			# portal has a maximum size
+			if self.selected == 'portal':
+				self.rect.SetCorner(e.pos, (0.05, 0.05))
+			else:
+				self.rect.SetCorner(e.pos)
 		elif self.selected == 'draw' and self.down and self.currentSurface:
 			self.currentSurface.Paint([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
 		elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:

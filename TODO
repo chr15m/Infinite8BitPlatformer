@@ -1,4 +1,5 @@
 * put an icon on the portal
+	* enforce maximum portal size
 	* before a portal is connected, the icon looks like a broken chain
 	* click the link and it remembers what level/portal this is on
 		* displays the level name somewhere
@@ -58,6 +59,8 @@ Bugs
 
 Later
 -----
+* make notifications 'slots' based instead of counter based
+
 * add a history to the editing of a level
 
 * rollovers for edit buttons
