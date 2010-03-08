@@ -58,6 +58,8 @@ Bugs
 
 Later
 -----
+* make notifications 'slots' based instead of counter based
+
 * add a history to the editing of a level
 
 * rollovers for edit buttons
