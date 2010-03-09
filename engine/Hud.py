@@ -7,6 +7,20 @@ from PodSix.GUI.Label import Label
 
 from engine.ChatBox import ChatBox
 
+class PortalDestinationIcon(ImageButton):
+	def __init__(self, parent):
+		self.parent = parent
+		ImageButton.__init__(self, [Image(path.join("resources", "icons", "portal.png")), Image(path.join("resources", "icons", "portal-invert.png"))], [60, 24])
+		self.destination = None 
+	
+	def Pressed(self):
+		# cancel the currently rememebered portal
+		self.destination = None
+	
+	def Draw(self):
+		if self.destination:
+			ImageButton.Draw(self)
+
 class EditButton(ImageButton):
 	def __init__(self, parent):
 		self.parent = parent
@@ -18,7 +32,7 @@ class EditButton(ImageButton):
 class LevelNameLabel(Label):
 	def __init__(self, parent):
 		self.parent = parent
-		Label.__init__(self, "Loading...", pos={"left": 0.06, "top": 0.02}, color=[255, 255, 255])
+		Label.__init__(self, "Loading...", pos={"left": 0.1, "top": 0.02}, color=[255, 255, 255])
 	
 	def MouseOver(self, e):
 		self.parent.chatBox.ShowText(self.text, self.UpdateLevelName)
@@ -41,10 +55,12 @@ class Hud(Concurrent, EventMonitor):
 		self.editButton = EditButton(self)
 		self.chatBox = ChatBox(self)
 		self.levelLabel = LevelNameLabel(self)
+		self.portalDestinationIcon = PortalDestinationIcon(self)
 		# edit button turns on the other buttons
 		self.Add(self.editButton)
 		self.Add(self.chatBox)
 		self.Add(self.levelLabel)
+		self.Add(self.portalDestinationIcon)
 		self.priority = 2
 	
 	###
