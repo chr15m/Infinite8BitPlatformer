@@ -15,6 +15,10 @@
 	* key repeat
 	* stop events propagating to the game, like enter for portals, arrow keys, etc. (triggered = True)
 
+* Make text not be black-on-black on dark levels
+
+* Make player not be white-on-white on light levels
+
 * deleting a prop adds a new prop in the center if it's the last one to go
 
 * improve dying - fade then zap to last platform
@@ -48,6 +52,10 @@
 		* level editing events
 		* 
 	* check protocol version number against clients
+
+* remove end-of-game condition from MinimalistPlatformer
+
+* make it so you can't paint transparent on a background
 
 --- FIRST PUBLIC RELEASE ---
 
