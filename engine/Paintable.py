@@ -9,7 +9,7 @@ class Paintable:
 	def SetEditLayer(self, editLayer):
 		self.editLayer = editLayer
 	
-	def MouseUp(self):
+	def MouseUp(self, e=None):
 		self.brushdown = False
 	
 	def GetOffset(self, pos):

@@ -38,7 +38,7 @@ class BitProp(Paintable):
 			self.rectangle.Top(self.rectangle.Top() + (pos[1] - self.lastDrag[1]))
 		self.lastDrag = pos
 	
-	def MouseUp(self):
+	def MouseUp(self, e=None):
 		if self.lastDrag:
 			self.lastDrag = None
 		else:

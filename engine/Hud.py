@@ -63,6 +63,9 @@ class Hud(Concurrent, EventMonitor):
 		self.Add(self.portalDestinationIcon)
 		self.priority = 2
 	
+	def SetPortalDestination(self, destination):
+		self.portalDestinationIcon.destination = destination
+	
 	###
 	###	Concurrency events
 	###

@@ -1,11 +1,5 @@
 * put an icon on the portal
-	* before a portal is connected, the icon looks like a broken chain
-	* click the link and it remembers what level/portal this is on
-		* displays the level name somewhere
-	* when you click another portal, it links the first one to that one
-	* the icon changes to a non-broken chain once it's linked
-
-* portal mouse hover to edit name
+	* when you click another portal icon (after clicking the first one), it links the first one to that one
 
 * item mouse hover to edit name
 
@@ -15,9 +9,7 @@
 	* key repeat
 	* stop events propagating to the game, like enter for portals, arrow keys, etc. (triggered = True)
 
-* Make text not be black-on-black on dark levels
-
-* Make player not be white-on-white on light levels
+* Make text not be black-on-black on dark levels (white background to box)
 
 * deleting a prop adds a new prop in the center if it's the last one to go
 
@@ -26,6 +18,10 @@
 	* if the level has no platforms, create one in the center of the level
 
 * clicking fill on transparent background changes the background color
+
+* make it so you can't paint transparent on a background
+
+* remove end-of-game condition from MinimalistPlatformer
 
 * chat box functionality
 	* /help command
@@ -53,10 +49,6 @@
 		* 
 	* check protocol version number against clients
 
-* remove end-of-game condition from MinimalistPlatformer
-
-* make it so you can't paint transparent on a background
-
 --- FIRST PUBLIC RELEASE ---
 
 Bugs
@@ -66,6 +58,8 @@ Bugs
 
 Later
 -----
+* Make player not be white-on-white on light levels
+
 * make notifications 'slots' based instead of counter based
 
 * add a history to the editing of a level
