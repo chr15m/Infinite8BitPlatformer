@@ -26,6 +26,7 @@ class PortalIcon(ImageButton):
 class BitPortal(BitProp, Portal, EventMonitor):
 	color = [255, 0, 0]
 	def __init__(self, *args, **kwargs):
+		self.over = False
 		BitProp.__init__(self, *args, **kwargs)
 		Portal.__init__(self, *args)
 		EventMonitor.__init__(self)
