@@ -7,20 +7,6 @@ from PodSix.GUI.Label import Label
 
 from engine.ChatBox import ChatBox
 
-class PortalDestinationIcon(ImageButton):
-	def __init__(self, parent):
-		self.parent = parent
-		ImageButton.__init__(self, [Image(path.join("resources", "icons", "portal.png")), Image(path.join("resources", "icons", "portal-invert.png"))], [60, 24])
-		self.destination = None 
-	
-	def Pressed(self):
-		# cancel the currently rememebered portal
-		self.destination = None
-	
-	def Draw(self):
-		if self.destination:
-			ImageButton.Draw(self)
-
 class EditButton(ImageButton):
 	def __init__(self, parent):
 		self.parent = parent
@@ -55,16 +41,11 @@ class Hud(Concurrent, EventMonitor):
 		self.editButton = EditButton(self)
 		self.chatBox = ChatBox(self)
 		self.levelLabel = LevelNameLabel(self)
-		self.portalDestinationIcon = PortalDestinationIcon(self)
 		# edit button turns on the other buttons
 		self.Add(self.editButton)
 		self.Add(self.chatBox)
 		self.Add(self.levelLabel)
-		self.Add(self.portalDestinationIcon)
 		self.priority = 2
-	
-	def SetPortalDestination(self, destination):
-		self.portalDestinationIcon.destination = destination
 	
 	###
 	###	Concurrency events

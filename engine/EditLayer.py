@@ -38,6 +38,20 @@ def editOn(fn):
 			return fn(self, *args, **kwargs)
 	return newfn
 
+class PortalDestinationIcon(ImageButton):
+	def __init__(self, parent):
+		self.parent = parent
+		ImageButton.__init__(self, [Image(path.join("resources", "icons", "portal.png")), Image(path.join("resources", "icons", "portal-invert.png"))], [60, 24])
+		self.destination = None 
+	
+	def Pressed(self):
+		# cancel the currently rememebered portal
+		self.destination = None
+	
+	def Draw(self):
+		if self.destination:
+			ImageButton.Draw(self)
+
 class FamilyButton(ImageRadioButton):
 	btncount = 0
 	def __init__(self, name, parent, buttonGroup):
@@ -114,6 +128,9 @@ class EditLayer(Concurrent, EventMonitor):
 		# the save button
 		self.editInterface.Add(SaveButton(self))
 		self.editInterface.Add(NewButton(self))
+		# portal destination selector
+		self.portalDestinationIcon = PortalDestinationIcon(self)
+		self.editInterface.Add(self.portalDestinationIcon)
 		# other stuff
 		self.selected = ""
 		self.down = False
@@ -134,6 +151,9 @@ class EditLayer(Concurrent, EventMonitor):
 		""" Called by LevelManager. """
 		self.level = level
 		self.level.SetEditLayer(self)
+	
+	def SetPortalDestination(self, destination):
+		self.portalDestinationIcon.destination = destination
 	
 	def ToggleMode(self):
 		self.mode = self.editButton.down

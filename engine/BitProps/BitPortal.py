@@ -17,7 +17,7 @@ class PortalIcon(ImageButton):
 		if self.parent.container and self.parent.container.__class__ == Layer:
 			# tell the edit layer what portal destination is
 			# TODO: shit, why is this so complicated? bad design i guess!
-			self.parent.container.level.editLayer.levelmanager.hud.SetPortalDestination(self.parent.container.level.name + ":" + self.parent.id)
+			self.parent.container.level.editLayer.SetPortalDestination(self.parent.container.level.name + ":" + self.parent.id)
 	
 	def Draw(self, really=False):
 		if really:
