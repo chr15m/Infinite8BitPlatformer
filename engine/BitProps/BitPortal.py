@@ -13,11 +13,23 @@ class PortalIcon(ImageButton):
 		ImageButton.__init__(self, [Image(path.join("resources", "icons", "portal.png")), Image(path.join("resources", "icons", "portal-invert.png"))], [0, 0])
 	
 	def Pressed(self):
-		# cancel the currently remembered portal
 		if self.parent.container and self.parent.container.__class__ == Layer:
-			# tell the edit layer what portal destination is
+			newDest = "level" + self.parent.container.level.name + ":" + self.parent.id
+			# see what the current portal destionation is
 			# TODO: shit, why is this so complicated? bad design i guess!
-			self.parent.container.level.editLayer.SetPortalDestination(self.parent.container.level.name + ":" + self.parent.id)
+			dest = self.parent.container.level.editLayer.GetPortalDestination()
+			# check if we already have a portal destination
+			if dest:
+				if dest != newDest:
+					# we have a portal in memory, and we've selected a new one, so join them
+					self.parent.destination = dest
+					# send a message
+					self.parent.container.level.editLayer.levelmanager.AddMessage("portal destination set", None, 1.0)
+				# clear the portal destination thing
+				self.parent.container.level.editLayer.SetPortalDestination(None)
+			# tell the edit layer what portal destination is
+			else:
+				self.parent.container.level.editLayer.SetPortalDestination(newDest)
 	
 	def Draw(self, really=False):
 		if really:

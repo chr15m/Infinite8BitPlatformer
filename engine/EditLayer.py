@@ -155,6 +155,9 @@ class EditLayer(Concurrent, EventMonitor):
 	def SetPortalDestination(self, destination):
 		self.portalDestinationIcon.destination = destination
 	
+	def GetPortalDestination(self):
+		return self.portalDestinationIcon.destination
+	
 	def ToggleMode(self):
 		self.mode = self.editButton.down
 	

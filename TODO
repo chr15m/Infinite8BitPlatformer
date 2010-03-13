@@ -1,34 +1,24 @@
-* put an icon on the portal
-	* when you click another portal icon (after clicking the first one), it links the first one to that one
-
-* item mouse hover to edit name
-
-* TextInput class (PodSix)
-	* cursor
-	* fix arrow keys to move around in edit box
-	* key repeat
-	* stop events propagating to the game, like enter for portals, arrow keys, etc. (triggered = True)
-
 * Make text not be black-on-black on dark levels (white background to box)
+
+* remove end-of-game condition from MinimalistPlatformer
 
 * deleting a prop adds a new prop in the center if it's the last one to go
 
-* improve dying - fade then zap to last platform
-	* if there is no last platform, pick one from the level
-	* if the level has no platforms, create one in the center of the level
+* history should include the destination portal as well as the source portal
 
 * clicking fill on transparent background changes the background color
 
 * make it so you can't paint transparent on a background
 
-* remove end-of-game condition from MinimalistPlatformer
+* TextInput class (PodSix)
+	* cursor
+	* stop events propagating to the game, like enter for portals, arrow keys, etc. (triggered = True)
 
 * chat box functionality
-	* /help command
-	* /new command with location name
-	* /teleport command with location
-	* /quit command
-	* /back command
+	* /teleport command to level name
+	* /help command - open a web browser to the website help page
+
+* item mouse hover to edit name
 
 * All level operations proxied through the levelmanager
 
@@ -46,7 +36,6 @@
 	* mirror commands to all users on the same level
 		* chat events
 		* level editing events
-		* 
 	* check protocol version number against clients
 
 --- FIRST PUBLIC RELEASE ---
@@ -58,6 +47,19 @@ Bugs
 
 Later
 -----
+* chat box functionality
+	* /new command (does the same as new button)
+	* /quit command
+	* /back command
+
+* TextInput class (PodSix)
+	* fix arrow keys to move around in edit box
+	* key repeat
+
+* improve dying - fade then zap to last platform
+	* if there is no last platform, pick one from the level
+	* if the level has no platforms, create one in the center of the level
+
 * Make player not be white-on-white on light levels
 
 * make notifications 'slots' based instead of counter based

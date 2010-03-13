@@ -27,7 +27,7 @@ class Core(Game, EventMonitor, LevelManager):
 		self.Add(self.editLayer)
 		self.hud = Hud(self)
 		self.Add(self.hud)
-		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 0.3)
+		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 1.0)
 		LevelManager.__init__(self)
 		self.bgColor = (150, 150, 150)
 	
