@@ -18,8 +18,6 @@
 
 * item mouse hover to edit name
 
-* make items come back again after a bit
-
 * All level operations proxied through the levelmanager
 
 * network client

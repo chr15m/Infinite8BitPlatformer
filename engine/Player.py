@@ -33,8 +33,8 @@ class Player(Character, EventMonitor, Sprite):
 	def Collide(self, who):
 		Character.Collide(self, who)
 		
-		# TODO: check if this item is in our inventory alread
-		if isinstance(who, Item) and who.visible:
+		# TODO: check for a copy of the item instead of the actual item
+		if isinstance(who, Item) and who.visible and not who in self.inventory:
 			self.game.AddMessage("got " + who.description)
 			# TODO: add a copy of the item instead of the actual item
 			self.inventory.append(who)
