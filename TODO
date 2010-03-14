@@ -1,5 +1,3 @@
-* remove end-of-game condition from MinimalistPlatformer
-
 * deleting a prop adds a new prop in the center if it's the last one to go
 
 * history should include the destination portal as well as the source portal
@@ -19,6 +17,8 @@
 	* /help command - open a web browser to the website help page
 
 * item mouse hover to edit name
+
+* make items come back again after a bit
 
 * All level operations proxied through the levelmanager
 

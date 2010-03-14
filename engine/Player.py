@@ -33,11 +33,11 @@ class Player(Character, EventMonitor, Sprite):
 	def Collide(self, who):
 		Character.Collide(self, who)
 		
+		# TODO: check if this item is in our inventory alread
 		if isinstance(who, Item) and who.visible:
 			self.game.AddMessage("got " + who.description)
+			# TODO: add a copy of the item instead of the actual item
 			self.inventory.append(who)
-			if len(self.inventory) == 15:
-				self.game.Win()
 			who.Hide()
 			sfx.PlaySound("item")
 		

@@ -69,13 +69,6 @@ class Core(Game, EventMonitor, LevelManager):
 	### Platformer events
 	###
 	
-	def Win(self):
-		[self.Remove(o) for o in self.objects]
-		self.AddMessage("you collected all items\n\n\nyou win :)", self.WinDone)
-	
-	def WinDone(self):
-		self.Quit()
-	
 	def PlayerDied(self):
 		self.QueueLater(100, self.Restart, self.level, self.player.lastplatform.id)
 		self.UnSetLevel()
