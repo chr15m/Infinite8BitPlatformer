@@ -1,5 +1,3 @@
-* Make text not be black-on-black on dark levels (white background to box)
-
 * remove end-of-game condition from MinimalistPlatformer
 
 * deleting a prop adds a new prop in the center if it's the last one to go
@@ -9,6 +7,8 @@
 * clicking fill on transparent background changes the background color
 
 * make it so you can't paint transparent on a background
+
+* after setting level name, clear old chatbox value
 
 * TextInput class (PodSix)
 	* cursor

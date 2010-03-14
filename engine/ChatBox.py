@@ -35,6 +35,8 @@ class ChatBox(TextInput):
 	
 	def Draw(self):
 		if self.visible:
+			if self.rect:
+				gfx.DrawRect([self.rect.left - 3, self.rect.top - 3, self.rect.width + 7, self.rect.height + 7], [255, 255, 255], 0)
 			TextInput.Draw(self)
 	
 	def ShowText(self, text, callback=None):
