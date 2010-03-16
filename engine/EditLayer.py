@@ -8,6 +8,7 @@ from PodSix.Rectangle import Rectangle
 from PodSix.Config import config
 from PodSix.GUI.Button import TextButton, ImageButton, ImageRadioButton, ImageRadioButtonGroup
 from PodSix.Platformer.Item import Item
+from PodSix.Platformer.Platform import Platform
 
 from ColorPicker import ColorPicker
 from BitLevel import BitLevel
@@ -248,7 +249,15 @@ class EditLayer(Concurrent, EventMonitor):
 						self.currentSurface.Drag(p)
 				elif self.selected == 'delete':
 					if self.GetPropUnderMouse(p) != self.level:
-						self.level.layer.RemoveProp(self.GetPropUnderMouse(p))
+						delprop = self.GetPropUnderMouse(p)
+						if isinstance(delprop, Platform):
+							# make sure there's at least one platform level in this level
+							print self.level.layer.platforms
+							if len(self.level.layer.platforms) <= 1:
+								delprop = None
+								self.levelmanager.AddMessage("Last platform!", callback=None, time=2)
+						if delprop:
+							self.level.layer.RemoveProp(delprop)
 	
 	@editOn
 	def MouseMove(self, e):
