@@ -1,5 +1,3 @@
-* history should include the destination portal as well as the source portal + do the smart thing (use source if on dest)
-
 * clicking fill on transparent background pixel changes the whole background color
 
 * after setting level name, clear old chatbox value
