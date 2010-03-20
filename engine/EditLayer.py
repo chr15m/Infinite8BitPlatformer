@@ -252,11 +252,16 @@ class EditLayer(Concurrent, EventMonitor):
 						delprop = self.GetPropUnderMouse(p)
 						if isinstance(delprop, Platform):
 							# make sure there's at least one platform level in this level
-							print self.level.layer.platforms
-							if len(self.level.layer.platforms) <= 1:
+							if len(self.level.layer.platforms) == 1:
 								delprop = None
 								self.levelmanager.AddMessage("Last platform!", callback=None, time=2)
 						if delprop:
+							# unset the player's last platform since it will no longer exist
+							if delprop == self.level.player.lastplatform:
+								self.level.player.lastplatform = None
+							# unset the player's current platform since it will no longer exist
+							if delprop == self.level.player.platform:
+								self.level.player.platform = None
 							self.level.layer.RemoveProp(delprop)
 	
 	@editOn

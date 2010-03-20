@@ -1,10 +1,6 @@
-* deleting your own platform should take you to 'start' or find a random platform
+* history should include the destination portal as well as the source portal + do the smart thing (use source if on dest)
 
-* history should include the destination portal as well as the source portal
-
-* clicking fill on transparent background changes the background color
-
-* make it so you can't paint transparent on a background
+* clicking fill on transparent background pixel changes the whole background color
 
 * after setting level name, clear old chatbox value
 
