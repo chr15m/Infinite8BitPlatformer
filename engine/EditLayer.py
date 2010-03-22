@@ -222,7 +222,7 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	@editOn
 	def MouseDown(self, e):
-		if not len([o for o in self.objects if hasattr(o, 'triggered') and o.triggered]):
+		if not len([o for o in self.editInterface.objects + self.objects if hasattr(o, 'triggered') and o.triggered]):
 			self.down = True
 			if self.selected in ['platform', 'portal', 'item']:
 				self.rect = EditBox(e.pos, self.level.camera)
