@@ -25,6 +25,11 @@ class Paintable:
 			self.bitmap.Line([new, new], self.editLayer.color)
 		self.brushdown = new
 	
-	def Fill(self, pos):
-		self.bitmap.FloodFill(self.GetOffset(pos), self.editLayer.color)
+	def Fill(self, pos, isLevel):
+		# if it's a fully transparent level pixel, change the BG
+		if isLevel and self.bitmap.Pixel(self.GetOffset(pos))[3] == 0:
+			self.bgColor = tuple(self.editLayer.color[:3])
+		# otherwise floodfill this sucker
+		else:
+			self.bitmap.FloodFill(self.GetOffset(pos), self.editLayer.color)
 

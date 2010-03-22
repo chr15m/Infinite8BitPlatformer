@@ -1,6 +1,8 @@
-* clicking fill on transparent background pixel changes the whole background color
-
 * after setting level name, clear old chatbox value
+
+* BUG: clicking palette sends fill command through
+
+* BUG: erase color is now bright pink
 
 * TextInput class (PodSix)
 	* cursor

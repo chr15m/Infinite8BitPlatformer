@@ -47,6 +47,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.history = []
 		self.startPoints = {}
 		self.displayName = name
+		self.bgColor = (150, 150, 150)
 	
 	def ApplyPalette(self):
 		palette = palettes.all[self.palette]
@@ -58,6 +59,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 	###
 	
 	def Draw(self):
+		gfx.SetBackgroundColor(self.bgColor)
 		subPixOffset = self.camera.PixelOffset()
 		pixelBoxSize = self.camera.ToPixels().Grow(1, 1)
 		box = pixelBoxSize.Clip([0, 0, 1024, 768])
@@ -73,7 +75,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return [(o.type, dict([(s, o.__dict__[s]) for s in ("id", "destination", "rectangle", "description") if s in o.__dict__])) for o in self.layer.GetAll()]
 	
 	def PackSerial(self):
-		return {"level": {"name": self.displayName, "history": self.history, "entities": self.GetEntities(), "palette": self.palette, "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
+		return {"level": {"name": self.displayName, "history": self.history, "entities": self.GetEntities(), "palette": self.palette, "background": self.bgColor, "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
 	
 	def UnpackSerial(self, data):
 		self.displayName = data["level"].get("name", "level" + self.name)
@@ -81,6 +83,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.palette = data["level"].get("palette", "NES")
 		for s in data['level']['entities']:
 			self.Create(s[0], s[1])
+		self.bgColor = tuple(data["level"].get("background", (150, 150, 150)))
 		sp = data["level"]["startpoints"]
 		self.startPoints = dict([(s, self.layer.names[sp[s]]) for s in sp])
 	

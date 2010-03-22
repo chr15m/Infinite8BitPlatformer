@@ -39,13 +39,11 @@ class LevelManager:
 	
 	def Back(self):
 		if self.levelHistory:
-			print "before", self.levelHistory
 			# if they haven't moved, skip the destination portal they just teleported to (since they're still standing there)
 			if not self.player.lastplatform and len(self.levelHistory) > 1:
 				self.levelHistory.pop()
 			if self.levelHistory:
 				self.SetLevel(back=True, *self.levelHistory.pop())
-			print "after", self.levelHistory
 	
 	def SetLevel(self, level, start, portal=None, back=False):
 		if level in self.levels.keys() and (start == "start" or start in self.levels[level].layer.names.keys()):
