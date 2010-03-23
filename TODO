@@ -1,5 +1,3 @@
-* after setting level name, clear old chatbox value
-
 * TextInput class (PodSix)
 	* cursor
 	* stop events propagating to the game, like enter for portals, arrow keys, etc. (triggered = True)
