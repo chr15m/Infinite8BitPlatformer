@@ -30,7 +30,7 @@ class ColorPicker(Concurrent, EventMonitor):
 				self.parent.color = self.bm.Pixel((e.pos[0] - gfx.width + sz[0], e.pos[1] - gfx.height + sz[1]))
 				self.triggered = True
 			elif e.pos[1] > gfx.height - 16:
-				self.parent.color = (255, 0, 255)
+				self.parent.color = (255, 0, 255, 0)
 				self.triggered = True
 	
 	def Draw(self):
