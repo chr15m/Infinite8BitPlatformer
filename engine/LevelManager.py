@@ -57,6 +57,15 @@ class LevelManager:
 			self.level = level
 			# add the destination to the history
 			self.AddHistory([self.level, start or "start"])
+			# make sure that start actually exists, otherwise find a random portal/platform to jump to
+			if start == "start" and not "start" in self.levels[self.level].startPoints.keys() and not "start" in self.levels[self.level].layer.names.keys():
+				# try find a random portal
+				portals = self.levels[self.level].layer.portals
+				if len(portals):
+					start = portals[0].id
+				else:
+					# didn't find a portal, just pick the first platform
+					start = self.levels[self.level].layer.platforms[0].id
 			self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
 			self.Add(self.levels[self.level])
 			self.editLayer.SetLevel(self.levels[level])

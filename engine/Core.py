@@ -88,12 +88,25 @@ class Core(Game, EventMonitor, LevelManager):
 			self.SetLevel(portal=portal, *parts)
 			return True
 	
+	def TeleportToLevel(self, displayName):
+		levelname = self.levels[displayName].name
+		self.SetLevel("level" + levelname, "start")
+	
 	def Back(self):
 		LevelManager.Back(self)
 	
 	def DoChatBox(self, text):
 		if text.startswith("/help"):
 			webbrowser.open("http://infiniteplatformer.com/info/help")
+		elif text.startswith("/teleport"):
+			bits = text.split(" ")
+			if len(bits) == 2:
+				destination = bits[1]
+				matches = [l for l in self.levels if self.levels[l].displayName == destination]
+				if len(matches):
+					self.TeleportToLevel(matches[0])
+				else:
+					self.AddMessage('No such level "%s"' % destination, time=1)
 		self.hud.chatBox.Hide()
 	
 	###

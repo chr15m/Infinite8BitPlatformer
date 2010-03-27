@@ -1,6 +1,3 @@
-* item mouse hover to edit name
-	* /teleport command to level name
-
 * All level operations proxied through the levelmanager
 
 * network client
