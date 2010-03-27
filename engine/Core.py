@@ -16,7 +16,7 @@ class Core(Game, EventMonitor, LevelManager):
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
-		gfx.LoadFont("FreeSans", 16.0 / gfx.width, "chat")
+		gfx.LoadFont("FreeSans", 18.0 / gfx.width, "chat")
 		sfx.LoadSound("item")
 		sfx.LoadSound("portal")
 		sfx.LoadSound("die")

@@ -7,11 +7,18 @@ from PodSix.Config import config
 
 from engine.Sprite import Sprite
 
+def chatboxShowing(fn):
+	def newfn(self, *args, **kwargs):
+		if not self.chatbox.visible:
+			return fn(self, *args, **kwargs)
+	return newfn
+
 class Player(Character, EventMonitor, Sprite):
 	def __init__(self, game, *args, **kwargs):
 		Character.__init__(self, *args, **kwargs)
 		EventMonitor.__init__(self)
 		self.game = game
+		self.chatbox = game.hud.chatBox
 		self.inventory = []
 		self.portal = None
 		self.hspeed = self.hspeed / config.zoom
@@ -73,23 +80,29 @@ class Player(Character, EventMonitor, Sprite):
 	###
 	
 	# key events
+	@chatboxShowing
 	def KeyDown_right(self, e):
 		self.WalkRight()
 	
+	@chatboxShowing
 	def KeyDown_left(self, e):
 		self.WalkLeft()
 	
+	@chatboxShowing
 	def KeyUp_right(self, e):
 		self.StopRight()
 	
+	@chatboxShowing
 	def KeyUp_left(self, e):
 		self.StopLeft()
 	
+	@chatboxShowing
 	def KeyDown_up(self, e):
 		if self.platform:
 			sfx.PlaySound("jump")
 		self.Jump()
 	
+	@chatboxShowing
 	def KeyDown_return(self, e):
 		self.Do()
 	

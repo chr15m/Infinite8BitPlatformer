@@ -10,13 +10,16 @@ class ChatBox(TextInput):
 		# last mouse position
 		self.lastPos = [0, 0]
 		# whether to draw this or not
-		self.visible = True
+		self.visible = False
 		# history of commands we have typed
 		self.history = []
 		
 		TextInput.__init__(self, {"left": 0.01, "bottom": 0.55}, 0.8, "/help", dict([(x, chr(x)) for x in range(97, 122)]), font="chat")
+		self.chatIcon = Image("resources/icons/chat.png")
 		# remember the drawn rectangle
+		self.visible = True
 		self.Draw()
+		self.visible = False
 		self.oldRect = self.rect
 		self.oldRect[0] -= 4
 		self.oldRect[1] -= 4
@@ -38,6 +41,8 @@ class ChatBox(TextInput):
 			if self.rect:
 				gfx.DrawRect([self.rect.left - 3, self.rect.top - 3, self.rect.width + 7, self.rect.height + 7], [255, 255, 255], 0)
 			TextInput.Draw(self)
+		else:
+			gfx.BlitImage(self.chatIcon, position=(8, gfx.height - 36))
 	
 	def ShowText(self, text, callback=None):
 		if not self.oldText:
