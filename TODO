@@ -1,11 +1,6 @@
-* TextInput class (PodSix)
-	* stop events propagating to the game, like enter for portals, arrow keys, etc. (triggered = True)
-
-* chat box functionality
+* item mouse hover to edit name
 	* /teleport command to level name
 	* /help command - open a web browser to the website help page
-
-* item mouse hover to edit name
 
 * All level operations proxied through the levelmanager
 

@@ -276,19 +276,18 @@ class EditLayer(Concurrent, EventMonitor):
 		elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
 			self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
 		
-		if hasattr(self.level.camera, "FromScreenCoordinates"):
+		#if hasattr(self.level.camera, "FromScreenCoordinates"):
 			# do the hover mode thing - show the names of objects
-			p = self.level.camera.FromScreenCoordinates(e.pos)
-			hover = self.GetPropUnderMouse(p)
+			#p = self.level.camera.FromScreenCoordinates(e.pos)
+			#hover = self.GetPropUnderMouse(p)
 			# if we have moused over a new edit layer thing
-			if hover != self.lastHover:
+			#if hover != self.lastHover:
 				# remove the edit-field on the chatbox
-				if isinstance(hover, Item):
-					self.levelmanager.hud.chatBox.ShowText(hover.description)
-					print hover.description
-				else:
-					self.levelmanager.hud.chatBox.RevertText()
-			self.lastHover = hover
+				#if isinstance(hover, Item):
+				#	self.levelmanager.hud.chatBox.ShowText(hover.description)
+				#else:
+				#	self.levelmanager.hud.chatBox.RevertText()
+			#self.lastHover = hover
 	
 	@editOn
 	def MouseUp(self, e):

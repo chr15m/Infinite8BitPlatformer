@@ -18,16 +18,20 @@ class EditButton(ImageButton):
 class LevelNameLabel(Label):
 	def __init__(self, parent):
 		self.parent = parent
+		self.editLayer = self.parent.game.editLayer
 		Label.__init__(self, "Loading...", pos={"left": 0.1, "top": 0.02}, color=[255, 255, 255])
 	
 	def MouseOver(self, e):
-		self.parent.chatBox.ShowText(self.text, self.UpdateLevelName)
+		if self.editLayer.mode:
+			self.parent.chatBox.ShowText(self.text, self.UpdateLevelName)
 	
 	def MouseOut(self, e):
-		self.parent.chatBox.RevertText()
+		if self.editLayer.mode:
+			self.parent.chatBox.RevertText()
 	
 	def UpdateLevelName(self, name):
 		self.parent.game.SetLevelName(name)
+		self.parent.chatBox.RevertText()
 
 class Hud(Concurrent, EventMonitor):
 	"""
