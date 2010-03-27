@@ -1,6 +1,5 @@
 * item mouse hover to edit name
 	* /teleport command to level name
-	* /help command - open a web browser to the website help page
 
 * All level operations proxied through the levelmanager
 

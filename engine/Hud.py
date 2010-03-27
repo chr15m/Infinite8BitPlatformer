@@ -43,7 +43,7 @@ class Hud(Concurrent, EventMonitor):
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		self.editButton = EditButton(self)
-		self.chatBox = ChatBox(self)
+		self.chatBox = ChatBox(self, self.game.DoChatBox)
 		self.levelLabel = LevelNameLabel(self)
 		# edit button turns on the other buttons
 		self.Add(self.editButton)

@@ -3,7 +3,7 @@ from PodSix.GUI.TextInput import TextInput
 from PodSix.Rectangle import Rectangle
 
 class ChatBox(TextInput):
-	def __init__(self, parent):
+	def __init__(self, parent, defaultcallback=None):
 		self.parent = parent
 		# special keys we want to ignore
 		self.specials = range(0, 10) + range(11, 32) + range(127, 160) + range(0x111, 0x211)
@@ -30,7 +30,8 @@ class ChatBox(TextInput):
 		self.oldPos = self.pos
 		self.oldText = ""
 		# what to run when enter is pressed
-		self.callback = None
+		self.callback = defaultcallback
+		self.oldCallback = None
 	
 	def Update(self):
 		if self.visible:
@@ -47,6 +48,8 @@ class ChatBox(TextInput):
 	def ShowText(self, text, callback=None):
 		if not self.oldText:
 			self.oldText = self.text
+		if not self.oldCallback:
+			self.oldCallback = self.callback
 		self.text = text
 		self.visible = True
 		self.callback = callback
@@ -55,8 +58,13 @@ class ChatBox(TextInput):
 		if self.oldText:
 			self.text = self.oldText
 			self.oldText = ""
+		if self.oldCallback:
+			self.callback = self.oldCallback
+			self.oldCallback = None
 		self.visible = False
-		self.callback = None
+	
+	def Hide(self):
+		self.visible = False
 	
 	def KeyDown(self, e):
 		if self.visible:

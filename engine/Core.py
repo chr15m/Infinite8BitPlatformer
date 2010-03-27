@@ -1,3 +1,5 @@
+import webbrowser
+
 from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
@@ -88,6 +90,11 @@ class Core(Game, EventMonitor, LevelManager):
 	
 	def Back(self):
 		LevelManager.Back(self)
+	
+	def DoChatBox(self, text):
+		if text.startswith("/help"):
+			webbrowser.open("http://infiniteplatformer.com/info/help")
+		self.hud.chatBox.Hide()
 	
 	###
 	### Interface events
