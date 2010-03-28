@@ -48,6 +48,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.startPoints = {}
 		self.displayName = name
 		self.bgColor = (150, 150, 150)
+		self.scaledbitmap = None
 	
 	def ApplyPalette(self):
 		palette = palettes.all[self.palette]
@@ -63,8 +64,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 		subPixOffset = self.camera.PixelOffset()
 		pixelBoxSize = self.camera.ToPixels().Grow(1, 1)
 		box = pixelBoxSize.Clip([0, 0, 1024, 768])
-		newbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom))
-		gfx.BlitImage(newbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
+		self.scaledbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom), self.scaledbitmap)
+		gfx.BlitImage(self.scaledbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
 		Level.Draw(self)
 	
 	###
