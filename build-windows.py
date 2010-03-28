@@ -46,4 +46,6 @@ if path.isdir(project_name):
 	shutil.rmtree(project_name)
 shutil.move("dist", "%s" % project_name)
 system("zip -r %s-%s-windows.zip %s" % (project_name, revno, project_name))
+# get rid of crap
 shutil.rmtree("build")
+shutil.rmtree("simplejson")
