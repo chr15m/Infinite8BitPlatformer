@@ -1,5 +1,8 @@
-* build for windows
-* build for mac
+* build script for mac
+
+* automatic updates
+
+* go to bugs/features web form on program exit
 
 * All level operations proxied through the levelmanager
 
