@@ -1,4 +1,5 @@
 from os import path
+import webbrowser
 
 from PodSix.Resource import *
 from PodSix.Concurrent import Concurrent
@@ -33,6 +34,21 @@ class LevelNameLabel(Label):
 		self.parent.game.SetLevelName(name)
 		self.parent.chatBox.RevertText()
 
+class FeedbackLink(Label):
+	def __init__(self, parent):
+		self.parent = parent
+		Label.__init__(self, "bugs/feedback?", pos={"right": 0.85, "top": 0.02}, color=(255, 255, 255))
+	
+	def MouseOver(self, e):
+		self.color = (255, 0, 0)
+	
+	def MouseOut(self, e):
+		self.color = (255, 255, 255)
+	
+	def MouseDown(self, e):
+		if self.InRect(e.pos):
+			webbrowser.open("http://infiniteplatformer.com/feedback")
+
 class Hud(Concurrent, EventMonitor):
 	"""
 	This layer holds the GUI for the player.
@@ -45,10 +61,12 @@ class Hud(Concurrent, EventMonitor):
 		self.editButton = EditButton(self)
 		self.chatBox = ChatBox(self, self.game.DoChatBox)
 		self.levelLabel = LevelNameLabel(self)
+		self.feedbacklink = FeedbackLink(self)
 		# edit button turns on the other buttons
 		self.Add(self.editButton)
 		self.Add(self.chatBox)
 		self.Add(self.levelLabel)
+		self.Add(self.feedbacklink)
 		self.priority = 2
 	
 	###

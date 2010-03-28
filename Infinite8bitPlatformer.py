@@ -15,6 +15,9 @@ PodSix.engine = "pygame"
 from PodSix.Resource import *
 gfx.SetIcon(os.path.join("resources", "icon.gif"))
 
+#from PodSix.Config import config
+#config.SetFilename("Infinite8BitPlatformer.cfg")
+
 #from PodSix.SplashScreen import SplashScreen
 #s = SplashScreen()
 #s.Launch()
@@ -28,3 +31,5 @@ if len(argv) == 2 and argv[1] == "profile":
 else:
 	c.Launch()
 
+# save the config file on exit
+#config.Save()
