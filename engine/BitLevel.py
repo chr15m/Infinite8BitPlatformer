@@ -44,14 +44,15 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.gravity = self.gravity / config.zoom
 		self.palette = "NES"
 		self.bitmap = BitImage(size=(1024, 768))
+		self.bitmap.Fill((255, 0, 255))
 		self.history = []
 		self.startPoints = {}
 		self.displayName = name
 		self.bgColor = (150, 150, 150)
 		self.scaledbitmap = None
 	
-	def ApplyPalette(self):
-		palette = palettes.all[self.palette]
+	#def ApplyPalette(self):
+		#palette = palettes.all[self.palette]
 		#self.bitmap.Palette(palette)
 		#[o.bitmap.Palette(palette) for o in self.layer.GetAll()]
 	
@@ -114,7 +115,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 	
 	def Initialise(self):
 		""" Initialise a completely blank new level. """
-		self.ApplyPalette()
+		#self.ApplyPalette()
 		self.AddLayer(self.name, self.layer)
 	
 	def FromString(self, data):
@@ -137,7 +138,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		rmdir(imgfile[:-len(path.basename(imgfile))])
 		rmdir(tmpdir)
 		# set the palette on everything
-		self.ApplyPalette()
+		#self.ApplyPalette()
 		self.AddLayer(self.name, self.layer)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):

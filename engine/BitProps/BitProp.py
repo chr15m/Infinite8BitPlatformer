@@ -11,6 +11,7 @@ class BitProp(Paintable):
 		rect = args[0]
 		size=(int(rect[2] * gfx.width), int(rect[3] * gfx.width))
 		self.bitmap = BitImage(size=size)
+		self.bitmap.Fill((255, 0, 255))
 		self.box = None
 		self.lastDrag = None
 	
