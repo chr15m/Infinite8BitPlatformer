@@ -1,5 +1,6 @@
 import os
 from sys import platform, path, argv
+import webbrowser
 
 import psyco
 psyco.full()
@@ -28,3 +29,4 @@ if len(argv) == 2 and argv[1] == "profile":
 else:
 	c.Launch()
 
+webbrowser.open("http://infiniteplatformer.com/feedback")

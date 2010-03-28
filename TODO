@@ -1,8 +1,6 @@
-* automatic updates
-
 * use transparent background on new levels/portals by default
 
-* go to bugs/features web form on program exit
+* automatic updates
 
 * All level operations proxied through the levelmanager
 
