@@ -4,7 +4,10 @@ import tempfile
 import zipfile
 from cStringIO import StringIO
 
-from simplejson import dumps, loads
+try:
+	from json import dumps, loads
+except ImportError:
+	from simplejson import dumps, loads
 
 from PodSix.Platformer.Level import Level
 from PodSix.Platformer.Layer import Layer

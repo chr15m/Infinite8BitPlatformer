@@ -1,6 +1,9 @@
 from os import path, listdir
 
-from simplejson import dumps
+try:
+	from json import dumps
+except ImportError:
+	from simplejson import dumps
 
 from BitLevel import BitLevel
 

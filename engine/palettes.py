@@ -1,4 +1,7 @@
-from simplejson import dumps, loads
+try:
+	from json import dumps, loads
+except ImportError:
+	from simplejson import dumps, loads
 from os import listdir, path
 
 from pygame import image
