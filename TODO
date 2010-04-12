@@ -1,7 +1,5 @@
 * automatic updates
 
-* teleporter connector tutorial on help page
-
 * network client
 	* make all LevelManager commands be proxied to the server
 	* don't allow LevelManager commands if not connected
@@ -17,20 +15,6 @@
 		* chat events
 		* level editing events
 	* check protocol version number against clients
-
-Bugs
-----
-
-* sound effects lag on vista 32 bit (ask jack casey)
-	* tweak buffer sizes?
-* default level background color = text color
-	* cache rendered text graphics
-* using fill tool on the bounding box where item meet platforms
-* crash when filling just outside a bounding box for an object
-* fill is too slow - game freezes if you do many fills quickly
-* going out of the level limits crashes the game
-* props should stay within max level size
-* off-by-one graphics bug
 
 Later
 -----
