@@ -1,3 +1,5 @@
+* BitLevel.py, line 98 - ZipFile() requires mode "r", "w", or "a"
+* do we need the SetIcon line on windows? (definately not on mac)
 * going out of the level limits crashes the game
 * props should stay within max level size
 * using fill tool on the bounding box where item meet platforms
