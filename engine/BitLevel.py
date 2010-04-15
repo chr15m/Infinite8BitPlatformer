@@ -117,7 +117,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def ToString(self):
 		""" Turns this level into a zipfile blob """
 		data = StringIO()
-		zip = zipfile.ZipFile(data, "w")
+		# open the file in 'wb' mode under Windows
+		zip = zipfile.ZipFile(data, "w" + (platform == "win32" and "b" or ""))
 		tmpfile = tempfile.mkstemp(suffix=".png")[1]
 		zip.writestr(self.name + "/level.json", dumps(self.PackSerial()))
 		self.bitmap.Save(tmpfile)

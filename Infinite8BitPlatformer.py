@@ -5,6 +5,7 @@ try:
 	import psyco           # psyco does not exist on 64 bit platforms
 	psyco.full()
 except ImportError:
+	print "Psyco not available"
 	pass
 
 if platform == "win32":
@@ -16,7 +17,9 @@ else:
 import PodSix
 PodSix.engine = "pygame"
 from PodSix.Resource import *
-gfx.SetIcon(os.path.join("resources", "icon.gif"))
+
+if platform == "win32":
+	gfx.SetIcon(os.path.join("resources", "icon.gif"))
 
 #from PodSix.Config import config
 #config.SetFilename("Infinite8BitPlatformer.cfg")
