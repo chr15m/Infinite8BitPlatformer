@@ -129,10 +129,10 @@ class EditLayer(Concurrent, EventMonitor):
 		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone']:
 			FamilyButton(b, self, self.buttonGroup)
 		
-		self.pentool = PenTool(self, self.buttonGroup, editLayer=self)
-		self.linetool = LineTool(self, self.buttonGroup, editLayer=self)
-		self.filltool = FillTool(self, self.buttonGroup, editLayer=self)
-		self.airbrushtool = AirbrushTool(self, self.buttonGroup, editLayer=self)
+		self.pentool = PenTool(self, self.buttonGroup)
+		self.linetool = LineTool(self, self.buttonGroup)
+		self.filltool = FillTool(self, self.buttonGroup)
+		self.airbrushtool = AirbrushTool(self, self.buttonGroup)
 		
 		# the save button
 		self.editInterface.Add(SaveButton(self))
@@ -212,7 +212,7 @@ class EditLayer(Concurrent, EventMonitor):
 		if self.On():
 			self.editInterface.Pump()
 			Concurrent.Pump(self)
-			EventMonitor.Pump(self)	
+			EventMonitor.Pump(self)
 		else:
 			self.editButton.Pump()
 	
@@ -231,7 +231,7 @@ class EditLayer(Concurrent, EventMonitor):
 			self.editInterface.Draw()
 			self.editButton.Draw()
 		
-			self.pentool.Draw()		
+			self.pentool.Draw()
 		else:
 			self.editButton.Draw()
 			
@@ -282,7 +282,7 @@ class EditLayer(Concurrent, EventMonitor):
 							if delprop == self.level.player.platform:
 								self.level.player.platform = None
 							self.level.layer.RemoveProp(delprop)
-				else:
+				elif type(self.selected) is not str:
 					# selected in a tool object not a string
 					#pos = [int(x * gfx.width) for x in p]
 					self.selected.OnMouseDown(e.pos)				
@@ -300,7 +300,7 @@ class EditLayer(Concurrent, EventMonitor):
 		elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
 			self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
 		elif type(self.selected) is not str:
-			self.selected.OnMouseMove(bitmapPos)
+			self.selected.OnMouseMove(e.pos)
 		
 		if hasattr(self.level.camera, "FromScreenCoordinates"):
 			# do the hover mode thing - show the names of objects
