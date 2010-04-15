@@ -17,6 +17,9 @@ class Paintable:
 		return (pos[0] - rec[0], pos[1] - rec[1])
 	
 	def Paint(self, pos):
+		self.bitmap.Line([self.GetOffset(pos), self.GetOffset(pos)], self.editLayer.color)
+	
+	def OldPaint(self,pos):
 		new = self.GetOffset(pos)
 		if self.brushdown and self.brushdown != new:
 			self.bitmap.Line([self.brushdown, new], self.editLayer.color)
@@ -24,6 +27,9 @@ class Paintable:
 			#self.bitmap.Pixel(new, self.editLayer.color)
 			self.bitmap.Line([new, new], self.editLayer.color)
 		self.brushdown = new
+		
+	def Line(self, start, end):
+		self.bitmap.Line([self.GetOffset(start), self.GetOffset(end)], self.editLayer.color)
 	
 	def Fill(self, pos, isLevel):
 		# if it's a fully transparent level pixel, change the BG

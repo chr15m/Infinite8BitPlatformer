@@ -1,8 +1,11 @@
 import os
 from sys import platform, path, argv
 
-import psyco
-psyco.full()
+try:
+	import psyco           # psyco does not exist on 64 bit platforms
+	psyco.full()
+except ImportError:
+	pass
 
 if platform == "win32":
 	# one level up from library.zip

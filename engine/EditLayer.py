@@ -13,6 +13,8 @@ from PodSix.Platformer.Platform import Platform
 from ColorPicker import ColorPicker
 from BitLevel import BitLevel
 
+from Tools import PenTool, LineTool, FillTool, AirbrushTool
+
 class EditBox(Rectangle, Concurrent):
 	def __init__(self, inlist, camera):
 		inlist = camera.FromScreenCoordinates(inlist) + [0, 0]
@@ -124,8 +126,14 @@ class EditLayer(Concurrent, EventMonitor):
 		# hold on to all the buttons
 		self.editInterface = EditInterface()
 		self.editInterface.Add(self.buttonGroup)
-		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone', '---', 'draw', 'fill']:
+		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone']:
 			FamilyButton(b, self, self.buttonGroup)
+		
+		self.pentool = PenTool(self, self.buttonGroup, editLayer=self)
+		self.linetool = LineTool(self, self.buttonGroup, editLayer=self)
+		self.filltool = FillTool(self, self.buttonGroup, editLayer=self)
+		self.airbrushtool = AirbrushTool(self, self.buttonGroup, editLayer=self)
+		
 		# the save button
 		self.editInterface.Add(SaveButton(self))
 		self.editInterface.Add(NewButton(self))
@@ -141,6 +149,19 @@ class EditLayer(Concurrent, EventMonitor):
 		self.colorPicker = ColorPicker(self)
 		self.editInterface.Add(self.colorPicker)
 		self.lastHover = None
+		
+		# for some tools we need to know where the mouse button down event happened, so we can rubber band and the like...
+		self.mouseDownPosition = [None,None]
+		
+		# for some tools, while the mouse is moving, we need to know the last mousemove pixel position. This stores that.
+		# this way we can tell wether a mouse move actually moves through a large pixel to another
+		self.mouseMovePosition = [None,None]
+		
+		# saved subimage for rubber banding
+		self.savedImage = None
+		
+		# for line tool
+		self.image_start = None
 	
 	def MakeId(self):
 		x = None
@@ -209,9 +230,12 @@ class EditLayer(Concurrent, EventMonitor):
 				[o.DrawEdit() for o in self.level.layer.GetAll() if o in self.level.camera.GetVisible()]
 			self.editInterface.Draw()
 			self.editButton.Draw()
+		
+			self.pentool.Draw()		
 		else:
 			self.editButton.Draw()
-	
+			
+			
 	###
 	###	Interface events
 	###
@@ -233,15 +257,7 @@ class EditLayer(Concurrent, EventMonitor):
 				self.Add(self.rect)
 			else:
 				p = self.level.camera.FromScreenCoordinates(e.pos)	
-				if self.selected == 'draw':
-					self.currentSurface = self.GetPropUnderMouse(p)
-					pos = [int(x * gfx.width) for x in p]
-					self.currentSurface.Paint(pos)
-				elif self.selected == 'fill':
-					pos = [int(x * gfx.width) for x in p]
-					fillsrf = self.GetPropUnderMouse(p)
-					fillsrf.Fill(pos, fillsrf == self.level)
-				elif self.selected == 'move':
+				if self.selected == 'move':
 					self.currentSurface = self.GetPropUnderMouse(p)
 					if self.currentSurface != self.level:
 						self.currentSurface.Drag(p)
@@ -266,19 +282,25 @@ class EditLayer(Concurrent, EventMonitor):
 							if delprop == self.level.player.platform:
 								self.level.player.platform = None
 							self.level.layer.RemoveProp(delprop)
+				else:
+					# selected in a tool object not a string
+					#pos = [int(x * gfx.width) for x in p]
+					self.selected.OnMouseDown(e.pos)				
 	
 	@editOn
 	def MouseMove(self, e):
+		bitmapPos = [int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)]
+	
 		if self.rect:
 			# portal has a maximum size
 			if self.selected == 'portal':
 				self.rect.SetCorner(e.pos, (0.05, 0.05))
 			else:
 				self.rect.SetCorner(e.pos)
-		elif self.selected == 'draw' and self.down and self.currentSurface:
-			self.currentSurface.Paint([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
 		elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
 			self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
+		elif type(self.selected) is not str:
+			self.selected.OnMouseMove(bitmapPos)
 		
 		if hasattr(self.level.camera, "FromScreenCoordinates"):
 			# do the hover mode thing - show the names of objects
@@ -292,6 +314,8 @@ class EditLayer(Concurrent, EventMonitor):
 					self.levelmanager.hud.chatBox.ShowText(hover.description, self.UpdateItemDescription)
 				else:
 					self.levelmanager.hud.chatBox.RevertText()
+					
+		self.mouseMovePosition = bitmapPos
 	
 	@editOn
 	def MouseUp(self, e):
@@ -306,4 +330,6 @@ class EditLayer(Concurrent, EventMonitor):
 		if self.currentSurface:
 			self.currentSurface.MouseUp()
 			self.currentSurface = None
+		if type(self.selected) is not str:
+			self.selected.OnMouseUp([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
 

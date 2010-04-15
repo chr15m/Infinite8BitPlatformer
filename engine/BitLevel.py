@@ -15,6 +15,7 @@ from PodSix.Platformer.Layer import Layer
 from PodSix.SVGLoader import SVGLoader
 from PodSix.Resource import *
 from PodSix.Config import config
+from PodSix.Rectangle import Rectangle
 
 from BitProps.BitProp import BitProp
 from BitProps.BitPlatform import BitPlatform
@@ -25,6 +26,8 @@ from Paintable import Paintable
 from BitImage import BitImage
 
 import palettes
+
+from pygame import Surface
 
 if not hasattr(zipfile.ZipFile, "extract"):
 	def extract(self, name, dest):
@@ -71,6 +74,25 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.scaledbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom), self.scaledbitmap)
 		gfx.BlitImage(self.scaledbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
 		Level.Draw(self)
+		
+	def SubImage(self, corner1, corner2):
+		"""given two opposite corners of a box, return an image representing the subimage in that box"""
+		# turn corners into topleft and bottomright
+		topleft = [corner1[x] if corner1[x]<corner2[x] else corner2[x] for x in [0,1]]
+		bottomright = [corner1[x] if corner1[x]>corner2[x] else corner2[x] for x in [0,1]]
+		widthheight = [B-A+1 for A,B in zip(topleft,bottomright)]
+		
+		box = Rectangle(topleft+widthheight)
+		sub = self.bitmap.SubImage(box,copy=True)		#.Scale((box.Width() * config.zoom, box.Height() * config.zoom), self.scaledbitmap)
+		
+		# this sub contains alpha. So lets fill those areas with the background colour
+		sub.RemoveAlpha(self.bgColor)
+				
+		return sub, topleft, bottomright
+		
+	def PasteSubImage(self, image, pos):
+		self.bitmap.Blit(image, pos)
+
 	
 	###
 	###	Level data routines
@@ -95,7 +117,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def ToString(self):
 		""" Turns this level into a zipfile blob """
 		data = StringIO()
-		zip = zipfile.ZipFile(data, "wb")
+		zip = zipfile.ZipFile(data, "w")
 		tmpfile = tempfile.mkstemp(suffix=".png")[1]
 		zip.writestr(self.name + "/level.json", dumps(self.PackSerial()))
 		self.bitmap.Save(tmpfile)

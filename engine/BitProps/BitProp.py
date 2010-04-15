@@ -1,6 +1,7 @@
 from PodSix.Resource import *
 from PodSix.Config import config
 from PodSix.Platformer.Layer import Layer
+from PodSix.Rectangle import Rectangle
 
 from engine.Paintable import Paintable
 from engine.BitImage import BitImage
@@ -45,3 +46,13 @@ class BitProp(Paintable):
 		else:
 			Paintable.MouseUp(self)
 
+	def SubImage(self, corner1, corner2):
+		"""given two opposite corners of a box, return an image representing the subimage in that box"""
+		sub = self.bitmap.Copy()
+		sub.RemoveAlpha()
+		return sub, [0,0], [self.rectangle.Right(),self.rectangle.Bottom()]
+		
+	def PasteSubImage(self, image, pos):
+		self.bitmap.Blit(image, pos)
+			
+			
