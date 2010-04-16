@@ -18,15 +18,6 @@ class Paintable:
 	
 	def Paint(self, pos):
 		self.bitmap.Line([self.GetOffset(pos), self.GetOffset(pos)], self.editLayer.color)
-	
-	def OldPaint(self,pos):
-		new = self.GetOffset(pos)
-		if self.brushdown and self.brushdown != new:
-			self.bitmap.Line([self.brushdown, new], self.editLayer.color)
-		else:
-			#self.bitmap.Pixel(new, self.editLayer.color)
-			self.bitmap.Line([new, new], self.editLayer.color)
-		self.brushdown = new
 		
 	def Line(self, start, end):
 		self.bitmap.Line([self.GetOffset(start), self.GetOffset(end)], self.editLayer.color)
@@ -38,4 +29,8 @@ class Paintable:
 		# otherwise floodfill this sucker
 		else:
 			self.bitmap.FloodFill(self.GetOffset(pos), self.editLayer.color)
+			
+	def GetPixel(self, pos):
+		"""return the colour of the pixel at pos"""
+		return self.bitmap.Pixel(pos)
 

@@ -20,7 +20,7 @@ class DrawTool(ImageRadioButton):
 		self.currentSurface = self.parent.GetPropUnderMouse(self.parent.level.camera.FromScreenCoordinates(pos))
 		pos = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
 		self.lastPos = pos
-				
+		
 	def OnMouseMove(self,pos):
 		self.lastPos = pos
 		
@@ -53,6 +53,7 @@ class LineTool(DrawTool):
 		self.mouseDownPosition = pos
 		
 	def OnMouseMove(self,pos):
+		pos = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
 		if self.currentSurface and self.lastPos!=pos:
 			if self.savedImage:
 				# there is an image saved. paste it
@@ -79,6 +80,7 @@ class PenTool(DrawTool):
 		self.currentSurface.Paint([int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)])
 				
 	def OnMouseMove(self,pos):
+		pos = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
 		if self.currentSurface and self.lastPos!=pos:
 			self.currentSurface.Line(self.lastPos,pos)
 		DrawTool.OnMouseMove(self,pos)
@@ -92,17 +94,50 @@ class FillTool(DrawTool):
 		DrawTool.OnMouseDown(self,pos)
 		self.currentSurface.Fill(	[int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)],
 									self.currentSurface != self.parent.level )
+			
 									
+from math import cos,sin,pi
+import random
+																											
 class AirbrushTool(DrawTool):
 	"""Old Amiga-style airbrush tool"""
 	def __init__(self, parent, buttonGroup, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="airbrush.png",selected="airbrush-invert.png",iconpos=10 * 33 + 72,*args,**kwargs)	
 		
-		self.radius = 20
+		self.radius = 20.0
+		self.position = None		# where the Pump() should draw to
 		
 	def OnMouseDown(self, pos):
 		DrawTool.OnMouseDown(self,pos)
-		self.currentSurface.Fill(	[int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)],
-									self.currentSurface != self.parent.level )
-	
+		self.PlotRandomPoint( pos )	
+		self.position = pos
+
+	def OnMouseMove(self,pos):
+		if self.currentSurface:
+			self.PlotRandomPoint( pos )
+			self.position = pos
+		DrawTool.OnMouseMove(self,pos)
+				
+	def Pump(self):
+		"""call me repeatedly to keep the pixels flowing"""
+		if self.currentSurface:
+			self.PlotRandomPoint(self.position)
+		ImageRadioButton.Pump(self)
+				
+	def PlotRandomPoint(self, pos):
+		"""Plot a random point on the currentSurface a distance 'radius' away from pos"""
+		pix = color = self.parent.color
+		count = 10
+		while pix==color and count>0:
+			theta = random.random()*2.0*pi
+			r = self.radius * random.random()
+			xpos = int(r * cos(theta) + pos[0])
+			ypos = int(r * sin(theta) + pos[1])
+			try:
+				pix = self.currentSurface.GetPixel([int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates([xpos,ypos])])
+			except IndexError, ie:
+				pass
+			count -= 1
+		
+		self.currentSurface.Paint([int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates([xpos,ypos])])
 	
