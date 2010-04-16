@@ -289,33 +289,34 @@ class EditLayer(Concurrent, EventMonitor):
 	
 	@editOn
 	def MouseMove(self, e):
-		bitmapPos = [int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)]
-	
-		if self.rect:
-			# portal has a maximum size
-			if self.selected == 'portal':
-				self.rect.SetCorner(e.pos, (0.05, 0.05))
-			else:
-				self.rect.SetCorner(e.pos)
-		elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
-			self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
-		elif type(self.selected) is not str:
-			self.selected.OnMouseMove(e.pos)
-		
-		if hasattr(self.level.camera, "FromScreenCoordinates"):
-			# do the hover mode thing - show the names of objects
-			p = self.level.camera.FromScreenCoordinates(e.pos)
-			hover = self.GetPropUnderMouse(p)
-			# if we have moused over a new edit layer thing
-			if hover != self.lastHover:
-				self.lastHover = hover
-				# remove the edit-field on the chatbox
-				if isinstance(hover, Item) and hover.visible:
-					self.levelmanager.hud.chatBox.ShowText(hover.description, self.UpdateItemDescription)
+		if self.level.camera:
+			bitmapPos = [int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)]
+			
+			if self.rect:
+				# portal has a maximum size
+				if self.selected == 'portal':
+					self.rect.SetCorner(e.pos, (0.05, 0.05))
 				else:
-					self.levelmanager.hud.chatBox.RevertText()
-					
-		self.mouseMovePosition = bitmapPos
+					self.rect.SetCorner(e.pos)
+			elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
+				self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
+			elif type(self.selected) is not str:
+				self.selected.OnMouseMove(e.pos)
+			
+			if hasattr(self.level.camera, "FromScreenCoordinates"):
+				# do the hover mode thing - show the names of objects
+				p = self.level.camera.FromScreenCoordinates(e.pos)
+				hover = self.GetPropUnderMouse(p)
+				# if we have moused over a new edit layer thing
+				if hover != self.lastHover:
+					self.lastHover = hover
+					# remove the edit-field on the chatbox
+					if isinstance(hover, Item) and hover.visible:
+						self.levelmanager.hud.chatBox.ShowText(hover.description, self.UpdateItemDescription)
+					else:
+						self.levelmanager.hud.chatBox.RevertText()
+						
+			self.mouseMovePosition = bitmapPos
 	
 	@editOn
 	def MouseUp(self, e):

@@ -15,6 +15,7 @@ class BitProp(Paintable):
 		self.bitmap.Fill((255, 0, 255))
 		self.box = None
 		self.lastDrag = None
+		self.levelsize = None
 	
 	def NewID(self):
 		return self.editLayer.MakeId()
@@ -38,7 +39,21 @@ class BitProp(Paintable):
 		if self.lastDrag:
 			self.rectangle.Left(self.rectangle.Left() + (pos[0] - self.lastDrag[0]))
 			self.rectangle.Top(self.rectangle.Top() + (pos[1] - self.lastDrag[1]))
+		self.Constrain()
 		self.lastDrag = pos
+	
+	def Constrain(self):
+		if not self.levelsize:
+			self.levelsize = tuple([float(x) / gfx.width for x in self.editLayer.level.size])
+		
+		if self.rectangle.Left() < 0:
+			self.rectangle.Left(0)
+		if self.rectangle.Top() < 0:
+			self.rectangle.Top(0)
+		if self.rectangle.Right() > self.levelsize[0]:
+			self.rectangle.Right(self.levelsize[0])
+		if self.rectangle.Bottom() > self.levelsize[1]:
+			self.rectangle.Bottom(self.levelsize[1])
 	
 	def MouseUp(self, e=None):
 		if self.lastDrag:

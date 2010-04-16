@@ -18,6 +18,8 @@
 
 Later
 -----
+* make fills happen one line per frame
+
 * chat box functionality
 	* /new command (does the same as new button)
 	* /quit command

@@ -49,7 +49,9 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.layer = Layer(self)
 		self.gravity = self.gravity / config.zoom
 		self.palette = "NES"
-		self.bitmap = BitImage(size=(1024, 768))
+		self.size = (1024, 768)
+		self.sizerect = (0, 0) + self.size
+		self.bitmap = BitImage(size=self.size)
 		self.bitmap.Fill((255, 0, 255))
 		self.history = []
 		self.startPoints = {}
@@ -70,7 +72,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		gfx.SetBackgroundColor(self.bgColor)
 		subPixOffset = self.camera.PixelOffset()
 		pixelBoxSize = self.camera.ToPixels().Grow(1, 1)
-		box = pixelBoxSize.Clip([0, 0, 1024, 768])
+		box = pixelBoxSize.Clip(self.sizerect)
 		if box.Width() > 0 and box.Height() > 0:
 			self.scaledbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom), self.scaledbitmap)
 			gfx.BlitImage(self.scaledbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
