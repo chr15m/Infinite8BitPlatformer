@@ -71,8 +71,9 @@ class BitLevel(Level, SVGLoader, Paintable):
 		subPixOffset = self.camera.PixelOffset()
 		pixelBoxSize = self.camera.ToPixels().Grow(1, 1)
 		box = pixelBoxSize.Clip([0, 0, 1024, 768])
-		self.scaledbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom), self.scaledbitmap)
-		gfx.BlitImage(self.scaledbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
+		if box.Width() > 0 and box.Height() > 0:
+			self.scaledbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom), self.scaledbitmap)
+			gfx.BlitImage(self.scaledbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
 		Level.Draw(self)
 		
 	def SubImage(self, corner1, corner2):

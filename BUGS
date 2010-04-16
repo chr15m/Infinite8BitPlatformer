@@ -1,4 +1,3 @@
-* going out of the level limits crashes the game
 * props should stay within max level size
 * using fill tool on the bounding box where item meet platforms
 * crash when filling just outside a bounding box for an object
