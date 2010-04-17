@@ -16,12 +16,13 @@ from BitLevel import BitLevel
 from Tools import PenTool, LineTool, FillTool, AirbrushTool
 
 class EditBox(Rectangle, Concurrent):
-	def __init__(self, inlist, camera):
+	def __init__(self, inlist, camera, levelrect):
 		inlist = camera.FromScreenCoordinates(inlist) + [0, 0]
 		Rectangle.__init__(self, inlist)
 		Concurrent.__init__(self)
 		self.camera = camera
-		self.color = (255, 255, 255)	
+		self.color = (255, 255, 255)
+		self.levelrect = levelrect
 	
 	def Draw(self):
 		gfx.DrawRect(self.camera.TranslateRectangle(self), self.color, 1)
@@ -34,6 +35,8 @@ class EditBox(Rectangle, Concurrent):
 		else:
 			self.Width((pos[0] - self.Left()))
 			self.Height((pos[1] - self.Top()))
+		# make sure we don't allow the edit rectangle to go bigger than the level size
+		Rectangle.__init__(self, self.Clip(self.levelrect))
 
 def editOn(fn):
 	def newfn(self, *args, **kwargs):
@@ -253,7 +256,7 @@ class EditLayer(Concurrent, EventMonitor):
 		if not len([o for o in self.editInterface.objects + self.objects if hasattr(o, 'triggered') and o.triggered]):
 			self.down = True
 			if self.selected in ['platform', 'portal', 'item']:
-				self.rect = EditBox(e.pos, self.level.camera)
+				self.rect = EditBox(e.pos, self.level.camera, Rectangle([float(x) / gfx.width for x in self.level.sizerect]))
 				self.Add(self.rect)
 			else:
 				p = self.level.camera.FromScreenCoordinates(e.pos)	
