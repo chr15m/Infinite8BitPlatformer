@@ -1,8 +1,10 @@
+from math import cos,sin,pi
+from os import path
+import random
+
 from PodSix.GUI.Button import ImageRadioButton
 from PodSix.Resource import *
 
-from os import path
-		
 class DrawTool(ImageRadioButton):
 	def __init__(self, parent, buttonGroup, filename="image.png", selected="image-invert.png", iconpos=64, *args, **kwargs):
 		self.parent = parent
@@ -92,13 +94,8 @@ class FillTool(DrawTool):
 					
 	def OnMouseDown(self, pos):
 		DrawTool.OnMouseDown(self,pos)
-		self.currentSurface.Fill(	[int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)],
-									self.currentSurface != self.parent.level )
-			
-									
-from math import cos,sin,pi
-import random
-																											
+		self.currentSurface.Fill([int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)], self.currentSurface == self.parent.level)
+
 class AirbrushTool(DrawTool):
 	"""Old Amiga-style airbrush tool"""
 	def __init__(self, parent, buttonGroup, *args, **kwargs):

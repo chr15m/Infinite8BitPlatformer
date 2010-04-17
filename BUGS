@@ -1,8 +1,7 @@
 * using fill tool on the bounding box where item meet platforms
-* crash when filling just outside a bounding box for an object
 * default level background color = text color
 	* cache rendered text graphics
 * fill is too slow - game freezes if you do many fills quickly
-* off-by-one graphics bug
+* off-by-one graphics bug (when drawing/filling/whatever you don't always hit inside the bounding box, even when the mouse is inside)
 * sound effects lag on vista 32 bit (ask jack casey)
 	* tweak buffer sizes?
