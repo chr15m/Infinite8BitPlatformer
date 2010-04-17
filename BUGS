@@ -1,4 +1,3 @@
-* using fill tool on the bounding box where item meet platforms
 * default level background color = text color
 	* cache rendered text graphics
 * fill is too slow - game freezes if you do many fills quickly

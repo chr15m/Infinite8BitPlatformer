@@ -19,9 +19,11 @@ class DrawTool(ImageRadioButton):
 						
 	def OnMouseDown(self, pos):
 		self.mouseDownPos = pos
-		self.currentSurface = self.parent.GetPropUnderMouse(self.parent.level.camera.FromScreenCoordinates(pos))
-		pos = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
+		coordinates = self.parent.level.camera.FromScreenCoordinates(pos)
+		self.currentSurface = self.parent.GetPropUnderMouse(coordinates)
+		pos = [int(x * gfx.width) for x in coordinates]
 		self.lastPos = pos
+		return coordinates
 		
 	def OnMouseMove(self,pos):
 		self.lastPos = pos
@@ -45,10 +47,10 @@ class LineTool(DrawTool):
 		self.savedImage = None
 				
 	def OnMouseDown(self, pos):
-		DrawTool.OnMouseDown(self,pos)
-		self.currentSurface = self.parent.GetPropUnderMouse(self.parent.level.camera.FromScreenCoordinates(pos))
+		p = DrawTool.OnMouseDown(self,pos)
+		self.currentSurface = self.parent.GetPropUnderMouse(p)
 		
-		pos = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
+		pos = [int(x * gfx.width) for x in p]
 		self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(pos,pos)
 		self.currentSurface.Paint(pos)		
 		
@@ -78,8 +80,8 @@ class PenTool(DrawTool):
 		DrawTool.__init__(self,parent,buttonGroup,filename="pen.png",selected="pen-invert.png",iconpos=8 * 33 + 72,*args,**kwargs)	
 					
 	def OnMouseDown(self, pos):
-		DrawTool.OnMouseDown(self,pos)
-		self.currentSurface.Paint([int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)])
+		p = DrawTool.OnMouseDown(self,pos)
+		self.currentSurface.Paint([int(x * gfx.width) for x in p])
 				
 	def OnMouseMove(self,pos):
 		pos = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
@@ -93,8 +95,8 @@ class FillTool(DrawTool):
 		DrawTool.__init__(self,parent,buttonGroup,filename="fill.png",selected="fill-invert.png",iconpos=9 * 33 + 72,*args,**kwargs)	
 					
 	def OnMouseDown(self, pos):
-		DrawTool.OnMouseDown(self,pos)
-		self.currentSurface.Fill([int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)], self.currentSurface == self.parent.level)
+		p = DrawTool.OnMouseDown(self,pos)
+		self.currentSurface.Fill([int(x * gfx.width) for x in p], self.currentSurface == self.parent.level)
 
 class AirbrushTool(DrawTool):
 	"""Old Amiga-style airbrush tool"""
