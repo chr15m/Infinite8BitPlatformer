@@ -17,7 +17,11 @@ from Tools import PenTool, LineTool, FillTool, AirbrushTool
 
 class EditBox(Rectangle, Concurrent):
 	def __init__(self, inlist, camera, levelrect):
-		inlist = camera.FromScreenCoordinates(inlist) + [0, 0]
+		self.initial = camera.FromScreenCoordinates(inlist)
+		# make sure initial click is inside the level bounds
+		for axis in (0, 1):
+			self.initial[axis] = max(0, min(levelrect[2 + axis], self.initial[axis]))
+		inlist = self.initial + [0, 0]
 		Rectangle.__init__(self, inlist)
 		Concurrent.__init__(self)
 		self.camera = camera
@@ -27,14 +31,23 @@ class EditBox(Rectangle, Concurrent):
 	def Draw(self):
 		gfx.DrawRect(self.camera.TranslateRectangle(self), self.color, 1)
 	
-	def SetCorner(self, pos, bounds=None):
+	def SetWidth(self, val):
+		self.Width(val)
+	
+	def SetHeight(self, val):
+		self.Height(val)
+	
+	def SetCorner(self, pos, bounds=[maxint, maxint]):
 		pos = self.camera.FromScreenCoordinates(pos)
-		if bounds:
-			self.Width(max(-bounds[0], min(pos[0] - self.Left(), bounds[0])))
-			self.Height(max(-bounds[1], min(pos[1] - self.Top(), bounds[1])))
-		else:
-			self.Width((pos[0] - self.Left()))
-			self.Height((pos[1] - self.Top()))
+		points = []
+		# respect the bounds
+		for axis in (0,1):
+			points.append([self.initial[axis], max(self.initial[axis] - bounds[axis], min(pos[axis], self.initial[axis] + bounds[axis]))])
+			points[-1].sort()
+		self.Left(points[0][0])
+		self.Width(points[0][1] - points[0][0])
+		self.Top(points[1][0])
+		self.Height(points[1][1] - points[1][0])
 		# make sure we don't allow the edit rectangle to go bigger than the level size
 		Rectangle.__init__(self, self.Clip(self.levelrect))
 
