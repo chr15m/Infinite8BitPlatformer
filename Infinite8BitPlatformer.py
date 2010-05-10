@@ -21,8 +21,8 @@ from PodSix.Resource import *
 if platform == "win32":
 	gfx.SetIcon(os.path.join("resources", "icon.gif"))
 
-#from PodSix.Config import config
-#config.SetFilename("Infinite8BitPlatformer.cfg")
+from PodSix.Config import config
+config.SetFilename("Infinite8BitPlatformer.cfg")
 
 #from PodSix.SplashScreen import SplashScreen
 #s = SplashScreen()
@@ -38,4 +38,4 @@ else:
 	c.Launch()
 
 # save the config file on exit
-#config.Save()
+config.Save()

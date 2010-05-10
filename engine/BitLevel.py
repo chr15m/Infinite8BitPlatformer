@@ -39,7 +39,7 @@ if not hasattr(zipfile.ZipFile, "extract"):
 		out = file(path.join(dest, name), "wb")
 		out.write(data)
 		out.close()
-	zipfile.ZipFile.extract = extract	
+	zipfile.ZipFile.extract = extract
 
 class BitLevel(Level, SVGLoader, Paintable):
 	def __init__(self, name, editLayer):
