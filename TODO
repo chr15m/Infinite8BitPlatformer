@@ -1,5 +1,7 @@
 * automatic updates
 
+* server/test client with full coverage of all network messages
+
 * network client
 	* make all LevelManager commands be proxied to the server
 	* don't allow LevelManager commands if not connected

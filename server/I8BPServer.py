@@ -43,9 +43,19 @@ class I8BPChannel(Channel):
 	def NoIDError(self):
 		# this client tried to use the server without having a UUID first
 		# we'll tell them and disconnect them and log it
-		self.Send({"server_error": "You don't have a UUID yet!"})
+		self.Send({"server_error": "You don't have a UUID yet, or you supplied the wrong UUID."})
 		self.Disconnect()
 		self._server.Log("No ID Error! Client %d (%s)" % (self.ID, self.playerID))
+	
+	def RebroadcastAndStore(self, data, key):
+		# the player has made some kind of move
+		if data.has_key("id") and data['id'] == self.playerID:
+			# tell neighbours what move i just made
+			self.SendToNeighbours(data)
+			# update my state with what move i just made
+			self.state[key] = data
+		else:
+			self.NoIDError()
 	
 	##################################
 	### Network specific callbacks ###
@@ -58,42 +68,37 @@ class I8BPChannel(Channel):
 		self.lastUpdate = time()
 	
 	def Network_playerid(self, data):
-		# client has asked for a new unique, persistent, secret UUID
+		# either player has supplied their unique player ID, in which case we remember it
+		if data.has_key("id"):
+			self.playerID = data['id']
+		# or client has asked for a new unique, persistent, secret UUID
 		# creates the player's unique id and sends it back to them
 		# this id is secret and persistent, and not known by any other client
-		self.playerID = self._server.GetNewPlayerID(self)
-		self.Send({"action": "playerid", "id": self.playerID})
+		else:
+			self.playerID = self._server.GetNewPlayerID(self)
+			self.Send({"action": "playerid", "id": self.playerID})
 	
 	def Network_move(self, data):
-		# the player has made some kind of move
-		# mirror it to other players in the same level
-		# and update our known state
-		if data.has_key("id"):
-			# tell neighbours what move i just made
-			# update my state with what move i just made
- 			pass
-		else:
-			self.NoIDError()
+		# the player has made some type of move
+		self.RebroadcastAndStore(data, "move")
 	
 	def Network_chat(self, data):
 		# this client's player is saying something for others to hear
-		if data.has_key("id"):
-			# tell neighbours what i just said
-			# update my state with what i just said
-			pass
-		else:
-			self.NoIDError()
+		self.RebroadcastAndStore(data, "chat")
 	
 	def Network_setlevel(self, data):
 		# the player has entered a particular level
 		# send them the state of other players, and the state of other players to them
-		if data.has_key("id"):
+		if data.has_key("id") and data['id'] == self.playerID:
 			if self.level:
 				self.SendToNeighbours({"action": "player_leaving"})
 			# TODO: stream the lastest version of this level back to the user if they have an out of date copy
 			self.level = data['level']
 			self.SendToNeighbours({"action": "player_entering"})
-			# TODO: send to this player all of the states of the other players in the room
+			# send to this player all of the states of the other players in the room
+			for n in self._server.GetNeighbours(self):
+				for s in n.state:
+					self.Send(n.state[s])
 		else:
 			self.NoIDError()
 	
@@ -105,10 +110,7 @@ class I8BPServer(Server):
 	# It's not secure in any way (e.g. it's very easy to snoop on other people's data, and a bit harder to impersonate them)
 	# Don't use this server for serious, important conversations. It's only marginally more secure than email.
 	
-	# TODO: time-out non-updating clients
-	# TODO: make generic disconnect-with-reason method
 	# TODO: disconnect clients with the wrong version
-	# TODO: disconnect clients who don't have an id but try to do something
 	channelClass = I8BPChannel
 	
 	def __init__(self, *args, **kwargs):
@@ -133,7 +135,6 @@ class I8BPServer(Server):
 	def GetNewPlayerID(self, channel):
 		# make a new secret player ID and add it to our pool
 		newID = str(uuid1())
-		# TODO: add this to a pool of known IDs
 		# TODO: check to make sure no ID gets used twice
 		return newID
 	

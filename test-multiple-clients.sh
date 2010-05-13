@@ -7,5 +7,6 @@ do
 	ids="$ids $!"
 	sleep 1
 done
-sleep 5
-kill $ids
+#sleep 5
+#kill $ids
+wait
