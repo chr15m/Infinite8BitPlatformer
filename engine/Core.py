@@ -5,15 +5,18 @@ from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
 from PodSix.Config import config
 
+from PodSixNet.Connection import connection
+
 from engine.Player import Player
 from engine.Notification import Notification
 from engine.EditLayer import EditLayer
 from engine.Hud import Hud
 from engine.BitCamera import BitCamera
 from engine.LevelManager import LevelManager
+from engine.NetMonitor import NetMonitor
 
 class Core(Game, EventMonitor, LevelManager):
-	def __init__(self):
+	def __init__(self, server="mccormick.cx"):
 		config.zoom = 5
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
@@ -28,10 +31,15 @@ class Core(Game, EventMonitor, LevelManager):
 		self.editLayer = EditLayer(self)
 		self.Add(self.editLayer)
 		self.hud = Hud(self)
+		self.net = NetMonitor(self, server)
 		self.Add(self.hud)
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 1.0)
 		LevelManager.__init__(self)
 		self.bgColor = (255, 255, 255)
+	
+	def Launch(self):
+		# connect to the server
+		Game.Launch(self)
 	
 	def Instructions(self):
 		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 5.0)
@@ -56,6 +64,7 @@ class Core(Game, EventMonitor, LevelManager):
 	###
 	
 	def Pump(self):
+		connection.Pump()
 		Game.Pump(self)
 		EventMonitor.Pump(self)
 	
