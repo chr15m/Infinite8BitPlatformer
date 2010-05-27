@@ -29,14 +29,11 @@ config.SetFilename("Infinite8BitPlatformer.cfg")
 #s.Launch()
 
 from engine.Core import Core
-c = Core((len(argv) == 2 and argv[1] != "profile") and argv[1] or "mccormick.cx")
+c = Core((len(argv) >= 2 and argv[1] != "profile") and argv[1] or "mccormick.cx")
 
-if len(argv) == 2:
-	if argv[1] == "profile":
-		import cProfile as profile
-		profile.run('c.Launch()')
-	else:
-		c.Launch()
+if "profile" in argv:
+	import cProfile as profile
+	profile.run('c.Launch()')
 else:
 	c.Launch()
 

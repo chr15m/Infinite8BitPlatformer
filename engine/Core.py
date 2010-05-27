@@ -5,8 +5,6 @@ from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
 from PodSix.Config import config
 
-from PodSixNet.Connection import connection
-
 from engine.Player import Player
 from engine.Notification import Notification
 from engine.EditLayer import EditLayer
@@ -17,7 +15,9 @@ from engine.NetMonitor import NetMonitor
 
 class Core(Game, EventMonitor, LevelManager):
 	def __init__(self, server="mccormick.cx"):
+		self.serverhost = server
 		config.zoom = 5
+		self.bgColor = (255, 255, 255)
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
@@ -28,17 +28,22 @@ class Core(Game, EventMonitor, LevelManager):
 		sfx.LoadSound("jump")
 		Game.__init__(self)
 		EventMonitor.__init__(self)
+		# connection to the network
+		self.net = NetMonitor(self)
+		self.Add(self.net)
+		# The editLayer user interface (hud for editing levels)
 		self.editLayer = EditLayer(self)
 		self.Add(self.editLayer)
+		# The other hud stuff
 		self.hud = Hud(self)
-		self.net = NetMonitor(self, server)
 		self.Add(self.hud)
+		# Create player and camera and put some text on the screen
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 1.0)
+		# Give us the methods for manipulating level collections
 		LevelManager.__init__(self)
-		self.bgColor = (255, 255, 255)
 	
 	def Launch(self):
-		# connect to the server
+		self.net.Connect(self.serverhost)
 		Game.Launch(self)
 	
 	def Instructions(self):
@@ -64,7 +69,6 @@ class Core(Game, EventMonitor, LevelManager):
 	###
 	
 	def Pump(self):
-		connection.Pump()
 		Game.Pump(self)
 		EventMonitor.Pump(self)
 	

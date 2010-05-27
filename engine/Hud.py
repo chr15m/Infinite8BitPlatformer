@@ -59,8 +59,7 @@ class ConnectedIcon(Concurrent, Image):
 		Concurrent.__init__(self)
 	
 	def Draw(self):
-		print self.parent.game.net.serverconnection
-		if not self.parent.game.net.serverconnection and (self.frame / 4) % 2:
+		if self.parent.game.net.serverconnection != 1 and (self.frame / 10) % 2:
 			gfx.BlitImage(self, center=self.pos)
 
 class Hud(Concurrent, EventMonitor, ConnectionListener):
@@ -93,18 +92,15 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 		print "Hud got network data:", data
 	
 	def Network_connected(self, data):
-		print 'CONNECTED'
-		self.serverconnection = 1
-		self.game.AddMessage("Connected to the server", None, 5.0)
+		self.game.AddMessage('Connected to ' + self.game.serverhost, None, 5.0)
 	
 	def Network_error(self, data):
 		self.game.AddMessage('error: ' + data['error'][1], None, 5.0)
-		self.serverconnection = 2
-		connection.Close()
+		if self.game.net.serverconnection:
+			connection.Close()
 	
 	def Network_disconnected(self, data):
-		self.serverconnection = 2
-		self.game.AddMessage('disconnected from the server', None, 5.0)
+		self.game.AddMessage('Disconnected from ' + self.game.serverhost, None, 5.0)
 	
 	###
 	###	Concurrency events

@@ -2,6 +2,7 @@ from time import sleep, strftime, time
 from weakref import WeakKeyDictionary
 import sys
 from uuid import uuid1
+import hashlib
 
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
@@ -104,6 +105,24 @@ class I8BPChannel(Channel):
 	
 	def Network_error(self, data):
 		print "Error!", data
+
+class Level:
+	""" Each level has an md5 of the zipfile we know about, and an array of other changes which have been applied to that level. """
+	def __init__(self, filename=None):
+		if filename:
+			self.filename = filename
+			md5hash = hashlib.md5()
+			md5hash.update(file(filename).read())
+			self.md5 = md5hash.hexdigest()
+		else:
+			# create a new unique file with a unique filename
+			pass
+		self.changes = []
+	
+	def Save(self, data):
+		file(self.filename)
+		self.changes = []
+		pass
 
 class I8BPServer(Server):
 	# This is an early, quite naive implementation of the game server.
