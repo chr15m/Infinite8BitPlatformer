@@ -5,6 +5,8 @@ from PodSix.Platformer.Item import Item
 from PodSix.ArrayOps import Multiply, Subtract
 from PodSix.Config import config
 
+from PodSixNet.Connection import ConnectionListener
+
 from engine.Sprite import Sprite
 
 def chatboxShowing(fn):
@@ -13,7 +15,7 @@ def chatboxShowing(fn):
 			return fn(self, *args, **kwargs)
 	return newfn
 
-class Player(Character, EventMonitor, Sprite):
+class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	def __init__(self, game, *args, **kwargs):
 		Character.__init__(self, *args, **kwargs)
 		EventMonitor.__init__(self)
@@ -72,8 +74,13 @@ class Player(Character, EventMonitor, Sprite):
 		self.portal = None
 	
 	def Pump(self):
+		ConnectionListener.Pump(self)
 		Character.Pump(self)
 		EventMonitor.Pump(self)
+	
+	###
+	### Network events received
+	###
 	
 	###
 	### Input events etc.

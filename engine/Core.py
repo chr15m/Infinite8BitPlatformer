@@ -5,6 +5,8 @@ from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
 from PodSix.Config import config
 
+from PodSixNet.Connection import ConnectionListener
+
 from engine.Player import Player
 from engine.Notification import Notification
 from engine.EditLayer import EditLayer
@@ -13,7 +15,7 @@ from engine.BitCamera import BitCamera
 from engine.LevelManager import LevelManager
 from engine.NetMonitor import NetMonitor
 
-class Core(Game, EventMonitor, LevelManager):
+class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	def __init__(self, server="mccormick.cx"):
 		self.serverhost = server
 		config.zoom = 5
@@ -69,6 +71,7 @@ class Core(Game, EventMonitor, LevelManager):
 	###
 	
 	def Pump(self):
+		ConnectionListener.Pump(self)
 		Game.Pump(self)
 		EventMonitor.Pump(self)
 	

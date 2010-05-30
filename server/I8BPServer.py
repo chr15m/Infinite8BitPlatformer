@@ -93,13 +93,22 @@ class I8BPChannel(Channel):
 		if data.has_key("id") and data['id'] == self.playerID:
 			if self.level:
 				self.SendToNeighbours({"action": "player_leaving"})
-			# TODO: stream the lastest version of this level back to the user if they have an out of date copy
+			# TODO: check the md5 the client sent us and if it's different
+			# stream the lastest version of this level back to the user if they have an out of date copy
 			self.level = data['level']
 			self.SendToNeighbours({"action": "player_entering"})
 			# send to this player all of the states of the other players in the room
 			for n in self._server.GetNeighbours(self):
 				for s in n.state:
 					self.Send(n.state[s])
+		else:
+			self.NoIDError()
+	
+	def Network_leavelevel(self, data):
+		if data.has_key("id") and data['id'] == self.playerID:
+			if self.level:
+				self.SendToNeighbours({"action": "player_leaving"})
+				self.level = None
 		else:
 			self.NoIDError()
 	
