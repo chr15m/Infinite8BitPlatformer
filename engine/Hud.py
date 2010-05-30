@@ -54,7 +54,7 @@ class FeedbackLink(Label):
 class ConnectedIcon(Concurrent, Image):
 	def __init__(self, parent):
 		self.parent = parent
-		self.pos = [24, 396]
+		self.pos = [gfx.width - 24, 24]
 		Image.__init__(self, path.join("resources", "icons", "disconnected.png"))
 		Concurrent.__init__(self)
 	

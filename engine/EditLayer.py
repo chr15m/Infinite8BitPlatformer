@@ -225,31 +225,34 @@ class EditLayer(Concurrent, EventMonitor):
 	###
 	
 	def Pump(self):
-		if self.On():
-			self.editInterface.Pump()
-			Concurrent.Pump(self)
-			EventMonitor.Pump(self)
-		else:
-			self.editButton.Pump()
+		if self.levelmanager.net.serverconnection == 1:
+			if self.On():
+				self.editInterface.Pump()
+				Concurrent.Pump(self)
+				EventMonitor.Pump(self)
+			else:
+				self.editButton.Pump()
 	
 	def Update(self):
-		if self.On():
-			self.editInterface.Update()
-			Concurrent.Update(self)
-		else:
-			self.editButton.Update()
+		if self.levelmanager.net.serverconnection == 1:
+			if self.On():
+				self.editInterface.Update()
+				Concurrent.Update(self)
+			else:
+				self.editButton.Update()
 	
 	def Draw(self):
-		if self.On():
-			Concurrent.Draw(self)
-			if self.mode and self.level.camera:
-				[o.DrawEdit() for o in self.level.layer.GetAll() if o in self.level.camera.GetVisible()]
-			self.editInterface.Draw()
-			self.editButton.Draw()
-		
-			self.pentool.Draw()
-		else:
-			self.editButton.Draw()
+		if self.levelmanager.net.serverconnection == 1:
+			if self.On():
+				Concurrent.Draw(self)
+				if self.mode and self.level.camera:
+					[o.DrawEdit() for o in self.level.layer.GetAll() if o in self.level.camera.GetVisible()]
+				self.editInterface.Draw()
+				self.editButton.Draw()
+			
+				self.pentool.Draw()
+			else:
+				self.editButton.Draw()
 			
 			
 	###
