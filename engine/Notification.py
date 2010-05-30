@@ -13,15 +13,27 @@ class Notification(TimedText):
 		kwargs['position'] = {"centerx": 0.5, "top": top}
 		if not kwargs.has_key('time') or not kwargs['time']:
 			kwargs['time'] = 0.2
-		kwargs['color'] = [150, 150, 150]
+		kwargs['color'] = [75, 75, 75]
 		if kwargs.has_key('callback') and kwargs['callback']:
 			self.callback = kwargs['callback']
 		del kwargs['callback']
+		
+		self.black = [0, 0, 0]
+		self.white = [255, 255, 255, 150]
 		
 		Notification.slots[slot] = self
 		self.slot = slot
 		TimedText.__init__(self, *args, **kwargs)
 		self.originalColor = self.color[:]
+	
+	def Draw(self):
+		if self.visible and hasattr(self, "rect"):
+			gfx.DrawRect([self.rect.left - 3, self.rect.top - 3, self.rect.width + 7, self.rect.height + 7], self.white, 0)
+			gfx.DrawLines([(self.rect.left - 3, self.rect.top - 4), (self.rect.right + 4, self.rect.top - 4)], self.black, False)
+			gfx.DrawLines([(self.rect.left - 3, self.rect.bottom + 4), (self.rect.right + 4, self.rect.bottom + 4)], self.black, False)
+			gfx.DrawLines([(self.rect.left - 4, self.rect.top - 3), (self.rect.left - 4, self.rect.bottom + 4)], self.black, False)
+			gfx.DrawLines([(self.rect.right + 4, self.rect.top - 3), (self.rect.right + 4, self.rect.bottom + 4)], self.black, False)
+		TimedText.Draw(self)
 	
 	#def Update(self):
 	#	self.color = [max(15, int(self.counter / self.time * x)) for x in self.originalColor]

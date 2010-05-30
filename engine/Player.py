@@ -42,7 +42,7 @@ class Player(Character, EventMonitor, Sprite):
 		
 		# TODO: check for a copy of the item instead of the actual item
 		if isinstance(who, Item) and who.visible and not who in self.inventory:
-			self.game.AddMessage("got " + who.description)
+			self.game.AddMessage("got" + (who.description and " " + who.description or ""), None, 2)
 			# TODO: add a copy of the item instead of the actual item
 			self.inventory.append(who)
 			who.Hide()
