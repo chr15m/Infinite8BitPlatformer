@@ -30,7 +30,9 @@ class NetMonitor(ConnectionListener, Concurrent):
 		# which should disconnect us from the server
 		if self.playerID:
 			data.update({"id": self.playerID})
-		self.Send(data)
+		if self.serverconnection == 1:
+			self.Send(data)
+			return True
 	
 	def Disconnect(self):
 		if self.serverconnection == 1:

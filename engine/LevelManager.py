@@ -62,8 +62,9 @@ class LevelManager:
 			self.Remove(self.editLayer)
 			if self.level:
 				# tell the server we've left this level
-				if self.net.serverconnection:
-					self.Send({"action": "leavelevel", "id": self.net.playerID})
+				self.net.SendWithID({"action": "leavelevel"})
+				# we don't care about any other players now
+				self.players.Clear()
 				if not back:
 					# add the source level to the history
 					self.AddHistory([self.level, (portal and portal.id) or (self.player.platform and self.player.platform.id) or (self.player.lastplatform and self.player.lastplatform.id) or "start"])
@@ -71,8 +72,7 @@ class LevelManager:
 				self.levels[self.level].RemovePlayerCamera()
 			self.level = level
 			# if we're connected already, tell the server (otherwise we'll tell the server when we get the Network_connected callback)
-			if self.net.serverconnection:
-				self.Send({"action": "setlevel", "id": self.net.playerID, "level": str(self.level)})
+			self.net.SendWithID({"action": "setlevel", "level": str(self.level)})
 			# add the destination to the history
 			self.AddHistory([self.level, start or "start"])
 			# make sure that start actually exists, otherwise find a random portal/platform to jump to
@@ -102,7 +102,7 @@ class LevelManager:
 	def SetLevelName(self, name):
 		self.levels[self.level].displayName = name
 		self.hud.levelLabel.text = name
-
+	
 	###
 	### Network events
 	###
@@ -110,5 +110,5 @@ class LevelManager:
 	def Network_playerid(self, data):
 		# got my player ID, now send a new level i want to be on
 		#self.playerID = data['id']
-		self.Send({"action": "setlevel", "id": self.net.playerID, "level": str(self.level)})
+		self.net.SendWithID({"action": "setlevel", "id": self.net.playerID, "level": str(self.level)})
 

@@ -14,6 +14,7 @@ from engine.Hud import Hud
 from engine.BitCamera import BitCamera
 from engine.LevelManager import LevelManager
 from engine.NetMonitor import NetMonitor
+from engine.PlayerManager import PlayerManager
 
 class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	def __init__(self, server="mccormick.cx"):
@@ -42,6 +43,7 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		# Create player and camera and put some text on the screen
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 1.0)
 		# Give us the methods for manipulating level collections
+		self.players = PlayerManager(self)
 		LevelManager.__init__(self)
 	
 	def Launch(self):
@@ -52,7 +54,8 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 5.0)
 	
 	def Setup(self, message="", callback=None, time=None):
-		self.player = Player(self, [0, 0, 11.0 / gfx.width, 12.0 / gfx.width])
+		# create our main player with id 0
+		self.player = Player(self, 0, [0, 0, 11.0 / gfx.width, 12.0 / gfx.width])
 		self.camera = BitCamera([0, 0, 1.0 / config.zoom, float(gfx.height) / gfx.width / config.zoom], tracking=self.player)
 		if message:
 			self.AddMessage(message, callback, time)
@@ -71,9 +74,10 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	###
 	
 	def Pump(self):
-		ConnectionListener.Pump(self)
 		Game.Pump(self)
 		EventMonitor.Pump(self)
+		ConnectionListener.Pump(self)
+		self.players.Pump()
 	
 	def Run(self):
 		if not self.level:

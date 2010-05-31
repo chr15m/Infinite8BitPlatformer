@@ -7,6 +7,14 @@ import hashlib
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
 
+def RequireID(fn):
+	def RequireIDFn(self, data):
+		if data.has_key("id") and data['id'] == self.playerID:
+			fn(self, data)
+		else:
+			self.NoIDError()
+	return RequireIDFn
+
 class I8BPChannel(Channel):
 	"""
 	This is the server representation of a single connected client.
@@ -20,6 +28,7 @@ class I8BPChannel(Channel):
 		self.level = None
 		# this player's last known state, such as last move performed, position etc.
 		self.state = {}
+		self.state["chat"] = []
 		self.lastUpdate = 0
 		Channel.__init__(self, *args, **kwargs)
 	
@@ -48,16 +57,6 @@ class I8BPChannel(Channel):
 		self.Disconnect()
 		self._server.Log("No ID Error! Client %d (%s)" % (self.ID, self.playerID))
 	
-	def RebroadcastAndStore(self, data, key):
-		# the player has made some kind of move
-		if data.has_key("id") and data['id'] == self.playerID:
-			# tell neighbours what move i just made
-			self.SendToNeighbours(data)
-			# update my state with what move i just made
-			self.state[key] = data
-		else:
-			self.NoIDError()
-	
 	##################################
 	### Network specific callbacks ###
 	##################################
@@ -79,38 +78,52 @@ class I8BPChannel(Channel):
 			self.playerID = self._server.GetNewPlayerID(self)
 			self.Send({"action": "playerid", "id": self.playerID})
 	
+	@RequireID
+	def Network_item(self, data):
+		# the player got an item
+		self.SendtoNeighbours(data)
+	
+	@RequireID
 	def Network_move(self, data):
 		# the player has made some type of move
-		self.RebroadcastAndStore(data, "move")
+		self.SendToNeighbours(data)
+		self.state["move"] = data
 	
+	@RequireID
 	def Network_chat(self, data):
 		# this client's player is saying something for others to hear
-		self.RebroadcastAndStore(data, "chat")
+		self.SendToNeighbours(data)
+		# add the latest message to the message stack
+		self.state["chat"].append(data["message"])
+		# make sure we only remember the last few messages
+		self.state["chat"] =  self.state["chat"][-5:]
 	
+	@RequireID
 	def Network_setlevel(self, data):
 		# the player has entered a particular level
 		# send them the state of other players, and the state of other players to them
-		if data.has_key("id") and data['id'] == self.playerID:
-			if self.level:
-				self.SendToNeighbours({"action": "player_leaving"})
-			# TODO: check the md5 the client sent us and if it's different
-			# stream the lastest version of this level back to the user if they have an out of date copy
-			self.level = data['level']
-			self.SendToNeighbours({"action": "player_entering"})
-			# send to this player all of the states of the other players in the room
-			for n in self._server.GetNeighbours(self):
-				for s in n.state:
-					self.Send(n.state[s])
-		else:
-			self.NoIDError()
+		if self.level:
+			self.SendToNeighbours({"action": "player_leaving"})
+		# TODO: check the md5 the client sent us and if it's different
+		# stream the lastest version of this level back to the user if they have an out of date copy
+		self.level = data['level']
+		self.SendToNeighbours({"action": "player_entering"})
+		# send to this player all of the states of the other players in the room
+		for n in self._server.GetNeighbours(self):
+			# tell me about all my neighbours
+			self.Send({"action": "player_entering", "id": n.ID, "servertime": time()})
+			# tell me about the states of all my neighbours
+			for s in n.state:
+				if n.state[s]:
+					state = n.state[s].copy()
+					state["action"] = s
+					self.Send(state)
 	
+	@RequireID
 	def Network_leavelevel(self, data):
-		if data.has_key("id") and data['id'] == self.playerID:
-			if self.level:
-				self.SendToNeighbours({"action": "player_leaving"})
-				self.level = None
-		else:
-			self.NoIDError()
+		if self.level:
+			self.SendToNeighbours({"action": "player_leaving"})
+			self.level = None
 	
 	def Network_error(self, data):
 		print "Error!", data

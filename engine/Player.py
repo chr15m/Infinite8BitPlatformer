@@ -16,9 +16,10 @@ def chatboxShowing(fn):
 	return newfn
 
 class Player(Character, EventMonitor, Sprite, ConnectionListener):
-	def __init__(self, game, *args, **kwargs):
-		Character.__init__(self, *args, **kwargs)
+	def __init__(self, game, playerid, *args, **kwargs):
+		Character.__init__(self, rectangle=[0, 0, 11.0 / gfx.width, 12.0 / gfx.width])
 		EventMonitor.__init__(self)
+		self.playerid = playerid
 		self.game = game
 		self.chatbox = game.hud.chatBox
 		self.inventory = []
@@ -49,6 +50,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 			self.inventory.append(who)
 			who.Hide()
 			sfx.PlaySound("item")
+			#self.Send({"action": "item", "item_id": who.name})
 		
 		if isinstance(who, Portal):
 			self.portal = who
@@ -76,11 +78,24 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	def Pump(self):
 		ConnectionListener.Pump(self)
 		Character.Pump(self)
-		EventMonitor.Pump(self)
+		# network players ignore events (keypresses, joysticks etc.)
+		if not self.playerid:
+			EventMonitor.Pump(self)
 	
 	###
-	### Network events received
+	### Network stuff
 	###
+	
+	def SendMove(self, **move):
+		move.update({"action": "move", "center": self.rectangle.Center(), "velocity": self.velocity})
+		self.game.net.SendWithID(move)
+	
+	def Network_move(self, data):
+		if data['id'] == self.playerid:
+			self.rectangle.Center(data['center'])
+			self.velocity = data['velocity']
+			if data['move'] in ["WalkRight", "WalkLeft", "StopRight", "StopLeft", "Jump"]:
+				getattr(self, data['move'])()
 	
 	###
 	### Input events etc.
@@ -89,24 +104,29 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	# key events
 	@chatboxShowing
 	def KeyDown_right(self, e):
+		self.SendMove(move="WalkRight")
 		self.WalkRight()
 	
 	@chatboxShowing
 	def KeyDown_left(self, e):
+		self.SendMove(move="WalkLeft")
 		self.WalkLeft()
 	
 	@chatboxShowing
 	def KeyUp_right(self, e):
+		self.SendMove(move="StopRight")
 		self.StopRight()
 	
 	@chatboxShowing
 	def KeyUp_left(self, e):
+		self.SendMove(move="StopLeft")
 		self.StopLeft()
 	
 	@chatboxShowing
 	def KeyDown_up(self, e):
 		if self.platform:
 			sfx.PlaySound("jump")
+		self.SendMove(move="Jump")
 		self.Jump()
 	
 	@chatboxShowing
