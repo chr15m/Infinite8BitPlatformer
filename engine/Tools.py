@@ -18,6 +18,7 @@ class DrawTool(ImageRadioButton):
 		self.mouseDownPos = None
 						
 	def OnMouseDown(self, pos):
+		self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendown", "tool": self.__class__.__name__})
 		self.mouseDownPos = pos
 		coordinates = self.parent.level.camera.FromScreenCoordinates(pos)
 		self.currentSurface = self.parent.GetPropUnderMouse(coordinates)
@@ -26,12 +27,16 @@ class DrawTool(ImageRadioButton):
 		return coordinates
 		
 	def OnMouseMove(self,pos):
+		if self.mouseDownPos:
+			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penmove", "tool": self.__class__.__name__})
 		self.lastPos = pos
 		
 	def OnMouseUp(self,pos):
+		if not self.currentSurface != self:
+			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penup", "tool": self.__class__.__name__})
 		self.currentSurface = None
 		self.lastPos = None
-		self.MouseDownPos = None
+		self.mouseDownPos = None
 				
 	def Pressed(self):
 		self.parent.selected = self		

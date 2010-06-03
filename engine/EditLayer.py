@@ -128,6 +128,7 @@ class EditLayer(Concurrent, EventMonitor):
 	def __init__(self, levelmanager):
 		# whether edit mode is showing or not
 		self.levelmanager = levelmanager
+		self.game = levelmanager
 		self.mode = False
 		self.level = None
 		self.editButton = EditButton(self)
@@ -288,6 +289,7 @@ class EditLayer(Concurrent, EventMonitor):
 				elif self.selected == 'delete':
 					if self.GetPropUnderMouse(p) != self.level:
 						delprop = self.GetPropUnderMouse(p)
+						self.game.net.SendWithID({"action": "edit", "instruction": "delete", "objectid": str(delprop.id)})
 						if isinstance(delprop, Platform):
 							# make sure there's at least one platform level in this level
 							if len(self.level.layer.platforms) == 1:
@@ -304,7 +306,7 @@ class EditLayer(Concurrent, EventMonitor):
 				elif type(self.selected) is not str:
 					# selected in a tool object not a string
 					#pos = [int(x * gfx.width) for x in p]
-					self.selected.OnMouseDown(e.pos)				
+					self.selected.OnMouseDown(e.pos)
 	
 	@editOn
 	def MouseMove(self, e):
@@ -319,6 +321,7 @@ class EditLayer(Concurrent, EventMonitor):
 					self.rect.SetCorner(e.pos)
 			elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
 				self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
+				self.game.net.SendWithID({"action": "edit", "instruction": "drag", "objectid": str(self.currentSurface.id), "pos": self.level.camera.FromScreenCoordinates(e.pos)})
 			elif type(self.selected) is not str:
 				self.selected.OnMouseMove(e.pos)
 			
@@ -345,6 +348,7 @@ class EditLayer(Concurrent, EventMonitor):
 				if self.selected in ['platform', 'portal', 'item']:
 					self.rect.Absolute()
 					self.level.Create(self.selected, {'rectangle': list(self.rect)})
+					self.game.net.SendWithID({"action": "edit", "instruction": "create", "type": self.selected, "rectangle": list(self.rect)})
 			self.Remove(self.rect)
 		self.rect = None
 		if self.currentSurface:
