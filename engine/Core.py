@@ -74,10 +74,10 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	###
 	
 	def Pump(self):
-		Game.Pump(self)
-		EventMonitor.Pump(self)
 		ConnectionListener.Pump(self)
 		self.players.Pump()
+		Game.Pump(self)
+		EventMonitor.Pump(self)
 	
 	def Run(self):
 		if not self.level:

@@ -85,6 +85,7 @@ class LevelManager:
 					# didn't find a portal, just pick the first platform
 					start = self.levels[self.level].layer.platforms[0].id
 			self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
+			self.player.SendCurrentMove()
 			self.Add(self.levels[self.level])
 			self.editLayer.SetLevel(self.levels[level])
 			self.Add(self.editLayer)
@@ -107,8 +108,8 @@ class LevelManager:
 	### Network events
 	###
 	
-	def Network_playerid(self, data):
+	#def Network_playerid(self, data):
 		# got my player ID, now send a new level i want to be on
 		#self.playerID = data['id']
-		self.net.SendWithID({"action": "setlevel", "id": self.net.playerID, "level": str(self.level)})
+	#	self.net.SendWithID({"action": "setlevel", "id": self.net.playerID, "level": str(self.level)})
 

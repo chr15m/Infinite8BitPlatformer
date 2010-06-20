@@ -88,8 +88,8 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 	###	Network events
 	###
 	
-	def Network(self, data):
-		print "Hud got network data:", data
+	#def Network(self, data):
+	#	print "Hud got network data:", data
 	
 	def Network_connected(self, data):
 		self.game.AddMessage('Connected to ' + self.game.serverhost, None, 5.0)

@@ -14,6 +14,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 		# do we have a current connection with the server?
 		self.serverconnection = 0
 		self.playerID = None
+		self.queued = {}
 		# randomly have an ID already (clients which have connected before)
 		#if randint(0, 1) and len(self.demo_ids):
 		#	self.playerID = self.demo_ids.pop()
@@ -30,9 +31,14 @@ class NetMonitor(ConnectionListener, Concurrent):
 		# which should disconnect us from the server
 		if self.playerID:
 			data.update({"id": self.playerID})
+		# send if we are connected
 		if self.serverconnection == 1:
 			self.Send(data)
 			return True
+		else:
+			# queue up the unsent action data
+			self.queued[data['action']] = data
+			return False
 	
 	def Disconnect(self):
 		if self.serverconnection == 1:
@@ -44,25 +50,37 @@ class NetMonitor(ConnectionListener, Concurrent):
 		ConnectionListener.Pump(self)
 		Concurrent.Pump(self)
 	
+	def ResendQueue(self):
+		for a in self.queued:
+			data = self.queued[a]
+			data.update({"id": self.playerID})
+			self.Send(self.queued[a])
+			print "NetMonitor QUEUED:", self.queued[a]
+		self.queued = {}
+	
 	#######################################
 	### Network event/message callbacks ###
 	#######################################
 	
 	def Network(self, data):
-		print "Received:", data
+		print "NetMonitor Received:", data
 	
 	def Network_playerid(self, data):
 		# got my player ID, now send a new level i want to be on
 		self.playerID = data['id']
 		#self.SendWithID({"action": "setlevel", "level": choice(self.levels)})
+		self.ResendQueue()
 	
 	def Network_player_entering(self, data):
-		print self.playerID, "Saw player with ID %d" % data['id']
+		print "NetMonitor", self.playerID, "Saw player with ID %d" % data['id']
 	
 	# built in stuff
 	
 	def Network_connected(self, data):
 		self.serverconnection = 1
+		# check if we have actions queued
+		if self.playerID:
+			self.ResendQueue()
 	
 	def Network_error(self, data):
 		self.serverconnection = 2

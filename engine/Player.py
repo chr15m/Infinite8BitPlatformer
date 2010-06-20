@@ -38,10 +38,12 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	
 	def Die(self):
 		sfx.PlaySound("die")
-		self.game.PlayerDied()
+		if self.game.player == self:
+			self.game.PlayerDied()
 	
 	def Collide(self, who):
 		Character.Collide(self, who)
+		# TODO: if we land on a platform, SendCurrentMove()
 		
 		# TODO: check for a copy of the item instead of the actual item
 		if isinstance(who, Item) and who.visible and not who in self.inventory:
@@ -90,12 +92,17 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		move.update({"action": "move", "center": self.rectangle.Center(), "velocity": self.velocity})
 		self.game.net.SendWithID(move)
 	
+	def SendCurrentMove(self):
+		self.SendMove(move=self.lastmove)
+	
 	def Network_move(self, data):
 		if data['id'] == self.playerid:
+			print "Player move:", self.playerid, data
 			self.rectangle.Center(data['center'])
 			self.velocity = data['velocity']
 			if data['move'] in ["WalkRight", "WalkLeft", "StopRight", "StopLeft", "Jump"]:
-				getattr(self, data['move'])()
+				# force the animation update
+				getattr(self, data['move'])(force=True)
 	
 	###
 	### Input events etc.
@@ -104,30 +111,30 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	# key events
 	@chatboxShowing
 	def KeyDown_right(self, e):
-		self.SendMove(move="WalkRight")
 		self.WalkRight()
+		self.SendMove(move="WalkRight")
 	
 	@chatboxShowing
 	def KeyDown_left(self, e):
-		self.SendMove(move="WalkLeft")
 		self.WalkLeft()
+		self.SendMove(move="WalkLeft")
 	
 	@chatboxShowing
 	def KeyUp_right(self, e):
-		self.SendMove(move="StopRight")
 		self.StopRight()
+		self.SendMove(move="StopRight")
 	
 	@chatboxShowing
 	def KeyUp_left(self, e):
-		self.SendMove(move="StopLeft")
 		self.StopLeft()
+		self.SendMove(move="StopLeft")
 	
 	@chatboxShowing
 	def KeyDown_up(self, e):
 		if self.platform:
 			sfx.PlaySound("jump")
-		self.SendMove(move="Jump")
 		self.Jump()
+		self.SendMove(move="Jump")
 	
 	@chatboxShowing
 	def KeyDown_return(self, e):

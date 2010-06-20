@@ -77,6 +77,12 @@ class I8BPChannel(Channel):
 		else:
 			self.playerID = self._server.GetNewPlayerID(self)
 			self.Send({"action": "playerid", "id": self.playerID})
+	@RequireID
+	def Network_edit(self, data):
+		# some type of edit action
+		if self.level:
+			self._server.AddLevelHistory(self.level, data)
+		self.SendtoNeighbours(data)
 	
 	@RequireID
 	def Network_item(self, data):
@@ -108,6 +114,9 @@ class I8BPChannel(Channel):
 		# stream the lastest version of this level back to the user if they have an out of date copy
 		self.level = data['level']
 		self.SendToNeighbours({"action": "player_entering"})
+		# send the current history of level changes to the client
+		for d in self._server.GetLevelHistory(self.level):
+			self.Send(d)
 		# send to this player all of the states of the other players in the room
 		for n in self._server.GetNeighbours(self):
 			# tell me about all my neighbours
@@ -157,6 +166,7 @@ class I8BPServer(Server):
 	def __init__(self, *args, **kwargs):
 		Server.__init__(self, *args, **kwargs)
 		self.clients = []
+		self.levelHistory = {}
 		# non-secret per-session IDs
 		self.ids = 0
 		self.Log('Infinite8BitPlatformer server listening on ' + ":".join([str(i) for i in kwargs['localaddr']]))
@@ -178,6 +188,19 @@ class I8BPServer(Server):
 		newID = str(uuid1())
 		# TODO: check to make sure no ID gets used twice
 		return newID
+	
+	def AddLevelHistory(self, level, data):
+		""" Add a level edit item to the history of changes of this level. """
+		if not self.levelHistory.has_key(level):
+			self.levelHistory[level] = []
+		self.levelHistory[level].append(data)
+	
+	def GetLevelHistory(self, level):
+		""" Get the history of changes of this level. """
+		if self.levelHistory.has_key(level):
+			return self.levelHistory[level]
+		else:
+			return []
 	
 	def Connected(self, client, addr):
 		# Sets the non-uuid non-secret ID for this session

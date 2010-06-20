@@ -20,12 +20,13 @@ class PlayerManager(ConnectionListener):
 		return self.game.levels[self.game.level]
 	
 	def Network_player_entering(self, data):
-		print 'Got player', data
+		print 'PlayerManager Got player', data
 		if not self.players.has_key(data['id']):
 			p = Player(self.game, data['id'])
 			self.GetLevel().AddCharacter(p)
 			p.SetLevel(self.GetLevel())
 			self.players[data['id']] = p
+			p.Pump()
 	
 	def Network_player_leaving(self, data):
 		if self.players.has_key(data['id']):
