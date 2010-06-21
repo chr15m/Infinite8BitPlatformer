@@ -200,7 +200,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return new
 	
 	def Create(self, which, data):
-		newthing = getattr(self, "Create" + which[0].capitalize() + which[1:], lambda x: x)(data)
+		newthing = getattr(self, "Create" + which.capitalize(), lambda x: x)(data)
 		#newthing.bitmap.Palette(palettes.all[self.palette])
 		return newthing
 	

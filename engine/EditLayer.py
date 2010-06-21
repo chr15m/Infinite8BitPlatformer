@@ -10,6 +10,8 @@ from PodSix.GUI.Button import TextButton, ImageButton, ImageRadioButton, ImageRa
 from PodSix.Platformer.Item import Item
 from PodSix.Platformer.Platform import Platform
 
+from PodSixNet.Connection import ConnectionListener
+
 from ColorPicker import ColorPicker
 from BitLevel import BitLevel
 
@@ -120,7 +122,7 @@ class EditButton(ImageButton):
 class EditInterface(Concurrent):
 	pass
 
-class EditLayer(Concurrent, EventMonitor):
+class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	"""
 	This layer holds the GUI for editing levels.
 	The edit button always shows, but toggling it shows or hides the other stuff.
@@ -208,6 +210,8 @@ class EditLayer(Concurrent, EventMonitor):
 		self.levelmanager.SaveLevel()
 	
 	def NewLevel(self):
+		# TODO: change this so that it doesn't do the portal creation stuff (now that we can press 'back')
+		# TODO: put the player into the new level
 		newlevel = self.levelmanager.NewLevel()
 		newlevel.Initialise()
 		dest = newlevel.Create("platform", {'rectangle': [0.48, 0.495, 0.04, 0.01]})
@@ -226,6 +230,7 @@ class EditLayer(Concurrent, EventMonitor):
 	###
 	
 	def Pump(self):
+		ConnectionListener.Pump(self)
 		if self.levelmanager.net.serverconnection == 1:
 			if self.On():
 				self.editInterface.Pump()
@@ -254,8 +259,7 @@ class EditLayer(Concurrent, EventMonitor):
 				self.pentool.Draw()
 			else:
 				self.editButton.Draw()
-			
-			
+	
 	###
 	###	Interface events
 	###
@@ -284,7 +288,9 @@ class EditLayer(Concurrent, EventMonitor):
 				elif self.selected == 'clone':
 					self.currentSurface = self.GetPropUnderMouse(p)
 					if self.currentSurface != self.level:
+						oldsurface = self.currentSurface
 						self.currentSurface = self.level.Clone(self.currentSurface)
+						self.game.net.SendWithID({"action": "edit", "instruction": "clone", "rectangle": list(self.rect), "objectid": str(oldsurface.id), "newobjectid": str(self.currentSurface.id)})
 						self.currentSurface.Drag(p)
 				elif self.selected == 'delete':
 					if self.GetPropUnderMouse(p) != self.level:
@@ -321,7 +327,7 @@ class EditLayer(Concurrent, EventMonitor):
 					self.rect.SetCorner(e.pos)
 			elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
 				self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
-				self.game.net.SendWithID({"action": "edit", "instruction": "drag", "objectid": str(self.currentSurface.id), "pos": self.level.camera.FromScreenCoordinates(e.pos)})
+				self.game.net.SendWithID({"action": "edit", "instruction": "drag", "pos": self.level.camera.FromScreenCoordinates(e.pos), "objectid": str(self.currentSurface.id)})
 			elif type(self.selected) is not str:
 				self.selected.OnMouseMove(e.pos)
 			
@@ -347,8 +353,8 @@ class EditLayer(Concurrent, EventMonitor):
 			if abs(self.rect[2]) > 0.002 and abs(self.rect[3]) > 0.002:
 				if self.selected in ['platform', 'portal', 'item']:
 					self.rect.Absolute()
-					self.level.Create(self.selected, {'rectangle': list(self.rect)})
-					self.game.net.SendWithID({"action": "edit", "instruction": "create", "type": self.selected, "rectangle": list(self.rect)})
+					newthing = self.level.Create(self.selected, {'rectangle': list(self.rect)})
+					self.game.net.SendWithID({"action": "edit", "instruction": "create", "type": self.selected, "rectangle": list(self.rect), "objectid": str(newthing.id)})
 			self.Remove(self.rect)
 		self.rect = None
 		if self.currentSurface:
@@ -356,4 +362,13 @@ class EditLayer(Concurrent, EventMonitor):
 			self.currentSurface = None
 		if type(self.selected) is not str:
 			self.selected.OnMouseUp([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
-
+	
+	###
+	###	Interface events
+	###
+	
+	def Network_edit(self, data):
+		print "EditLayer", data
+		i = data['instruction']
+		if i == "create":
+			self.level.Create(data['type'], {'rectangle': list(data['rectangle']), "id": data['objectid']})

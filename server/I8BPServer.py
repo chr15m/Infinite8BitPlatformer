@@ -82,12 +82,12 @@ class I8BPChannel(Channel):
 		# some type of edit action
 		if self.level:
 			self._server.AddLevelHistory(self.level, data)
-		self.SendtoNeighbours(data)
+		self.SendToNeighbours(data)
 	
 	@RequireID
 	def Network_item(self, data):
 		# the player got an item
-		self.SendtoNeighbours(data)
+		self.SendToNeighbours(data)
 	
 	@RequireID
 	def Network_move(self, data):
