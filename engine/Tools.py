@@ -12,32 +12,35 @@ class DrawTool(ImageRadioButton):
 				[Image(path.join("resources", "icons", filename)), Image(path.join("resources", "icons", selected))],
 				[gfx.width - 24, iconpos],
 				"line", buttonGroup)
-				
+		
 		self.currentSurface = None
 		self.lastPos = None
-		self.mouseDownPos = None
-						
+		self.mouseDown = False
+	
 	def OnMouseDown(self, pos):
-		self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendown", "tool": self.__class__.__name__})
-		self.mouseDownPos = pos
+		self.mouseDown = True
 		coordinates = self.parent.level.camera.FromScreenCoordinates(pos)
 		self.currentSurface = self.parent.GetPropUnderMouse(coordinates)
 		pos = [int(x * gfx.width) for x in coordinates]
 		self.lastPos = pos
-		return coordinates
-		
-	def OnMouseMove(self,pos):
-		if self.mouseDownPos:
+		self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendown", "tool": self.__class__.__name__})
+		return pos
+	
+	def OnMouseMove(self, pos):
+		absolute = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
+		if self.mouseDown:
 			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penmove", "tool": self.__class__.__name__})
-		self.lastPos = pos
-		
+		oldLastPos = self.lastPos
+		self.lastPos = absolute
+		return absolute, oldLastPos
+	
 	def OnMouseUp(self,pos):
 		if not self.currentSurface != self:
 			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penup", "tool": self.__class__.__name__})
 		self.currentSurface = None
 		self.lastPos = None
-		self.mouseDownPos = None
-				
+		self.mouseDown = False
+	
 	def Pressed(self):
 		self.parent.selected = self		
 		self.parent.CallMethod("Pressed_" + self.name)
@@ -52,28 +55,21 @@ class LineTool(DrawTool):
 		self.savedImage = None
 				
 	def OnMouseDown(self, pos):
-		p = DrawTool.OnMouseDown(self,pos)
-		self.currentSurface = self.parent.GetPropUnderMouse(p)
-		
-		pos = [int(x * gfx.width) for x in p]
+		pos = DrawTool.OnMouseDown(self,pos)
 		self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(pos,pos)
-		self.currentSurface.Paint(pos)		
-		
+		self.currentSurface.Paint(pos)
 		self.mouseDownPosition = pos
 		
 	def OnMouseMove(self,pos):
-		pos = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
-		if self.currentSurface and self.lastPos!=pos:
+		pos, lastPos = DrawTool.OnMouseMove(self, pos)
+		if self.currentSurface and lastPos != pos:
 			if self.savedImage:
 				# there is an image saved. paste it
 				self.currentSurface.PasteSubImage(self.savedImage, self.image_start)
 			#save area of image so we can revert it when drawing a new line
 			self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(self.mouseDownPosition,pos)
 			self.currentSurface.Line(self.mouseDownPosition, pos)
-		
-		DrawTool.OnMouseMove(self,pos)
-
-		
+	
 	def OnMouseUp(self,pos):
 		DrawTool.OnMouseUp(self,pos)
 		self.mouseDownPosition = None
@@ -83,65 +79,63 @@ class PenTool(DrawTool):
 	
 	def __init__(self, parent, buttonGroup, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="pen.png",selected="pen-invert.png",iconpos=8 * 33 + 72,*args,**kwargs)	
-					
+	
 	def OnMouseDown(self, pos):
 		p = DrawTool.OnMouseDown(self,pos)
-		self.currentSurface.Paint([int(x * gfx.width) for x in p])
-				
+		self.currentSurface.Paint(p)
+	
 	def OnMouseMove(self,pos):
-		pos = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
-		if self.currentSurface and self.lastPos!=pos:
-			self.currentSurface.Line(self.lastPos,pos)
-		DrawTool.OnMouseMove(self,pos)
-		
+		pos, lastPos = DrawTool.OnMouseMove(self, pos)
+		if self.currentSurface and lastPos != pos:
+			self.currentSurface.Line(lastPos, pos)
+
 class FillTool(DrawTool):
 	"""Flood fill tool"""
 	def __init__(self, parent, buttonGroup, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="fill.png",selected="fill-invert.png",iconpos=9 * 33 + 72,*args,**kwargs)	
-					
+	
 	def OnMouseDown(self, pos):
 		p = DrawTool.OnMouseDown(self,pos)
-		self.currentSurface.Fill([int(x * gfx.width) for x in p], self.currentSurface == self.parent.level)
+		self.currentSurface.Fill(p, self.currentSurface == self.parent.level)
 
 class AirbrushTool(DrawTool):
 	"""Old Amiga-style airbrush tool"""
 	def __init__(self, parent, buttonGroup, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="airbrush.png",selected="airbrush-invert.png",iconpos=10 * 33 + 72,*args,**kwargs)	
-		
-		self.radius = 20.0
+		self.radius = 3000.0 / gfx.width
 		self.position = None		# where the Pump() should draw to
 		
 	def OnMouseDown(self, pos):
-		DrawTool.OnMouseDown(self,pos)
-		self.PlotRandomPoint( pos )	
-		self.position = pos
-
-	def OnMouseMove(self,pos):
+		p = DrawTool.OnMouseDown(self,pos)
+		self.PlotRandomPoint(p)	
+		self.position = p
+	
+	def OnMouseMove(self, pos):
+		pos, lastPos = DrawTool.OnMouseMove(self, pos)
 		if self.currentSurface:
 			self.PlotRandomPoint( pos )
 			self.position = pos
-		DrawTool.OnMouseMove(self,pos)
-				
+	
 	def Pump(self):
 		"""call me repeatedly to keep the pixels flowing"""
 		if self.currentSurface:
 			self.PlotRandomPoint(self.position)
 		ImageRadioButton.Pump(self)
-				
+	
 	def PlotRandomPoint(self, pos):
 		"""Plot a random point on the currentSurface a distance 'radius' away from pos"""
 		pix = color = self.parent.color
 		count = 10
-		while pix==color and count>0:
-			theta = random.random()*2.0*pi
+		while pix == color and count > 0:
+			theta = random.random() * 2.0 * pi
 			r = self.radius * random.random()
 			xpos = int(r * cos(theta) + pos[0])
 			ypos = int(r * sin(theta) + pos[1])
 			try:
-				pix = self.currentSurface.GetPixel([int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates([xpos,ypos])])
+				pix = self.currentSurface.GetPixel([xpos, ypos])
 			except IndexError, ie:
 				pass
 			count -= 1
 		
-		self.currentSurface.Paint([int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates([xpos,ypos])])
+		self.currentSurface.Paint([xpos, ypos])
 	
