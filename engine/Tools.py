@@ -6,9 +6,10 @@ from PodSix.GUI.Button import ImageRadioButton
 from PodSix.Resource import *
 
 class DrawTool(ImageRadioButton):
-	def __init__(self, parent, buttonGroup, filename="image.png", selected="image-invert.png", iconpos=64, *args, **kwargs):
+	def __init__(self, parent, buttonGroup=None, filename="image.png", selected="image-invert.png", iconpos=64, *args, **kwargs):
 		self.parent = parent
-		ImageRadioButton.__init__(self,
+		if buttonGroup:
+			ImageRadioButton.__init__(self,
 				[Image(path.join("resources", "icons", filename)), Image(path.join("resources", "icons", selected))],
 				[gfx.width - 24, iconpos],
 				"line", buttonGroup)
@@ -57,7 +58,7 @@ class DrawTool(ImageRadioButton):
 
 class LineTool(DrawTool):
 	"""Line drawing tool"""
-	def __init__(self, parent, buttonGroup, *args, **kwargs):
+	def __init__(self, parent, buttonGroup=None, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="line.png",selected="line-invert.png",iconpos=7 * 33 + 72,*args,**kwargs)
 		
 		self.mouseDownPosition = None
@@ -87,7 +88,7 @@ class LineTool(DrawTool):
 class PenTool(DrawTool):
 	"""Pen drawing tool"""
 	
-	def __init__(self, parent, buttonGroup, *args, **kwargs):
+	def __init__(self, parent, buttonGroup=None, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="pen.png",selected="pen-invert.png",iconpos=8 * 33 + 72,*args,**kwargs)	
 	
 	def PenDown(self, pos, surface):
@@ -102,7 +103,7 @@ class PenTool(DrawTool):
 
 class FillTool(DrawTool):
 	"""Flood fill tool"""
-	def __init__(self, parent, buttonGroup, *args, **kwargs):
+	def __init__(self, parent, buttonGroup=None, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="fill.png",selected="fill-invert.png",iconpos=9 * 33 + 72,*args,**kwargs)	
 	
 	def PenDown(self, pos, surface):
@@ -111,7 +112,7 @@ class FillTool(DrawTool):
 
 class AirbrushTool(DrawTool):
 	"""Old Amiga-style airbrush tool"""
-	def __init__(self, parent, buttonGroup, *args, **kwargs):
+	def __init__(self, parent, buttonGroup=None, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="airbrush.png",selected="airbrush-invert.png",iconpos=10 * 33 + 72,*args,**kwargs)	
 		self.radius = 3000.0 / gfx.width
 		self.position = None		# where the Pump() should draw to
@@ -148,6 +149,6 @@ class AirbrushTool(DrawTool):
 			except IndexError, ie:
 				pass
 			count -= 1
-		
+		# TODO: make this pain happen correctly over the network
 		self.currentSurface.Paint([xpos, ypos])
 	

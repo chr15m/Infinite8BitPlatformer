@@ -1,5 +1,11 @@
 * automatic updates
 
+* make spray paint tool work correctly over the network
+
+* make the clone and drag tools work
+
+* make 'new level' just create a level, not create portals
+
 * server/test client with full coverage of all network messages
 
 * network client

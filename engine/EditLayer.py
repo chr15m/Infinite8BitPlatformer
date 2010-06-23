@@ -15,7 +15,7 @@ from PodSixNet.Connection import ConnectionListener
 from ColorPicker import ColorPicker
 from BitLevel import BitLevel
 
-from Tools import PenTool, LineTool, FillTool, AirbrushTool
+import Tools
 
 class EditBox(Rectangle, Concurrent):
 	def __init__(self, inlist, camera, levelrect):
@@ -148,10 +148,12 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone']:
 			FamilyButton(b, self, self.buttonGroup)
 		
-		self.pentool = PenTool(self, self.buttonGroup)
-		self.linetool = LineTool(self, self.buttonGroup)
-		self.filltool = FillTool(self, self.buttonGroup)
-		self.airbrushtool = AirbrushTool(self, self.buttonGroup)
+		self.pentool = Tools.PenTool(self, self.buttonGroup)
+		self.linetool = Tools.LineTool(self, self.buttonGroup)
+		self.filltool = Tools.FillTool(self, self.buttonGroup)
+		self.airbrushtool = Tools.AirbrushTool(self, self.buttonGroup)
+		# tools which remote users are currently using (created dynamically)
+		self.networktools = {}
 		
 		# the save button
 		self.editInterface.Add(SaveButton(self))
@@ -372,3 +374,21 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		i = data['instruction']
 		if i == "create":
 			self.level.Create(data['type'], {'rectangle': list(data['rectangle']), "id": data['objectid']})
+		elif i.startswith("pen"):
+			if data.has_key("objectid"):
+				print data['objectid']
+			print data['pos']
+			print data['instruction']
+			print data['tool']
+			print data['id']
+			if i == "pendown":
+				# create the tool for this user
+				self.networktools[data['id']] = getattr(Tools, data['tool'])(self)
+				prop = [o for o in self.level.layer.GetAll() if o.id == data['objectid']][0]
+				self.networktools[data['id']].PenDown(data['pos'], prop)
+			elif i == "penmove":
+				self.networktools[data['id']].PenMove(data['pos'])
+			elif i == "penup":
+				self.networktools[data['id']].PenUp()
+				del self.networktools[data['id']]
+
