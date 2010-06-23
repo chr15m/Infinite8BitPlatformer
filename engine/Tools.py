@@ -18,25 +18,35 @@ class DrawTool(ImageRadioButton):
 		self.mouseDown = False
 	
 	def OnMouseDown(self, pos):
-		self.mouseDown = True
 		coordinates = self.parent.level.camera.FromScreenCoordinates(pos)
-		self.currentSurface = self.parent.GetPropUnderMouse(coordinates)
-		pos = [int(x * gfx.width) for x in coordinates]
+		surface = self.parent.GetPropUnderMouse(coordinates)
+		absolute = [int(x * gfx.width) for x in coordinates]
+		self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendown", "tool": self.__class__.__name__, "pos": absolute, "objectid": surface.id})
+		return self.PenDown(absolute, surface)
+	
+	def PenDown(self, pos, surface):
+		self.mouseDown = True
 		self.lastPos = pos
-		self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendown", "tool": self.__class__.__name__})
-		return pos
+		self.currentSurface = surface
+		return pos, self.currentSurface
 	
 	def OnMouseMove(self, pos):
 		absolute = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
 		if self.mouseDown:
-			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penmove", "tool": self.__class__.__name__})
-		oldLastPos = self.lastPos
-		self.lastPos = absolute
-		return absolute, oldLastPos
+			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penmove", "tool": self.__class__.__name__, "pos": absolute})
+		return self.PenMove(absolute)
 	
-	def OnMouseUp(self,pos):
+	def PenMove(self, pos):
+		oldLastPos = self.lastPos
+		self.lastPos = pos
+		return pos, oldLastPos
+	
+	def OnMouseUp(self, pos):
 		if not self.currentSurface != self:
 			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penup", "tool": self.__class__.__name__})
+		return self.PenUp()
+	
+	def PenUp(self):
 		self.currentSurface = None
 		self.lastPos = None
 		self.mouseDown = False
@@ -47,21 +57,20 @@ class DrawTool(ImageRadioButton):
 
 class LineTool(DrawTool):
 	"""Line drawing tool"""
-	
 	def __init__(self, parent, buttonGroup, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="line.png",selected="line-invert.png",iconpos=7 * 33 + 72,*args,**kwargs)
 		
 		self.mouseDownPosition = None
 		self.savedImage = None
-				
-	def OnMouseDown(self, pos):
-		pos = DrawTool.OnMouseDown(self,pos)
-		self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(pos,pos)
+	
+	def PenDown(self, pos, surface):
+		pos, surface = DrawTool.PenDown(self, pos, surface)
+		self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(pos, pos)
 		self.currentSurface.Paint(pos)
 		self.mouseDownPosition = pos
-		
-	def OnMouseMove(self,pos):
-		pos, lastPos = DrawTool.OnMouseMove(self, pos)
+	
+	def PenMove(self, pos):
+		pos, lastPos = DrawTool.PenMove(self, pos)
 		if self.currentSurface and lastPos != pos:
 			if self.savedImage:
 				# there is an image saved. paste it
@@ -69,9 +78,10 @@ class LineTool(DrawTool):
 			#save area of image so we can revert it when drawing a new line
 			self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(self.mouseDownPosition,pos)
 			self.currentSurface.Line(self.mouseDownPosition, pos)
+		return pos, lastPos
 	
-	def OnMouseUp(self,pos):
-		DrawTool.OnMouseUp(self,pos)
+	def PenUp(self):
+		DrawTool.PenUp(self)
 		self.mouseDownPosition = None
 
 class PenTool(DrawTool):
@@ -80,23 +90,24 @@ class PenTool(DrawTool):
 	def __init__(self, parent, buttonGroup, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="pen.png",selected="pen-invert.png",iconpos=8 * 33 + 72,*args,**kwargs)	
 	
-	def OnMouseDown(self, pos):
-		p = DrawTool.OnMouseDown(self,pos)
-		self.currentSurface.Paint(p)
+	def PenDown(self, pos, surface):
+		pos, surface = DrawTool.PenDown(self, pos, surface)
+		self.currentSurface.Paint(pos)
 	
-	def OnMouseMove(self,pos):
-		pos, lastPos = DrawTool.OnMouseMove(self, pos)
+	def PenMove(self,pos):
+		pos, lastPos = DrawTool.PenMove(self, pos)
 		if self.currentSurface and lastPos != pos:
 			self.currentSurface.Line(lastPos, pos)
+		return pos, lastPos
 
 class FillTool(DrawTool):
 	"""Flood fill tool"""
 	def __init__(self, parent, buttonGroup, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="fill.png",selected="fill-invert.png",iconpos=9 * 33 + 72,*args,**kwargs)	
 	
-	def OnMouseDown(self, pos):
-		p = DrawTool.OnMouseDown(self,pos)
-		self.currentSurface.Fill(p, self.currentSurface == self.parent.level)
+	def PenDown(self, pos, surface):
+		pos, surface = DrawTool.PenDown(self, pos, surface)
+		self.currentSurface.Fill(pos, self.currentSurface == self.parent.level)
 
 class AirbrushTool(DrawTool):
 	"""Old Amiga-style airbrush tool"""
@@ -105,16 +116,17 @@ class AirbrushTool(DrawTool):
 		self.radius = 3000.0 / gfx.width
 		self.position = None		# where the Pump() should draw to
 		
-	def OnMouseDown(self, pos):
-		p = DrawTool.OnMouseDown(self,pos)
-		self.PlotRandomPoint(p)	
-		self.position = p
+	def PenDown(self, pos, surface):
+		pos, surface = DrawTool.PenDown(self, pos, surface)
+		self.PlotRandomPoint(pos)	
+		self.position = pos
 	
-	def OnMouseMove(self, pos):
-		pos, lastPos = DrawTool.OnMouseMove(self, pos)
+	def PenMove(self, pos):
+		pos, lastPos = DrawTool.PenMove(self, pos)
 		if self.currentSurface:
 			self.PlotRandomPoint( pos )
 			self.position = pos
+		return pos, lastPos
 	
 	def Pump(self):
 		"""call me repeatedly to keep the pixels flowing"""
