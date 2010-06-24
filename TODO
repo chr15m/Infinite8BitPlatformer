@@ -1,28 +1,29 @@
 * automatic updates
 
-* make spray paint tool work correctly over the network
+* make a speech bubble thing for received chats
 
-* make the clone and drag tools work
-
-* make 'new level' just create a level, not create portals
-
-* server/test client with full coverage of all network messages
+* make 'new level' just create a level + teleport to it, not create portals
 
 * network client
-	* make all LevelManager commands be proxied to the server
-	* don't allow LevelManager commands if not connected
-	* world icon shows if a connection is made
-	* send movements to the client
-	* check version number against server
+	* make the drag tool work
+	* make the clone tool work
 	* send chat events to the server
-	* send level editing events to the server
+	* proxy portal/level destination change message
+	* check version number against server
+	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
+	+ send level editing events to the server
+	+ make all LevelManager commands be proxied to the server
+	+ don't allow LevelManager commands if not connected
+	+ icon shows if a connection is made
+	+ send movements to the client
 
 * network server
-	* level store
+	* check protocol version number against clients
+	* make level downloading work
 	* mirror commands to all users on the same level
 		* chat events
-		* level editing events
-	* check protocol version number against clients
+		+ level editing events
+	+ level store
 
 Later
 -----

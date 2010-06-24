@@ -77,6 +77,7 @@ class I8BPChannel(Channel):
 		else:
 			self.playerID = self._server.GetNewPlayerID(self)
 			self.Send({"action": "playerid", "id": self.playerID})
+	
 	@RequireID
 	def Network_edit(self, data):
 		# some type of edit action
@@ -167,6 +168,7 @@ class I8BPServer(Server):
 		Server.__init__(self, *args, **kwargs)
 		self.clients = []
 		self.levelHistory = {}
+		self.levelEditIds = {}
 		# non-secret per-session IDs
 		self.ids = 0
 		self.Log('Infinite8BitPlatformer server listening on ' + ":".join([str(i) for i in kwargs['localaddr']]))
@@ -191,6 +193,9 @@ class I8BPServer(Server):
 	
 	def AddLevelHistory(self, level, data):
 		""" Add a level edit item to the history of changes of this level. """
+		# edit id/index
+		self.levelEditIds[level] = self.levelEditIds.get(level, 0) + 1
+		data.update({"editid": self.levelEditIds[level]})
 		if not self.levelHistory.has_key(level):
 			self.levelHistory[level] = []
 		self.levelHistory[level].append(data)
