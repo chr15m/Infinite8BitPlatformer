@@ -375,20 +375,17 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		if i == "create":
 			self.level.Create(data['type'], {'rectangle': list(data['rectangle']), "id": data['objectid']})
 		elif i.startswith("pen"):
-			if data.has_key("objectid"):
-				print data['objectid']
-			print data['pos']
-			print data['instruction']
-			print data['tool']
-			print data['id']
 			if i == "pendown":
 				# create the tool for this user
 				self.networktools[data['id']] = getattr(Tools, data['tool'])(self)
 				prop = [o for o in self.level.layer.GetAll() if o.id == data['objectid']][0]
-				self.networktools[data['id']].PenDown(data['pos'], prop)
+				self.networktools[data['id']].NetworkPenDown(data['pos'], prop)
 			elif i == "penmove":
-				self.networktools[data['id']].PenMove(data['pos'])
+				self.networktools[data['id']].NetworkPenMove(data['pos'])
 			elif i == "penup":
-				self.networktools[data['id']].PenUp()
+				self.networktools[data['id']].NetworkPenUp()
 				del self.networktools[data['id']]
+			elif i == "pendata":
+				# some some special data for this tool
+				self.networktools[data['id']].NetworkPenData(data)
 

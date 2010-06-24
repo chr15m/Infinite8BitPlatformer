@@ -31,11 +31,17 @@ class DrawTool(ImageRadioButton):
 		self.currentSurface = surface
 		return pos, self.currentSurface
 	
+	def NetworkPenDown(self, pos, surface):
+		self.PenDown(pos, surface)
+	
 	def OnMouseMove(self, pos):
 		absolute = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
 		if self.mouseDown:
 			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penmove", "tool": self.__class__.__name__, "pos": absolute})
 		return self.PenMove(absolute)
+	
+	def NetworkPenMove(self, pos):
+		self.PenMove(pos)
 	
 	def PenMove(self, pos):
 		oldLastPos = self.lastPos
@@ -46,6 +52,9 @@ class DrawTool(ImageRadioButton):
 		if not self.currentSurface != self:
 			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penup", "tool": self.__class__.__name__})
 		return self.PenUp()
+	
+	def NetworkPenUp(self):
+		self.PenUp()
 	
 	def PenUp(self):
 		self.currentSurface = None
@@ -116,11 +125,24 @@ class AirbrushTool(DrawTool):
 		DrawTool.__init__(self,parent,buttonGroup,filename="airbrush.png",selected="airbrush-invert.png",iconpos=10 * 33 + 72,*args,**kwargs)	
 		self.radius = 3000.0 / gfx.width
 		self.position = None		# where the Pump() should draw to
-		
+	
 	def PenDown(self, pos, surface):
 		pos, surface = DrawTool.PenDown(self, pos, surface)
-		self.PlotRandomPoint(pos)	
+		x,y = self.PlotRandomPoint(pos)
 		self.position = pos
+	
+	def NetworkPenDown(self, pos, surface):
+		DrawTool.PenDown(self, pos, surface)
+	
+	def NetworkPenMove(self, pos):
+		DrawTool.PenMove(self, pos)
+	
+	def NetworkPenUp(self):
+		DrawTool.PenUp(self)
+	
+	def NetworkPenData(self, data):
+		""" We want to draw a special pixel point. """
+		self.currentSurface.Paint(data['pos'])
 	
 	def PenMove(self, pos):
 		pos, lastPos = DrawTool.PenMove(self, pos)
@@ -149,6 +171,7 @@ class AirbrushTool(DrawTool):
 			except IndexError, ie:
 				pass
 			count -= 1
-		# TODO: make this pain happen correctly over the network
 		self.currentSurface.Paint([xpos, ypos])
-	
+		# make sure the paint happens remotely too
+		self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendata", "tool": "AirbrushTool", "pos": [xpos, ypos], "objectid": self.currentSurface.id})
+		return xpos, ypos
