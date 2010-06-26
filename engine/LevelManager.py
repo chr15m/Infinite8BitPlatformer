@@ -98,6 +98,8 @@ class LevelManager:
 	def UnSetLevel(self):
 		self.Remove(self.levels[self.level])
 		self.levels[self.level].RemovePlayerCamera()
+		# forget any other network players
+		self.players.Clear()
 		self.level = None
 	
 	def SetLevelName(self, name):

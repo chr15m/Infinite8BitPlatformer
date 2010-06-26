@@ -15,7 +15,7 @@ from PodSixNet.Connection import ConnectionListener
 from ColorPicker import ColorPicker
 from BitLevel import BitLevel
 
-from Tools import PenTool, LineTool, FillTool, AirbrushTool
+import Tools
 
 class EditBox(Rectangle, Concurrent):
 	def __init__(self, inlist, camera, levelrect):
@@ -148,10 +148,12 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone']:
 			FamilyButton(b, self, self.buttonGroup)
 		
-		self.pentool = PenTool(self, self.buttonGroup)
-		self.linetool = LineTool(self, self.buttonGroup)
-		self.filltool = FillTool(self, self.buttonGroup)
-		self.airbrushtool = AirbrushTool(self, self.buttonGroup)
+		self.pentool = Tools.PenTool(self, self.buttonGroup)
+		self.linetool = Tools.LineTool(self, self.buttonGroup)
+		self.filltool = Tools.FillTool(self, self.buttonGroup)
+		self.airbrushtool = Tools.AirbrushTool(self, self.buttonGroup)
+		# tools which remote users are currently using (created dynamically)
+		self.networktools = {}
 		
 		# the save button
 		self.editInterface.Add(SaveButton(self))
@@ -181,6 +183,9 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		
 		# for line tool
 		self.image_start = None
+		
+		# last servertime from the server for a particular level
+		self.lastLevelServerEdit = {}
 	
 	def MakeId(self):
 		x = None
@@ -224,6 +229,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	
 	def On(self):
 		return self.mode and self.level
+	
+	def PropFromId(self, objectid):
+		objs = [o for o in self.level.layer.GetAll() if o.id == objectid]
+		return len(objs) and objs[0] or None
 	
 	###
 	###	Concurrency events
@@ -285,6 +294,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 					self.currentSurface = self.GetPropUnderMouse(p)
 					if self.currentSurface != self.level:
 						self.currentSurface.Drag(p)
+						self.game.net.SendWithID({"action": "edit", "instruction": "startdrag", "pos": p, "objectid": str(self.currentSurface.id)})
 				elif self.selected == 'clone':
 					self.currentSurface = self.GetPropUnderMouse(p)
 					if self.currentSurface != self.level:
@@ -295,7 +305,6 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				elif self.selected == 'delete':
 					if self.GetPropUnderMouse(p) != self.level:
 						delprop = self.GetPropUnderMouse(p)
-						self.game.net.SendWithID({"action": "edit", "instruction": "delete", "objectid": str(delprop.id)})
 						if isinstance(delprop, Platform):
 							# make sure there's at least one platform level in this level
 							if len(self.level.layer.platforms) == 1:
@@ -309,6 +318,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 							if delprop == self.level.player.platform:
 								self.level.player.platform = None
 							self.level.layer.RemoveProp(delprop)
+							self.game.net.SendWithID({"action": "edit", "instruction": "delete", "objectid": str(delprop.id)})
 				elif type(self.selected) is not str:
 					# selected in a tool object not a string
 					#pos = [int(x * gfx.width) for x in p]
@@ -326,8 +336,9 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				else:
 					self.rect.SetCorner(e.pos)
 			elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
-				self.currentSurface.Drag(self.level.camera.FromScreenCoordinates(e.pos))
-				self.game.net.SendWithID({"action": "edit", "instruction": "drag", "pos": self.level.camera.FromScreenCoordinates(e.pos), "objectid": str(self.currentSurface.id)})
+				dragpos = self.level.camera.FromScreenCoordinates(e.pos)
+				self.currentSurface.Drag(dragpos)
+				self.game.net.SendWithID({"action": "edit", "instruction": "drag", "pos": dragpos, "objectid": str(self.currentSurface.id)})
 			elif type(self.selected) is not str:
 				self.selected.OnMouseMove(e.pos)
 			
@@ -359,6 +370,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.rect = None
 		if self.currentSurface:
 			self.currentSurface.MouseUp()
+			self.game.net.SendWithID({"action": "edit", "instruction": "stopdrag", "objectid": str(self.currentSurface.id)})
 			self.currentSurface = None
 		if type(self.selected) is not str:
 			self.selected.OnMouseUp([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
@@ -369,6 +381,38 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	
 	def Network_edit(self, data):
 		print "EditLayer", data
-		i = data['instruction']
-		if i == "create":
-			self.level.Create(data['type'], {'rectangle': list(data['rectangle']), "id": data['objectid']})
+		# only perform this edit if we haven't seen it before
+		if self.lastLevelServerEdit.get(self.level.name, 0) < data['editid']:
+			# remember the time of our last edit
+			self.lastLevelServerEdit[self.level.name] = data['editid']
+			# what edit instruction have we been sent?
+			i = data['instruction']
+			if i == "create":
+				self.level.Create(data['type'], {'rectangle': list(data['rectangle']), "id": data['objectid']})
+			elif i == "clone":
+				pass
+			elif i == "delete":
+				pass
+			# dragging objects around
+			elif i == "startdrag":
+				self.PropFromId(data['objectid']).Drag(data['pos'])
+			elif i == "drag":
+				self.PropFromId(data['objectid']).Drag(data['pos'])
+			elif i == "stopdrag":
+				self.PropFromId(data['objectid']).MouseUp()
+			# drawing tools over the network
+			elif i.startswith("pen"):
+				if i == "pendown":
+					# create the tool for this user
+					self.networktools[data['id']] = getattr(Tools, data['tool'])(self)
+					prop = self.PropFromId(data['objectid'])
+					self.networktools[data['id']].NetworkPenDown(data['pos'], prop)
+				elif i == "penmove":
+					self.networktools[data['id']].NetworkPenMove(data['pos'])
+				elif i == "penup":
+					self.networktools[data['id']].NetworkPenUp()
+					del self.networktools[data['id']]
+				elif i == "pendata":
+					# some some special data for this tool
+					self.networktools[data['id']].NetworkPenData(data)
+
