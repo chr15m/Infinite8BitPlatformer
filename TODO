@@ -1,21 +1,18 @@
 * automatic updates
 
-* make a speech bubble thing for received chats
+* make a speech bubble thing for received chat messages
 
 * make 'new level' just create a level + teleport to it, not create portals
 
 * network client
-	* make the clone tool work
-	* don't allow LevelManager commands if not connected
-	* send movements to the client
-	* make the drag tool work
-	* make the clone tool work
+	* make the clone tool work over the network
 	* send chat events to the server
 	* proxy portal/level destination change message
 	* check version number against server
-	* send chat events to the server
-	* send level editing events to the server
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
+	+ don't allow LevelManager commands if not connected
+	+ send movements to the client
+	+ make the drag tool work
 	+ send level editing events to the server
 	+ make all LevelManager commands be proxied to the server
 	+ don't allow LevelManager commands if not connected
@@ -25,8 +22,10 @@
 * network server
 	* check protocol version number against clients
 	* make level downloading work
+	* make level uploading work
 	* mirror commands to all users on the same level
 		* chat events
+		+ move events
 		+ level editing events
 	+ level store
 
