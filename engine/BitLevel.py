@@ -194,8 +194,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 		prop.SetEditLayer(self.editLayer)
 		return prop
 	
-	def Clone(self, which):
-		new = self.Create(which.type, {"rectangle": list(which.rectangle)})
+	def Clone(self, which, newid=None):
+		new = self.Create(which.type, {"rectangle": list(which.rectangle), "id": newid})
 		new.bitmap = BitImage(image=which.bitmap)
 		return new
 	

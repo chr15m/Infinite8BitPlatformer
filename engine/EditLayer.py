@@ -300,8 +300,8 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 					if self.currentSurface != self.level:
 						oldsurface = self.currentSurface
 						self.currentSurface = self.level.Clone(self.currentSurface)
-						self.game.net.SendWithID({"action": "edit", "instruction": "clone", "rectangle": list(self.rect), "objectid": str(oldsurface.id), "newobjectid": str(self.currentSurface.id)})
 						self.currentSurface.Drag(p)
+						self.game.net.SendWithID({"action": "edit", "instruction": "clone", "pos": p, "objectid": str(oldsurface.id), "newobjectid": str(self.currentSurface.id)})
 				elif self.selected == 'delete':
 					if self.GetPropUnderMouse(p) != self.level:
 						delprop = self.GetPropUnderMouse(p)
@@ -390,9 +390,26 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 			if i == "create":
 				self.level.Create(data['type'], {'rectangle': list(data['rectangle']), "id": data['objectid']})
 			elif i == "clone":
-				pass
+				newsurface = self.level.Clone(self.PropFromId(data['objectid']), data['newobjectid'])
+				newsurface.Drag(data['pos'])
 			elif i == "delete":
-				pass
+				delprop = self.PropFromId(data['objectid'])
+				allplayers = self.levelmanager.players.players
+				# check if any players have this as their last platform or platform
+				for p in allplayers:
+					# unset the player's last platform since it will no longer exist
+					if delprop == allplayers[p].lastplatform:
+						allplayers[p].lastplatform = None
+					# unset the player's current platform since it will no longer exist
+					if delprop == allplayers[p].platform:
+						allplayers[p].platform = None
+				# unset the player's last platform since it will no longer exist
+				if delprop == self.level.player.lastplatform:
+					self.level.player.lastplatform = None
+				# unset the player's current platform since it will no longer exist
+				if delprop == self.level.player.platform:
+					self.level.player.platform = None
+				self.level.layer.RemoveProp(delprop)
 			# dragging objects around
 			elif i == "startdrag":
 				self.PropFromId(data['objectid']).Drag(data['pos'])
