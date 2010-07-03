@@ -1,6 +1,7 @@
 from random import randint
 from sys import maxint
 from os import path
+from uuid import uuid1
 
 from PodSix.Resource import *
 from PodSix.Concurrent import Concurrent
@@ -188,10 +189,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.lastLevelServerEdit = {}
 	
 	def MakeId(self):
-		x = None
-		while not x or "prop-%d" % x in self.level.layer.names.keys():
-			x = randint(1, maxint)
-		return "prop-%d" % x
+		return 'prop-%s' % str(uuid1())
 	
 	def SetLevel(self, level):
 		""" Called by LevelManager. """
