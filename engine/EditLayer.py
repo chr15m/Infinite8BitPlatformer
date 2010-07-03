@@ -213,17 +213,28 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.levelmanager.SaveLevel()
 	
 	def NewLevel(self):
-		# TODO: change this so that it doesn't do the portal creation stuff (now that we can press 'back')
-		# TODO: put the player into the new level
+		# create a new level and set it up
 		newlevel = self.levelmanager.NewLevel()
 		newlevel.Initialise()
-		dest = newlevel.Create("platform", {'rectangle': [0.48, 0.495, 0.04, 0.01]})
-		#player = self.levelmanager.player
-		#srcportal = self.level.Create("portal", {'destination': "level" + newlevel.name + ":" + dest.id, 'rectangle': [player.rectangle.CenterX() - 0.01, player.GetBottom() - 0.03, 0.02, 0.03]})
-		destportal = newlevel.Create("portal", {'destination': "level" + self.level.name + ":start", 'rectangle': [0.49, 0.465, 0.02, 0.03]})
-		#srcportal.destination = "level" + newlevel.name + ":" + destportal.id
+		# create a platform at the destination
+		args = {'rectangle': [0.48, 0.495, 0.04, 0.01]}
+		dest = newlevel.Create("platform", args)
+		# teleport the player to the destination
 		sfx.PlaySound("portal")
 		self.levelmanager.SetLevel("level" + newlevel.name, dest.id)
+		# send the creation of the portal over the network
+		args.update({"action": "edit", "instruction": "create", "type": "platform", "objectid": dest.id})
+		self.game.net.SendWithID(args)
+		#srcportal.destination = "level" + newlevel.name + ":" + destportal.id
+		#player = self.levelmanager.player
+		#srcportal = self.level.Create("portal", {'destination': "level" + newlevel.name + ":" + dest.id, 'rectangle': [player.rectangle.CenterX() - 0.01, player.GetBottom() - 0.03, 0.02, 0.03]})
+		# create a portal at the destination too
+		args = {'destination': "level" + self.level.name + ":start", 'rectangle': [0.49, 0.465, 0.02, 0.03]}
+		destportal = newlevel.Create("portal", args)
+		# send the portal creation commands over the network
+		args.update({"action": "edit", "instruction": "create", "type": "portal", "objectid": destportal.id})
+		self.game.net.SendWithID(args)
+		#srcportal.destination = "level" + newlevel.name + ":" + destportal.id
 	
 	def On(self):
 		return self.mode and self.level

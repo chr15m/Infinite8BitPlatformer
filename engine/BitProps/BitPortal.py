@@ -18,22 +18,17 @@ class PortalIcon(ImageButton):
 			# see what the current portal destionation is
 			# TODO: shit, why is this so complicated? bad design i guess!
 			dest = self.parent.container.level.editLayer.GetPortalDestination()
-			print "remembered destination:", dest
-			print "newly selected destination:", newDest
 			# check if we already have a portal destination
 			if dest:
 				if dest != newDest:
 					# we have a portal in memory, and we've selected a new one, so join them
-					print 'set this portal destionation to:', dest
 					self.parent.destination = dest
 					# send a message
 					self.parent.container.level.editLayer.levelmanager.AddMessage("portal destination set", None, 1.0)
 				# clear the portal destination thing
-				print 'cleared remembered destination'
 				self.parent.container.level.editLayer.SetPortalDestination(None)
 			# tell the edit layer what portal destination is
 			else:
-				print 'setting remembered destination to:', newDest
 				self.parent.container.level.editLayer.SetPortalDestination(newDest)
 	
 	def Draw(self, really=False):
