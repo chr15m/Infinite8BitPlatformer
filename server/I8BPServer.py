@@ -82,8 +82,10 @@ class I8BPChannel(Channel):
 	def Network_edit(self, data):
 		# some type of edit action
 		if self.level:
-			self._server.AddLevelHistory(self.level, data)
+			editid = self._server.AddLevelHistory(self.level, data)
 		self.SendToNeighbours(data)
+		# make sure the player gets the latest editid
+		self.Send({"action": "edit", "editid": editid})
 	
 	@RequireID
 	def Network_item(self, data):
@@ -199,6 +201,7 @@ class I8BPServer(Server):
 		if not self.levelHistory.has_key(level):
 			self.levelHistory[level] = []
 		self.levelHistory[level].append(data)
+		return self.levelEditIds[level]
 	
 	def GetLevelHistory(self, level):
 		""" Get the history of changes of this level. """
