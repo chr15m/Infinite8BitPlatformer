@@ -134,7 +134,7 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		elif text.startswith("/back"):
 			self.Back()
 		else:
-			self.player.Say(text)
+			self.player.Chat(text)
 		self.hud.chatBox.Hide()
 	
 	###

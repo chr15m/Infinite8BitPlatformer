@@ -10,6 +10,10 @@ from PodSixNet.Connection import ConnectionListener
 
 from engine.Sprite import Sprite
 
+import math
+import pygame
+import pygame.gfxdraw
+
 def chatboxShowing(fn):
 	def newfn(self, *args, **kwargs):
 		if not self.chatbox.visible:
@@ -23,22 +27,60 @@ class SpeechBubble(Concurrent):
 		self.text = text
 		Concurrent.__init__(self)
 		self.lifetime = 5
+		
+		lines = []
+		max_width = 0
+		height = 0
+		for line in self.text.splitlines():
+		    line = gfx.font["default"]["font"].render(line, 1, (255, 255, 255)) 
+		    max_width = max(max_width, line.get_width())
+		    height += line.get_height()
+		    lines.append(line)
+		    
+		size = (max_width, height)
+		self.img = pygame.Surface(size)
+		self.img.fill((1,1,1))
+		self.img.set_colorkey((1,1,1))
+		height = 0
+		centerx = max_width / 2
+		for line in lines:
+		    self.img.blit(line, line.get_rect(midtop=(centerx, height)))
+		    height += line.get_height()
+		
+		self.rect = self.img.get_rect()
+	
+
 	
 	def Update(self):
 		self.lifetime -= self.Elapsed()
 		if self.lifetime <= 0:
 			self.parent.Remove(self)
 		Concurrent.Update(self)
-		
+	
+	
 		
 	def Draw(self):
-		#rect = self.parent.level.camera.TranslateRectangle(self.parent.rectangle)
+		rect = self.parent.level.camera.TranslateRectangle(self.parent.rectangle)
 		#print self.parent.rectangle, rect
-		#mid, top = rect.CenterX(), rect.Top()
+		#self.parent.level.camera.FromScreenCoordinates(rect.CenterX(), rect.Top())
+		pos = (rect.CenterX(), rect.Top()-20)
+		
 		#pos = {"centerx": mid, "centery": top}
-		Concurrent.Draw(self)
+		#Concurrent.Draw(self)
 		#gfx.DrawText(self.text, pos, color=[0, 0, 0], font="default")
-		gfx.DrawText("(chat): "+self.text+" (%.1f)"%self.lifetime, {"centerx": 0.4, "centery": 0.2}, color=[0, 0, 0], font="default")
+		#gfx.DrawRect(rect, (200,0,0), 4)
+		#gfx.DrawText("(chat): "+self.text+" (%.1f)"%self.lifetime, {"centerx": 0.4, "centery": 0.2}, color=[0, 0, 0], font="default")
+		
+		self.rect.midbottom = pos
+		gfx.screen.blit(self.img, self.rect)
+		w, h = self.img.get_size()
+		w_el = w * math.sqrt(2)
+		h_el = h * math.sqrt(2)
+		el_rect = pygame.Rect(0,0,w_el+10, h_el+10)
+		el_rect.center = self.rect.center
+		#pygame.draw.ellipse(screen, (0,0,200), el_rect, 1)
+		pygame.gfxdraw.aaellipse(gfx.screen, el_rect.centerx, el_rect.centery, el_rect.width/2, el_rect.height/2, (255,255,255))
+	
 		
 		
 class Player(Character, EventMonitor, Sprite, ConnectionListener):
