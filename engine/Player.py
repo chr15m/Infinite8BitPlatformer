@@ -4,6 +4,7 @@ from PodSix.Platformer.Portal import Portal
 from PodSix.Platformer.Item import Item
 from PodSix.ArrayOps import Multiply, Subtract
 from PodSix.Config import config
+from PodSix.Concurrent import Concurrent
 
 from PodSixNet.Connection import ConnectionListener
 
@@ -15,6 +16,31 @@ def chatboxShowing(fn):
 			return fn(self, *args, **kwargs)
 	return newfn
 
+class SpeechBubble(Concurrent):
+	def __init__(self, parent, text):
+		# must be a player:
+		self.parent = parent
+		self.text = text
+		Concurrent.__init__(self)
+		self.lifetime = 5
+	
+	def Update(self):
+		self.lifetime -= self.Elapsed()
+		if self.lifetime <= 0:
+			self.parent.Remove(self)
+		Concurrent.Update(self)
+		
+		
+	def Draw(self):
+		#rect = self.parent.level.camera.TranslateRectangle(self.parent.rectangle)
+		#print self.parent.rectangle, rect
+		#mid, top = rect.CenterX(), rect.Top()
+		#pos = {"centerx": mid, "centery": top}
+		Concurrent.Draw(self)
+		#gfx.DrawText(self.text, pos, color=[0, 0, 0], font="default")
+		gfx.DrawText("(chat): "+self.text+" (%.1f)"%self.lifetime, {"centerx": 0.4, "centery": 0.2}, color=[0, 0, 0], font="default")
+		
+		
 class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	def __init__(self, game, playerid, *args, **kwargs):
 		Character.__init__(self, rectangle=[0, 0, 11.0 / gfx.width, 12.0 / gfx.width])
@@ -62,6 +88,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 			sfx.PlaySound("portal")
 			if self.game.Teleport(self.portal):
 				self.game.AddMessage("teleporting to " + self.portal.destination.split(":")[0])
+				
 	
 	###
 	### Concurrency related methods
@@ -69,6 +96,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	
 	def Draw(self):
 		Sprite.Draw(self)
+		Concurrent.Draw(self)
 		#gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 1)
 	
 	def Update(self):
@@ -83,6 +111,20 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		# network players ignore events (keypresses, joysticks etc.)
 		if not self.playerid:
 			EventMonitor.Pump(self)
+	###
+	### Wrapper method
+	###
+	
+	def Chat(self, text):
+		print "CHAT"
+		self.Say(text)
+		self.SendChat(text)
+		
+	def Say(self, text):
+		"""temp. testing (local) (display a message)"""
+		print "SAY"
+		sb = SpeechBubble(self, text)
+		self.Add(sb)
 	
 	###
 	### Network stuff
@@ -103,7 +145,14 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 			if data['move'] in ["WalkRight", "WalkLeft", "StopRight", "StopLeft", "Jump"]:
 				# force the animation update
 				getattr(self, data['move'])(force=True)
+								
+	def SendChat(self, text):
+		    self.game.net.SendWithID({"action": "chat", "message":text})
 	
+	def Network_chat(self, data):
+		if data['id'] == self.playerid:
+			self.Say(data["message"])
+		
 	###
 	### Input events etc.
 	###

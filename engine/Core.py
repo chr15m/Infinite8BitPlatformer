@@ -127,6 +127,14 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 					self.TeleportToLevel(matches[0])
 				else:
 					self.AddMessage('No such level "%s"' % destination, time=1)
+		elif text.startswith("/new"):
+			self.edit_layer.NewLevel()
+		elif text.startswith("/quit"):
+			self.Quit()
+		elif text.startswith("/back"):
+			self.Back()
+		else:
+			self.player.Say(text)
 		self.hud.chatBox.Hide()
 	
 	###
