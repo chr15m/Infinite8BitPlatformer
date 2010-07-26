@@ -151,7 +151,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		# hold on to all the buttons
 		self.editInterface = EditInterface()
 		self.editInterface.Add(self.buttonGroup)
-		for b in ['platform', 'portal', 'item', '---', 'move', 'delete', 'clone']:
+		for b in ['platform', 'ladder', 'portal', 'item', '---', 'move', 'delete', 'clone']:
 			FamilyButton(b, self, self.buttonGroup)
 		
 		self.pentool = Tools.PenTool(self, self.buttonGroup)
@@ -299,7 +299,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	def MouseDown(self, e):
 		if not len([o for o in self.editInterface.objects + self.objects if hasattr(o, 'triggered') and o.triggered]):
 			self.down = True
-			if self.selected in ['platform', 'portal', 'item']:
+			if self.selected in ['platform', 'ladder', 'portal', 'item']:
 				self.rect = EditBox(e.pos, self.level.camera, Rectangle([float(x) / gfx.width for x in self.level.sizerect]))
 				self.Add(self.rect)
 			else:
@@ -376,7 +376,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.down = False
 		if self.rect:
 			if abs(self.rect[2]) > 0.002 and abs(self.rect[3]) > 0.002:
-				if self.selected in ['platform', 'portal', 'item']:
+				if self.selected in ['platform', 'ladder', 'portal', 'item']:
 					self.rect.Absolute()
 					newthing = self.level.Create(self.selected, {'rectangle': list(self.rect)})
 					self.game.net.SendWithID({"action": "edit", "instruction": "create", "type": self.selected, "rectangle": list(self.rect), "objectid": str(newthing.id)})

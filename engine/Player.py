@@ -219,11 +219,31 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		self.SendMove(move="StopLeft")
 	
 	@chatboxShowing
-	def KeyDown_up(self, e):
+	def KeyDown_space(self, e):
 		if self.platform:
 			sfx.PlaySound("jump")
 		self.Jump()
 		self.SendMove(move="Jump")
+		
+	@chatboxShowing
+	def KeyDown_up(self, e):
+		self.ClimbUp()
+		self.SendMove(move="ClimbUp")
+		
+	@chatboxShowing
+	def KeyDown_down(self, e):
+		self.ClimbDown()
+		self.SendMove(move="ClimbDonw")
+		
+	@chatboxShowing
+	def KeyUp_up(self, e):
+		self.StopUp()
+		self.SendMove(move="StopUp")
+		
+	@chatboxShowing
+	def KeyUp_down(self, e):
+		self.StopUp()
+		self.SendMove(move="StopDown")
 	
 	@chatboxShowing
 	def KeyDown_return(self, e):
