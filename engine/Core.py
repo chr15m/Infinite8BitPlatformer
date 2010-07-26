@@ -4,6 +4,7 @@ from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
 from PodSix.Config import config
+from PodSix.GUI.ToolTip import tooltip
 
 from PodSixNet.Connection import ConnectionListener
 
@@ -40,6 +41,8 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		# The other hud stuff
 		self.hud = Hud(self)
 		self.Add(self.hud)
+		# global tooltip singleton
+		self.Add(tooltip)
 		# Create player and camera and put some text on the screen
 		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 1.0)
 		# Give us the methods for manipulating level collections
@@ -127,6 +130,14 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 					self.TeleportToLevel(matches[0])
 				else:
 					self.AddMessage('No such level "%s"' % destination, time=1)
+		elif text.startswith("/new"):
+			self.edit_layer.NewLevel()
+		elif text.startswith("/quit"):
+			self.Quit()
+		elif text.startswith("/back"):
+			self.Back()
+		else:
+			self.player.Chat(text)
 		self.hud.chatBox.Hide()
 	
 	###
