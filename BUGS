@@ -4,6 +4,8 @@
 
 Bugs from Julian:
 
+* cwd command in the root script changes to the wrong directory if not called from library.zip
+
 * clicking on a widget and then dragging the mouse out breaks button state - requires a FocusLeft() method of some kind.
 
 * start game, press enter, opens browser (chat box focus needs fixing)
