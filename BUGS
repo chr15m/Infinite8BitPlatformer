@@ -1,6 +1,61 @@
-* default level background color = text color
-	* cache rendered text graphics
 * fill is too slow - game freezes if you do many fills quickly
-* off-by-one graphics bug (when drawing/filling/whatever you don't always hit inside the bounding box, even when the mouse is inside)
-* sound effects lag on vista 32 bit (ask jack casey)
+* sound effects lag on vista 32 bit (ask jack casey) also on ubuntu (pulse audio?)
 	* tweak buffer sizes?
+
+Bugs from Julian:
+
+* clicking on a widget and then dragging the mouse out breaks button state - requires a FocusLeft() method of some kind.
+
+* start game, press enter, opens browser (chat box focus needs fixing)
+
+* replace "e.key == [int]" with K_* instead
+
+* remove instances of "from resource import *" and replace with actual imported resources
+
+Traceback (most recent call last):
+  File "C:\Users\Julian\Infinite8BitPlatformer\Infinite8BitPlatformer.py", line
+38, in <module>
+    c.Launch()
+  File "C:\Users\Julian\Infinite8BitPlatformer\engine\Core.py", line 51, in Laun
+ch
+    Game.Launch(self)
+  File "C:\Users\Julian\Infinite8BitPlatformer\PodSix\Game.py", line 17, in Laun
+ch
+    self.Run()
+  File "C:\Users\Julian\Infinite8BitPlatformer\engine\Core.py", line 85, in Run
+    Game.Run(self)
+  File "C:\Users\Julian\Infinite8BitPlatformer\PodSix\Game.py", line 27, in Run
+    Concurrent.Run(self)
+  File "C:\Users\Julian\Infinite8BitPlatformer\PodSix\Concurrent.py", line 38, i
+n Run
+    self.Pump()
+  File "C:\Users\Julian\Infinite8BitPlatformer\engine\Core.py", line 79, in Pump
+
+    Game.Pump(self)
+  File "C:\Users\Julian\Infinite8BitPlatformer\PodSix\Concurrent.py", line 45, i
+n Pump
+    [o.Pump() for o in self.objects if hasattr(o, "Pump") and not self.frame % o
+.frequency]
+  File "C:\Users\Julian\Infinite8BitPlatformer\engine\EditLayer.py", line 256, i
+n Pump
+    EventMonitor.Pump(self)
+  File "C:\Users\Julian\Infinite8BitPlatformer\PodSix\EventHandlerPygame.py", li
+ne 68, in Pump
+    self.CallMethod("MouseDown", e)
+  File "C:\Users\Julian\Infinite8BitPlatformer\PodSix\SelfCallMixin.py", line 8,
+ in CallMethod
+    getattr(self, methodname)(args)
+  File "C:\Users\Julian\Infinite8BitPlatformer\engine\EditLayer.py", line 60, in
+ newfn
+    return fn(self, *args, **kwargs)
+  File "C:\Users\Julian\Infinite8BitPlatformer\engine\EditLayer.py", line 334, i
+n MouseDown
+    self.selected.OnMouseDown(e.pos)
+  File "C:\Users\Julian\Infinite8BitPlatformer\engine\Tools.py", line 25, in OnM
+ouseDown
+    self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendown",
+ "tool": self.__class__.__name__, "pos": absolute, "objectid": surface.id})
+AttributeError: BitLevel instance has no attribute 'id'
+
+(using line tool, but happens quite often)
+
