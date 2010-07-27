@@ -77,17 +77,24 @@ class PortalDestinationIcon(ImageButton):
 
 class FamilyButton(ImageRadioButton):
 	btncount = 0
+	col = 0
 	def __init__(self, name, parent, buttonGroup):
 		self.parent = parent
 		if name != "---":
 			ImageRadioButton.__init__(self,
 				[Image(path.join("resources", "icons", name + ".png")), Image(path.join("resources", "icons", name + "-invert.png"))],
-				[gfx.width - 24, self.__class__.btncount * 36 + 64],
+				[gfx.width - 24 - self.__class__.col * 36, self.__class__.btncount * 36 + 64],
 				name, buttonGroup)
-			self.__class__.btncount += 1
+			if self.__class__.col == 0:
+				self.__class__.col = 1
+			else:
+				self.__class__.col = 0
+				self.__class__.btncount += 1
 			self.help_text = name
 		else:
+			self.__class__.col = 0
 			self.__class__.btncount += 0.5
+			
 	
 	def Draw(self):
 		if self.name != '---':
