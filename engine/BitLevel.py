@@ -19,6 +19,7 @@ from PodSix.Rectangle import Rectangle
 
 from BitProps.BitProp import BitProp
 from BitProps.BitPlatform import BitPlatform
+from BitProps.BitLadder import BitLadder
 from BitProps.BitItem import BitItem
 from BitProps.BitPortal import BitPortal
 
@@ -206,6 +207,9 @@ class BitLevel(Level, SVGLoader, Paintable):
 	
 	def CreatePlatform(self, data):
 		return self.AddProp(BitPlatform(data["rectangle"], data.get("id", None), editLayer=self.editLayer))
+
+	def CreateLadder(self, data):
+		return self.AddProp(BitLadder(data["rectangle"], data.get("id", None), editLayer=self.editLayer))
 	
 	def CreatePortal(self, data):
 		return self.AddProp(BitPortal(data["rectangle"], data.get("id", None), data.get("destination", ""), editLayer=self.editLayer))
