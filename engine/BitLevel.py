@@ -46,6 +46,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def __init__(self, name, editLayer):
 		Paintable.__init__(self, editLayer)
 		Level.__init__(self, name)
+		# self.name should be self.id
+		self.id = name
 		self.basefilename = path.join("resources", "levels", self.name)
 		self.layer = Layer(self)
 		self.gravity = self.gravity / config.zoom

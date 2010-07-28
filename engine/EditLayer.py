@@ -252,7 +252,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		return self.mode and self.level
 	
 	def PropFromId(self, objectid):
-		objs = [o for o in self.level.layer.GetAll() if o.id == objectid]
+		objs = [o for o in self.level.layer.GetAll()+[self.level] if o.id == objectid]
 		return len(objs) and objs[0] or None
 	
 	###
