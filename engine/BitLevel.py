@@ -148,7 +148,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.AddLayer(self.name, self.layer)
 	
 	def FromString(self, data):
-		mode = (platform == "win32" and "rb" or "r")
+		mode = "r"
 		zip = zipfile.ZipFile(StringIO(data), mode)
 		self.UnpackSerial(loads(zip.read(self.name + "/level.json")))
 		tmpdir = tempfile.mkdtemp()
