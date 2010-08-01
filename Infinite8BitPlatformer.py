@@ -8,7 +8,9 @@ except ImportError:
 	print "Psyco not available"
 	pass
 
-if platform == "win32":
+# TODO: Fix!
+in_library_zip = False
+if platform == "win32" and in_library_zip:
 	# one level up from library.zip
 	os.chdir(os.sep.join(path[0].split(os.sep)[:-1]))
 else:

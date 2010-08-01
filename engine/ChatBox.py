@@ -66,16 +66,20 @@ class ChatBox(TextInput):
 	def Hide(self):
 		self.visible = False
 	
-	def KeyDown(self, e):
-		if self.visible:
-			self.Draw()
-			#print e.key
-			#print e
-			if self.textWidth < self.width * gfx.width  - self.letterWidth and not e.key in self.specials:
-				self.text += e.unicode
-			elif e.key == 13 and self.callback:
-				self.callback(self.text)
-			self.triggered = True
+#	def KeyDown(self, e):
+#		if self.visible:
+#			self.Draw()
+#			#print e.key
+#			#print e
+#			if self.textWidth < self.width * gfx.width  - self.letterWidth and not e.key in self.specials:
+#				self.text += e.unicode
+#			elif e.key == 13 and self.callback:
+#				self.callback(self.text)
+#			self.triggered = True
+	
+	def KeyDown_return(self, e):
+		if self.callback:
+			self.callback(self.text)
 	
 	def MouseMove(self, e):
 		inNew = self.oldRect.PointInRect(e.pos)
