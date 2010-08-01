@@ -16,7 +16,7 @@ class ChatBox(TextInput):
 		
 		TextInput.__init__(self, {"left": 0.01, "bottom": 0.55}, 0.8, "/help", dict([(x, chr(x)) for x in range(97, 122)]), font="chat")
 		self.chatIcon = Image("resources/icons/chat.png")
-		# remember the drawn rectangle
+		# remember the drawn rectangle (bleh. hack.)
 		self.visible = True
 		self.Draw()
 		self.visible = False
@@ -66,8 +66,9 @@ class ChatBox(TextInput):
 	def Hide(self):
 		self.visible = False
 	
-#	def KeyDown(self, e):
-#		if self.visible:
+	def KeyDown(self, e):
+		if self.visible:
+			TextInput.KeyDown(self, e)
 #			self.Draw()
 #			#print e.key
 #			#print e
@@ -78,7 +79,7 @@ class ChatBox(TextInput):
 #			self.triggered = True
 	
 	def KeyDown_return(self, e):
-		if self.callback:
+		if self.visible and self.callback:
 			self.callback(self.text)
 	
 	def MouseMove(self, e):
