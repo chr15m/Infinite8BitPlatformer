@@ -11,6 +11,8 @@ from PodSixNet.Connection import ConnectionListener, connection
 from engine.ChatBox import ChatBox
 
 class EditButton(ImageButton):
+	# why is this called EditButton? its the BackButton! (c'n'p relict?)
+	help_text = "back"
 	def __init__(self, parent):
 		self.parent = parent
 		ImageButton.__init__(self, [Image(path.join("resources", "icons", "back.png")), Image(path.join("resources", "icons", "back-invert.png"))], [24, 24])

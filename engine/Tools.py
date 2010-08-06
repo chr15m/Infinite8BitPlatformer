@@ -67,6 +67,7 @@ class DrawTool(ImageRadioButton):
 
 class LineTool(DrawTool):
 	"""Line drawing tool"""
+	help_text = "draw line"
 	def __init__(self, parent, buttonGroup=None, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="line.png",selected="line-invert.png",iconpos=7 * 33 + 72,*args,**kwargs)
 		
@@ -96,7 +97,7 @@ class LineTool(DrawTool):
 
 class PenTool(DrawTool):
 	"""Pen drawing tool"""
-	
+	help_text = "draw"	
 	def __init__(self, parent, buttonGroup=None, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="pen.png",selected="pen-invert.png",iconpos=8 * 33 + 72,*args,**kwargs)	
 	
@@ -112,6 +113,7 @@ class PenTool(DrawTool):
 
 class FillTool(DrawTool):
 	"""Flood fill tool"""
+	help_text = "fill"
 	def __init__(self, parent, buttonGroup=None, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="fill.png",selected="fill-invert.png",iconpos=9 * 33 + 72,*args,**kwargs)	
 	
@@ -121,6 +123,7 @@ class FillTool(DrawTool):
 
 class AirbrushTool(DrawTool):
 	"""Old Amiga-style airbrush tool"""
+	help_text = "airbrush"
 	def __init__(self, parent, buttonGroup=None, *args, **kwargs):
 		DrawTool.__init__(self,parent,buttonGroup,filename="airbrush.png",selected="airbrush-invert.png",iconpos=10 * 33 + 72,*args,**kwargs)	
 		self.radius = 3000.0 / gfx.width
