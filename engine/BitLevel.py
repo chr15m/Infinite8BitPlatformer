@@ -30,6 +30,20 @@ import palettes
 
 from pygame import Surface
 
+
+#Continue even if there are errors cleaning up temp
+import time
+_unlink = unlink
+def unlink(*args):
+	sleep = 0.002
+	for attempt in range(5):
+		try:
+			_unlink(*args)
+			return
+		except:
+			time.sleep(sleep)
+			sleep *= 2
+
 if not hasattr(zipfile.ZipFile, "extract"):
 	def extract(self, name, dest):
 		destdir = path.join(dest, name)
