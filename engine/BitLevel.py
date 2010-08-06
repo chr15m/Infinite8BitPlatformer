@@ -137,7 +137,6 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def ToString(self):
 		""" Turns this level into a zipfile blob """
 		data = StringIO()
-		# open the file in 'wb' mode under Windows
 		zip = zipfile.ZipFile(data, "w")
 		tmpfile = tempfile.mkstemp(suffix=".png")[1]
 		zip.writestr(self.name + "/level.json", dumps(self.PackSerial()))
@@ -165,24 +164,15 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.AddLayer(self.name, self.layer)
 	
 	def FromString(self, data):
-		mode = "r"
-		zip = zipfile.ZipFile(StringIO(data), mode)
+		zip = zipfile.ZipFile(StringIO(data), "r")
 		self.UnpackSerial(loads(zip.read(self.name + "/level.json")))
-		tmpdir = tempfile.mkdtemp()
-		zip.extract(self.name + "/level.png", tmpdir)
-		imgfile = path.join(tmpdir, self.name, "level.png")
+		imgfile = StringIO(zip.read(self.name + "/level.png"))
 		self.bitmap = BitImage(imgfile)
-		# remove created temp files
-		unlink(imgfile)
 		for t, e in self.GetEntities():
 			baseimgfile = self.name + "/" + e['id'] + ".png"
 			if baseimgfile in zip.namelist():
-				zip.extract(baseimgfile, tmpdir)
-				imgfile = path.join(tmpdir, baseimgfile)
+				imgfile = StringIO(zip.read(baseimgfile))
 				self.layer.names[e['id']].bitmap = BitImage(imgfile)
-				unlink(imgfile)
-		rmdir(imgfile[:-len(path.basename(imgfile))])
-		rmdir(tmpdir)
 		# set the palette on everything
 		#self.ApplyPalette()
 		self.AddLayer(self.name, self.layer)
