@@ -1,8 +1,15 @@
 * fill is too slow - game freezes if you do many fills quickly
+
 * sound effects lag on vista 32 bit (ask jack casey) also on ubuntu (pulse audio?)
 	* tweak buffer sizes?
 
-Bugs from Julian:
+* Bug when level background is being drawn upon but is offscreen:
+	File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Tools.py", line 79, in PenDown
+	self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(pos, pos)
+	AttributeError: 'NoneType' object has no attribute 'SubImage'
+	(Appears to be a bug when the level is sending you changes but you've switched levels)
+
+* send current level edit id to the server when switching levels, and stop the server sending modifications we already have
 
 * cwd command in the root script changes to the wrong directory if not called from library.zip
 
