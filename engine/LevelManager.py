@@ -72,7 +72,7 @@ class LevelManager:
 				self.levels[self.level].RemovePlayerCamera()
 			self.level = level
 			# if we're connected already, tell the server (otherwise we'll tell the server when we get the Network_connected callback)
-			self.net.SendWithID({"action": "setlevel", "level": str(self.level)})
+			self.net.SendWithID({"action": "setlevel", "level": str(self.level), "editid": self.levels[self.level].LastEdit()})
 			# add the destination to the history
 			self.AddHistory([self.level, start or "start"])
 			# make sure that start actually exists, otherwise find a random portal/platform to jump to

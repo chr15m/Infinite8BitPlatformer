@@ -407,7 +407,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		# record this in our level history
 		self.level.AddHistory(data)
 		# only perform this edit if we haven't seen it before
-		if len(self.level.history) <= data['editid']:
+		if self.level.LastEdit() <= data['editid']:
 			# what edit instruction have we been sent?
 			i = data.get('instruction', "")
 			if i == "create":

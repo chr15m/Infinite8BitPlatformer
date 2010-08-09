@@ -30,8 +30,8 @@ import palettes
 
 from pygame import Surface
 
-
-#Continue even if there are errors cleaning up temp
+# this is a horrible Windows 7 hack apparently
+## Patrick: continue even if there are errors cleaning up temp
 import time
 _unlink = unlink
 def unlink(*args):
@@ -180,6 +180,9 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def AddHistory(self, historyitem):
 		""" Records a single item of level edit history. """
 		self.history.append(historyitem)
+	
+	def LastEdit(self):
+		return len(self.history)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
 		""" Legacy SVG level loading code. """

@@ -118,8 +118,10 @@ class I8BPChannel(Channel):
 		self.level = data['level']
 		self.SendToNeighbours({"action": "player_entering"})
 		# send the current history of level changes to the client
-		for d in self._server.GetLevelHistory(self.level):
+		for d in self._server.GetLevelHistory(self.level)[data['editid']:]:
 			self.Send(d)
+		# send a save request back to the client to save the state of the current level once they have received all edits
+		
 		# send to this player all of the states of the other players in the room
 		for n in self._server.GetNeighbours(self):
 			# tell me about all my neighbours
