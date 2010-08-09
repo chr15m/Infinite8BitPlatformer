@@ -295,7 +295,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	###
 	
 	def GetPropUnderMouse(self, p):
-		props = [o for o in self.level.layer.GetAll() if o.TestPoint(p)]
+		props = [o for o in self.level.layer.GetAll()+[self.level] if o.TestPoint(p)]
 		props.reverse()
 		if len(props):
 			return props[0]
@@ -401,8 +401,9 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	###
 	
 	def Network_edit(self, data):
-		print "EditLayer", data
+		#print "EditLayer", data
 		# only perform this edit if we haven't seen it before
+		#print self.level.name, self.lastLevelServerEdit.get(self.level.name, 0), data['editid']
 		if self.lastLevelServerEdit.get(self.level.name, 0) < data['editid']:
 			# remember the time of our last edit
 			self.lastLevelServerEdit[self.level.name] = data['editid']
