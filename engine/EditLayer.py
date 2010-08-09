@@ -295,7 +295,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	###
 	
 	def GetPropUnderMouse(self, p):
-		props = [o for o in self.level.layer.GetAll()+[self.level] if o.TestPoint(p)]
+		props = [o for o in self.level.layer.GetAll() if o.TestPoint(p)]
 		props.reverse()
 		if len(props):
 			return props[0]
