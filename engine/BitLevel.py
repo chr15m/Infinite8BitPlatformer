@@ -177,6 +177,10 @@ class BitLevel(Level, SVGLoader, Paintable):
 		#self.ApplyPalette()
 		self.AddLayer(self.name, self.layer)
 	
+	def AddHistory(self, historyitem):
+		""" Records a single item of level edit history. """
+		self.history.append(historyitem)
+	
 	def Layer_backgroundboxes(self, element, size, info, dom):
 		""" Legacy SVG level loading code. """
 		l = self.layer

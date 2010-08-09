@@ -196,9 +196,6 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		
 		# for line tool
 		self.image_start = None
-		
-		# last servertime from the server for a particular level
-		self.lastLevelServerEdit = {}
 	
 	def MakeId(self):
 		return 'prop-%s' % str(uuid1())
@@ -236,7 +233,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.levelmanager.SetLevel("level" + newlevel.name, dest.id)
 		# send the creation of the portal over the network
 		args.update({"action": "edit", "instruction": "create", "type": "platform", "objectid": dest.id})
-		self.game.net.SendWithID(args)
+		self.RecordEdit(args)
 		#srcportal.destination = "level" + newlevel.name + ":" + destportal.id
 		#player = self.levelmanager.player
 		#srcportal = self.level.Create("portal", {'destination': "level" + newlevel.name + ":" + dest.id, 'rectangle': [player.rectangle.CenterX() - 0.01, player.GetBottom() - 0.03, 0.02, 0.03]})
@@ -245,7 +242,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		destportal = newlevel.Create("portal", args)
 		# send the portal creation commands over the network
 		args.update({"action": "edit", "instruction": "create", "type": "portal", "objectid": destportal.id})
-		self.game.net.SendWithID(args)
+		self.RecordEdit(args)
 		#srcportal.destination = "level" + newlevel.name + ":" + destportal.id
 	
 	def On(self):
@@ -315,14 +312,14 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 					self.currentSurface = self.GetPropUnderMouse(p)
 					if self.currentSurface != self.level:
 						self.currentSurface.Drag(p)
-						self.game.net.SendWithID({"action": "edit", "instruction": "startdrag", "pos": p, "objectid": str(self.currentSurface.id)})
+						self.RecordEdit({"action": "edit", "instruction": "startdrag", "pos": p, "objectid": str(self.currentSurface.id)})
 				elif self.selected == 'clone':
 					self.currentSurface = self.GetPropUnderMouse(p)
 					if self.currentSurface != self.level:
 						oldsurface = self.currentSurface
 						self.currentSurface = self.level.Clone(self.currentSurface)
 						self.currentSurface.Drag(p)
-						self.game.net.SendWithID({"action": "edit", "instruction": "clone", "pos": p, "objectid": str(oldsurface.id), "newobjectid": str(self.currentSurface.id)})
+						self.RecordEdit({"action": "edit", "instruction": "clone", "pos": p, "objectid": str(oldsurface.id), "newobjectid": str(self.currentSurface.id)})
 				elif self.selected == 'delete':
 					if self.GetPropUnderMouse(p) != self.level:
 						delprop = self.GetPropUnderMouse(p)
@@ -339,7 +336,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 							if delprop == self.level.player.platform:
 								self.level.player.platform = None
 							self.level.layer.RemoveProp(delprop)
-							self.game.net.SendWithID({"action": "edit", "instruction": "delete", "objectid": str(delprop.id)})
+							self.RecordEdit({"action": "edit", "instruction": "delete", "objectid": str(delprop.id)})
 				elif type(self.selected) is not str:
 					# selected in a tool object not a string
 					#pos = [int(x * gfx.width) for x in p]
@@ -359,7 +356,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 			elif self.selected in ('move', 'clone') and self.down and self.currentSurface and self.currentSurface != self.level:
 				dragpos = self.level.camera.FromScreenCoordinates(e.pos)
 				self.currentSurface.Drag(dragpos)
-				self.game.net.SendWithID({"action": "edit", "instruction": "drag", "pos": dragpos, "objectid": str(self.currentSurface.id)})
+				self.RecordEdit({"action": "edit", "instruction": "drag", "pos": dragpos, "objectid": str(self.currentSurface.id)})
 			elif type(self.selected) is not str:
 				self.selected.OnMouseMove(e.pos)
 			
@@ -386,27 +383,31 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				if self.selected in ['platform', 'ladder', 'portal', 'item']:
 					self.rect.Absolute()
 					newthing = self.level.Create(self.selected, {'rectangle': list(self.rect)})
-					self.game.net.SendWithID({"action": "edit", "instruction": "create", "type": self.selected, "rectangle": list(self.rect), "objectid": str(newthing.id)})
+					self.RecordEdit({"action": "edit", "instruction": "create", "type": self.selected, "rectangle": list(self.rect), "objectid": str(newthing.id)})
 			self.Remove(self.rect)
 		self.rect = None
 		if self.currentSurface:
 			self.currentSurface.MouseUp()
-			self.game.net.SendWithID({"action": "edit", "instruction": "stopdrag", "objectid": str(self.currentSurface.id)})
+			self.RecordEdit({"action": "edit", "instruction": "stopdrag", "objectid": str(self.currentSurface.id)})
 			self.currentSurface = None
 		if type(self.selected) is not str:
 			self.selected.OnMouseUp([int(x * gfx.width) for x in self.level.camera.FromScreenCoordinates(e.pos)])
 	
+	### Records an edit to the level history, and also to the network
+	
+	def RecordEdit(self, edit):
+		self.level.AddHistory(edit)
+		self.game.net.SendWithID(edit)
+	
 	###
-	###	Interface events
+	###	Network events
 	###
 	
 	def Network_edit(self, data):
-		#print "EditLayer", data
+		# record this in our level history
+		self.level.AddHistory(data)
 		# only perform this edit if we haven't seen it before
-		#print self.level.name, self.lastLevelServerEdit.get(self.level.name, 0), data['editid']
-		if self.lastLevelServerEdit.get(self.level.name, 0) < data['editid']:
-			# remember the time of our last edit
-			self.lastLevelServerEdit[self.level.name] = data['editid']
+		if len(self.level.history) <= data['editid']:
 			# what edit instruction have we been sent?
 			i = data.get('instruction', "")
 			if i == "create":

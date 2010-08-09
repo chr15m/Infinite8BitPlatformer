@@ -9,6 +9,8 @@
 
 * figure out what to do with level backgrounds (transparent? no?)
 
+* make background fill happen incrementally across frames
+
 * network client
 	* send color information over the network
 	* proxy portal/level destination change message
