@@ -1,4 +1,4 @@
-* crashdump reporting
+* automatic crashdump reporting
 
 * automatic updates - use esky?
 
@@ -6,6 +6,8 @@
 	* word wrap
 	* use a utf8 friendly font
 	* pixellate utf8 font
+
+* fix tooltips - add padding and use a utf8 compatible font
 
 * figure out what to do with level backgrounds (transparent? no?)
 
@@ -37,11 +39,13 @@
 		* chat events
 		+ move events
 		+ level editing events
+	* keep a copy of the level server side and make local modifications to it
 	+ level store
+
+* make fills happen one line per frame
 
 Later
 -----
-* make fills happen one line per frame
 
 * chat box functionality
 	* /new command (does the same as new button)
@@ -49,7 +53,7 @@ Later
 	* /back command
 
 * TextInput class (PodSix)
-	* fix arrow keys to move around in edit box
+	+ fix arrow keys to move around in edit box (done - thanks julian!)
 	* key repeat
 
 * improve dying - fade then zap to last platform
@@ -60,7 +64,7 @@ Later
 
 * make notifications 'slots' based instead of counter based
 
-* add a history to the editing of a level
++ add a history to the editing of a level
 
 * rollovers for edit buttons
 
@@ -78,7 +82,7 @@ Later
 	* graphics things
 		+ draw
 		+ fill
-		> line
+		+ line
 		> rectangle
 	* palette button
 		* choose color

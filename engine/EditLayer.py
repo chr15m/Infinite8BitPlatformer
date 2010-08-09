@@ -407,7 +407,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		# record this in our level history
 		self.level.AddHistory(data)
 		# only perform this edit if we haven't seen it before
-		if self.level.LastEdit() <= data['editid']:
+		if self.level.LastEdit() <= data['editid'] and data['level'] == "level" + self.level.id:
 			# what edit instruction have we been sent?
 			i = data.get('instruction', "")
 			if i == "create":
@@ -455,4 +455,5 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				elif i == "pendata":
 					# some some special data for this tool
 					self.networktools[data['id']].NetworkPenData(data)
-
+		else:
+			print "dropped edit: ", data['editid'], "last:", self.level.LastEdit(), "levelid:", data['level'], "current:", "level" + self.level.id

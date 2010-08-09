@@ -84,8 +84,8 @@ class I8BPChannel(Channel):
 		if self.level:
 			editid = self._server.AddLevelHistory(self.level, data)
 		self.SendToNeighbours(data)
-		# make sure the player gets the latest editid
-		self.Send({"action": "edit", "editid": editid})
+		# tell the neighbours to save their level after each edit
+		#self.Send({"action": "save", "servertime": time()})
 	
 	@RequireID
 	def Network_item(self, data):
@@ -119,9 +119,11 @@ class I8BPChannel(Channel):
 		self.SendToNeighbours({"action": "player_entering"})
 		# send the current history of level changes to the client
 		for d in self._server.GetLevelHistory(self.level)[data['editid']:]:
-			self.Send(d)
+			t = d.copy()
+			t["level"] = self.level
+			self.Send(t)
 		# send a save request back to the client to save the state of the current level once they have received all edits
-		
+		#self.Send({"action": "save", "servertime": time()})
 		# send to this player all of the states of the other players in the room
 		for n in self._server.GetNeighbours(self):
 			# tell me about all my neighbours
