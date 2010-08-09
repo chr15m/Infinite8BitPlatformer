@@ -30,6 +30,20 @@ import palettes
 
 from pygame import Surface
 
+
+#Continue even if there are errors cleaning up temp
+import time
+_unlink = unlink
+def unlink(*args):
+	sleep = 0.002
+	for attempt in range(5):
+		try:
+			_unlink(*args)
+			return
+		except:
+			time.sleep(sleep)
+			sleep *= 2
+
 if not hasattr(zipfile.ZipFile, "extract"):
 	def extract(self, name, dest):
 		destdir = path.join(dest, name)
@@ -123,8 +137,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def ToString(self):
 		""" Turns this level into a zipfile blob """
 		data = StringIO()
-		# open the file in 'wb' mode under Windows
-		zip = zipfile.ZipFile(data, "w" + (platform == "win32" and "b" or ""))
+		zip = zipfile.ZipFile(data, "w")
 		tmpfile = tempfile.mkstemp(suffix=".png")[1]
 		zip.writestr(self.name + "/level.json", dumps(self.PackSerial()))
 		self.bitmap.Save(tmpfile)
@@ -137,7 +150,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return data.getvalue()
 	
 	def Save(self):
-		mode = (platform == "win32" and "wb" or "w")
+		mode = "wb"
 		out = file(self.basefilename + ".level.zip", mode)
 		out.write(self.ToString())
 		out.close()
@@ -151,24 +164,15 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.AddLayer(self.name, self.layer)
 	
 	def FromString(self, data):
-		mode = (platform == "win32" and "rb" or "r")
-		zip = zipfile.ZipFile(StringIO(data), mode)
+		zip = zipfile.ZipFile(StringIO(data), "r")
 		self.UnpackSerial(loads(zip.read(self.name + "/level.json")))
-		tmpdir = tempfile.mkdtemp()
-		zip.extract(self.name + "/level.png", tmpdir)
-		imgfile = path.join(tmpdir, self.name, "level.png")
+		imgfile = StringIO(zip.read(self.name + "/level.png"))
 		self.bitmap = BitImage(imgfile)
-		# remove created temp files
-		unlink(imgfile)
 		for t, e in self.GetEntities():
 			baseimgfile = self.name + "/" + e['id'] + ".png"
 			if baseimgfile in zip.namelist():
-				zip.extract(baseimgfile, tmpdir)
-				imgfile = path.join(tmpdir, baseimgfile)
+				imgfile = StringIO(zip.read(baseimgfile))
 				self.layer.names[e['id']].bitmap = BitImage(imgfile)
-				unlink(imgfile)
-		rmdir(imgfile[:-len(path.basename(imgfile))])
-		rmdir(tmpdir)
 		# set the palette on everything
 		#self.ApplyPalette()
 		self.AddLayer(self.name, self.layer)
