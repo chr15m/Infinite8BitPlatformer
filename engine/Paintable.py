@@ -1,3 +1,6 @@
+from math import cos, sin, pi
+from random import random
+
 from PodSix.Resource import *
 from PodSix.Config import config
 
@@ -29,7 +32,24 @@ class Paintable:
 		# otherwise floodfill this sucker
 		else:
 			self.bitmap.FloodFill(self.GetOffset(pos), self.editLayer.color)
-			
+	
+	def PlotRandomPoint(self, pos, radius):
+		""" Plot a random point on the currentSurface a distance 'radius' away from pos (spray paint) """
+		pix = color = self.editLayer.color
+		count = 10
+		while pix == color and count > 0:
+			theta = random() * 2.0 * pi
+			r = radius * random()
+			xpos = int(r * cos(theta) + pos[0])
+			ypos = int(r * sin(theta) + pos[1])
+			try:
+				pix = self.GetPixel([xpos, ypos])
+			except IndexError, ie:
+				pass
+			count -= 1
+		self.Paint([xpos, ypos])
+		return xpos, ypos
+	
 	def GetPixel(self, pos):
 		"""return the colour of the pixel at pos"""
 		return self.bitmap.Pixel(pos)
