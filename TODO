@@ -19,7 +19,7 @@
 	* check version number against server
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
 	* upload level on 'new level'
-	* make level uploading work
+	* make server side level modification work
 	+ make tools work on level background
 	+ send chat events to the server
 	+ make the clone tool work over the network
@@ -34,9 +34,9 @@
 
 * network server
 	* check protocol version number against clients
-	* make level downloading work
+	* make level downloading work (md5sum, latest edit)
 	* mirror commands to all users on the same level
-		* chat events
+		+ chat events
 		+ move events
 		+ level editing events
 	* keep a copy of the level server side and make local modifications to it
