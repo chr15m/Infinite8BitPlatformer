@@ -1,4 +1,4 @@
-* on-screen messages are broken (appear late)
+* get tooltips to clamp to screen area again
 
 * fill is too slow - game freezes if you do many fills quickly
 
@@ -72,4 +72,7 @@ AttributeError: BitLevel instance has no attribute 'id'
 + cwd command in the root script changes to the wrong directory if not called from library.zip
 
 + send current level edit id to the server when switching levels, and stop the server sending modifications we already have
+
++ on-screen messages are broken (appear late)
+
 
