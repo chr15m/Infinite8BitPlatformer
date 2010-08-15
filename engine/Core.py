@@ -26,6 +26,7 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
 		gfx.LoadFont("FreeSans", 18.0 / gfx.width, "chat")
+		#gfx.LoadFont("FreeSans", 8.0 / gfx.width, "tiny")
 		sfx.LoadSound("item")
 		sfx.LoadSound("portal")
 		sfx.LoadSound("die")
@@ -43,8 +44,11 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		self.Add(self.hud)
 		# global tooltip singleton
 		self.Add(tooltip)
+		# set tooltip font
+		#tooltip.font = "tiny"
 		# Create player and camera and put some text on the screen
-		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 1.0)
+		#self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 1.0)
+		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", None, 3.0)
 		# Give us the methods for manipulating level collections
 		self.players = PlayerManager(self)
 		LevelManager.__init__(self)
@@ -53,8 +57,8 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		self.net.Connect(self.serverhost)
 		Game.Launch(self)
 	
-	def Instructions(self):
-		self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 5.0)
+	#def Instructions(self):
+	#	self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 5.0)
 	
 	def Setup(self, message="", callback=None, time=None):
 		# create our main player with id 0
@@ -64,7 +68,8 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 			self.AddMessage(message, callback, time)
 	
 	def AddMessage(self, messagetxt, callback=None, time=None):
-		self.Add(Notification(self, messagetxt, callback=callback, time=time))
+		# why do i have to do this? the first notification does not appear if I don't delay for 1 frame
+		self.QueueLater(1, self.Add, Notification(self, messagetxt, callback=callback, time=time))
 	
 	def RemoveMessage(self, message):
 		self.Remove(message)

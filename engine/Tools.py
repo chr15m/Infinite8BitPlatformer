@@ -1,6 +1,4 @@
-from math import cos,sin,pi
 from os import path
-import random
 
 from PodSix.GUI.Button import ImageRadioButton
 from PodSix.Resource import *
@@ -131,7 +129,7 @@ class AirbrushTool(DrawTool):
 	
 	def PenDown(self, pos, surface):
 		pos, surface = DrawTool.PenDown(self, pos, surface)
-		x,y = self.PlotRandomPoint(pos)
+		x,y = surface.PlotRandomPoint(pos, self.radius)
 		self.position = pos
 	
 	def NetworkPenDown(self, pos, surface):
@@ -150,31 +148,15 @@ class AirbrushTool(DrawTool):
 	def PenMove(self, pos):
 		pos, lastPos = DrawTool.PenMove(self, pos)
 		if self.currentSurface:
-			self.PlotRandomPoint( pos )
+			xpos, ypos = self.currentSurface.PlotRandomPoint(pos, self.radius)
+			# make sure the paint happens remotely too
+			self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendata", "tool": "AirbrushTool", "pos": [xpos, ypos], "objectid": self.currentSurface.id})
 			self.position = pos
 		return pos, lastPos
 	
 	def Pump(self):
 		"""call me repeatedly to keep the pixels flowing"""
 		if self.currentSurface:
-			self.PlotRandomPoint(self.position)
+			self.currentSurface.PlotRandomPoint(self.position, self.radius)
 		ImageRadioButton.Pump(self)
-	
-	def PlotRandomPoint(self, pos):
-		"""Plot a random point on the currentSurface a distance 'radius' away from pos"""
-		pix = color = self.parent.color
-		count = 10
-		while pix == color and count > 0:
-			theta = random.random() * 2.0 * pi
-			r = self.radius * random.random()
-			xpos = int(r * cos(theta) + pos[0])
-			ypos = int(r * sin(theta) + pos[1])
-			try:
-				pix = self.currentSurface.GetPixel([xpos, ypos])
-			except IndexError, ie:
-				pass
-			count -= 1
-		self.currentSurface.Paint([xpos, ypos])
-		# make sure the paint happens remotely too
-		self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendata", "tool": "AirbrushTool", "pos": [xpos, ypos], "objectid": self.currentSurface.id})
-		return xpos, ypos
+

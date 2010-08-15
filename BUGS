@@ -1,25 +1,18 @@
+* get tooltips to clamp to screen area again
+
 * fill is too slow - game freezes if you do many fills quickly
 
 * sound effects lag on vista 32 bit (ask jack casey) also on ubuntu (pulse audio?)
 	* tweak buffer sizes?
 
-* Bug when level background is being drawn upon but is offscreen:
-	File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Tools.py", line 79, in PenDown
-	self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(pos, pos)
-	AttributeError: 'NoneType' object has no attribute 'SubImage'
-	(Appears to be a bug when the level is sending you changes but you've switched levels)
-
-* send current level edit id to the server when switching levels, and stop the server sending modifications we already have
-
-* cwd command in the root script changes to the wrong directory if not called from library.zip
-
 * clicking on a widget and then dragging the mouse out breaks button state - requires a FocusLeft() method of some kind.
-
-* start game, press enter, opens browser (chat box focus needs fixing)
 
 * replace "e.key == [int]" with K_* instead
 
 * remove instances of "from resource import *" and replace with actual imported resources
+
+Fixed
+-----
 
 Traceback (most recent call last):
   File "C:\Users\Julian\Infinite8BitPlatformer\Infinite8BitPlatformer.py", line
@@ -67,4 +60,19 @@ ouseDown
 AttributeError: BitLevel instance has no attribute 'id'
 
 (using line tool, but happens quite often)
+
++ Bug when level background is being drawn upon but is offscreen:
+	File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Tools.py", line 79, in PenDown
+	self.savedImage, self.image_start, dummy = self.currentSurface.SubImage(pos, pos)
+	AttributeError: 'NoneType' object has no attribute 'SubImage'
+	(Appears to be a bug when the level is sending you changes but you've switched levels)
+
++ start game, press enter, opens browser (chat box focus needs fixing)
+
++ cwd command in the root script changes to the wrong directory if not called from library.zip
+
++ send current level edit id to the server when switching levels, and stop the server sending modifications we already have
+
++ on-screen messages are broken (appear late)
+
 
