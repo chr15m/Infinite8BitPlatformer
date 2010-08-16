@@ -446,7 +446,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 					# create the tool for this user
 					self.networktools[data['id']] = getattr(Tools, data['tool'])(self)
 					prop = self.PropFromId(data['objectid'])
-					self.networktools[data['id']].NetworkPenDown(data['pos'], prop)
+					self.networktools[data['id']].NetworkPenDown(data['pos'], prop, data['color'])
 				elif i == "penmove":
 					self.networktools[data['id']].NetworkPenMove(data['pos'])
 				elif i == "penup":

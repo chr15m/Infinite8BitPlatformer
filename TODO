@@ -10,12 +10,12 @@
 * make background fill happen incrementally across frames
 
 * network client
-	* send color information over the network
 	* proxy portal/level destination change message
 	* check version number against server
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
 	* upload level on 'new level'
 	* make server side level modification work
+	+ send color information over the network
 	+ make tools work on level background
 	+ send chat events to the server
 	+ make the clone tool work over the network
