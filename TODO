@@ -2,7 +2,7 @@
 
 * automatic updates - use esky?
 
-* fix speech bubble
+* fix speech bubble/chat
 	* word wrap
 	* use a utf8 friendly font
 	* pixellate utf8 font
@@ -31,7 +31,7 @@
 * network server
 	* check protocol version number against clients
 	* make level downloading work (md5sum, latest edit)
-	* mirror commands to all users on the same level
+	+ mirror commands to all users on the same level
 		+ chat events
 		+ move events
 		+ level editing events

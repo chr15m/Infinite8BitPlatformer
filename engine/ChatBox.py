@@ -45,6 +45,9 @@ class ChatBox(TextInput):
 		else:
 			gfx.BlitImage(self.chatIcon, position=(8, gfx.height - 36))
 	
+	def ClearText(self):
+		self.ShowText("", self.callback)
+	
 	def ShowText(self, text, callback=None):
 		if not self.oldText:
 			self.oldText = self.text

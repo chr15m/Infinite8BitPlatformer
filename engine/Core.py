@@ -143,6 +143,7 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 			self.Back()
 		else:
 			self.player.Chat(text)
+			self.hud.chatBox.ClearText()
 		self.hud.chatBox.Hide()
 	
 	###
