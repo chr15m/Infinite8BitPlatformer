@@ -1,7 +1,3 @@
-* get tooltips to clamp to screen area again
-
-* fill is too slow - game freezes if you do many fills quickly
-
 * sound effects lag on vista 32 bit (ask jack casey) also on ubuntu (pulse audio?)
 	* tweak buffer sizes?
 
@@ -75,4 +71,5 @@ AttributeError: BitLevel instance has no attribute 'id'
 
 + on-screen messages are broken (appear late)
 
++ get tooltips to clamp to screen area again
 

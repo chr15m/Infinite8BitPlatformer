@@ -1,20 +1,25 @@
-* automatic crashdump reporting
-
-* automatic updates - use esky?
-
 * fix speech bubble/chat
 	* word wrap
-	* use a utf8 friendly font
-	* pixellate utf8 font
 
-* make background fill happen incrementally across frames
+* network server
+	* keep a copy of the level server side and make local modifications to it
+	* make level downloading work (md5sum, latest edit)
+	* accept 'new level' message
+	* check protocol version number against clients
+	+ mirror commands to all users on the same level
+		+ chat events
+		+ move events
+		+ level editing events
+	+ level store
+
+* fix ladder climbing keys - possible to just use up key for climb+jump?
 
 * network client
 	* proxy portal/level destination change message
-	* check version number against server
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
-	* upload level on 'new level'
-	* make server side level modification work
+	* check version number against server
+	* 'new level' message sent to server
+	+ make server side level modification work
 	+ send color information over the network
 	+ make tools work on level background
 	+ send chat events to the server
@@ -28,19 +33,11 @@
 	+ icon shows if a connection is made
 	+ send movements to the client
 
-* network server
-	* check protocol version number against clients
-	* make level downloading work (md5sum, latest edit)
-	+ mirror commands to all users on the same level
-		+ chat events
-		+ move events
-		+ level editing events
-	* keep a copy of the level server side and make local modifications to it
-	+ level store
+* make background fill happen incrementally across frames
 
-* make fills happen one line per frame
+* automatic crashdump reporting
 
-* tooltip clamping to gfx area
+* automatic updates - use esky?
 
 Later
 -----
@@ -53,6 +50,7 @@ Later
 * TextInput class (PodSix)
 	+ fix arrow keys to move around in edit box (done - thanks julian!)
 	* key repeat
+	* copy/paste
 
 * improve dying - fade then zap to last platform
 	* if there is no last platform, pick one from the level
