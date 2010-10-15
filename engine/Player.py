@@ -102,7 +102,6 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		self.SendChat(text)
 	
 	def Say(self, text):
-		"""temp. testing (local) (display a message)"""
 		t = "\n".join(gfx.WrapText(text, 0.25))
 		if self.sb:
 			self.sb.visible = False
@@ -128,14 +127,14 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 			if data['move'] in ["WalkRight", "WalkLeft", "StopRight", "StopLeft", "Jump"]:
 				# force the animation update
 				getattr(self, data['move'])(force=True)
-								
+	
 	def SendChat(self, text):
 		    self.game.net.SendWithID({"action": "chat", "message":text})
 	
 	def Network_chat(self, data):
 		if data['id'] == self.playerid:
 			self.Say(data["message"])
-		
+	
 	###
 	### Input events etc.
 	###
@@ -167,22 +166,25 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 			sfx.PlaySound("jump")
 		self.Jump()
 		self.SendMove(move="Jump")
-		
+	
 	@chatboxShowing
 	def KeyDown_up(self, e):
-		self.ClimbUp()
-		self.SendMove(move="ClimbUp")
-		
+		if self.ClimbUp():
+			self.SendMove(move="ClimbUp")
+		else:
+			self.KeyDown_space(e)
+	
+	@chatboxShowing
+	def KeyUp_up(self, e):
+		if self.grabbing:
+			self.StopUp()
+			self.SendMove(move="StopUp")
+	
 	@chatboxShowing
 	def KeyDown_down(self, e):
 		self.ClimbDown()
 		self.SendMove(move="ClimbDonw")
-		
-	@chatboxShowing
-	def KeyUp_up(self, e):
-		self.StopUp()
-		self.SendMove(move="StopUp")
-		
+	
 	@chatboxShowing
 	def KeyUp_down(self, e):
 		self.StopUp()

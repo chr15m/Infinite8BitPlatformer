@@ -1,6 +1,3 @@
-* fix speech bubble/chat
-	* word wrap
-
 * network server
 	* keep a copy of the level server side and make local modifications to it
 	* make level downloading work (md5sum, latest edit)
@@ -11,8 +8,6 @@
 		+ move events
 		+ level editing events
 	+ level store
-
-* fix ladder climbing keys - possible to just use up key for climb+jump?
 
 * network client
 	* proxy portal/level destination change message
@@ -38,6 +33,11 @@
 * automatic crashdump reporting
 
 * automatic updates - use esky?
+
++ fix ladder climbing keys - possible to just use up key for climb + jump?
+
++ fix speech bubble/chat
+	+ word wrap
 
 Later
 -----
