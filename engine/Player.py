@@ -100,12 +100,13 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	def Chat(self, text):
 		self.Say(text)
 		self.SendChat(text)
-		
+	
 	def Say(self, text):
 		"""temp. testing (local) (display a message)"""
+		t = "\n".join(gfx.WrapText(text, 0.25))
 		if self.sb:
 			self.sb.visible = False
-		self.sb = SpeechBubble(self, text)
+		self.sb = SpeechBubble(self, t)
 		self.Add(self.sb)
 	
 	###
