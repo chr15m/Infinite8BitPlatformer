@@ -14,6 +14,7 @@
 		* item description
 		* level name
 		* portal destionation
+	* send 'landed on platform' event over the network
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
 	* send version number to server when connecting
 	* 'new level' message sent to server

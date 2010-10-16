@@ -81,9 +81,15 @@ class I8BPChannel(Channel):
 	@RequireID
 	def Network_edit(self, data):
 		# some type of edit action
+		# network edits must record the level name where the change was made
+		data.update({"level": self.level})
 		if self.level:
 			editid = self._server.AddLevelHistory(self.level, data)
 		self.SendToNeighbours(data)
+		# if this was a level name change, the server needs to know about it
+		if data["action"] == "levelname":
+			self._server.ChangeLevelName(self.level, data["name"])
+			self.level = data["name"]
 		# tell the neighbours to save their level after each edit
 		#self.Send({"action": "save", "servertime": time()})
 	
@@ -119,9 +125,9 @@ class I8BPChannel(Channel):
 		self.SendToNeighbours({"action": "player_entering"})
 		# send the current history of level changes to the client
 		for d in self._server.GetLevelHistory(self.level)[data['editid']:]:
-			t = d.copy()
-			t["level"] = self.level
-			self.Send(t)
+			#t = d.copy()
+			#t["level"] = self.level
+			self.Send(d)
 		# send a save request back to the client to save the state of the current level once they have received all edits
 		#self.Send({"action": "save", "servertime": time()})
 		# send to this player all of the states of the other players in the room
@@ -131,6 +137,7 @@ class I8BPChannel(Channel):
 			# tell me about the states of all my neighbours
 			for s in n.state:
 				if n.state[s]:
+					print "STATE COPY:", n.state[s]
 					state = n.state[s].copy()
 					state["action"] = s
 					self.Send(state)
@@ -213,6 +220,12 @@ class I8BPServer(Server):
 			return self.levelHistory[level]
 		else:
 			return []
+	
+	def ChangeLevelName(self, oldname, newname):
+		self.levelHistory[newname] = self.levelHistory[oldname]
+		self.levelEditIds[newname] = self.levelHistory[oldname]
+		del self.levelHistory[oldname]
+		del self.levelEditIds[oldname]
 	
 	def Connected(self, client, addr):
 		# Sets the non-uuid non-secret ID for this session

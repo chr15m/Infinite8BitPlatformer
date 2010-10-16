@@ -28,15 +28,11 @@ class LevelNameLabel(Label):
 	
 	def MouseOver(self, e):
 		if self.editLayer.mode:
-			self.parent.chatBox.ShowText(self.text, self.UpdateLevelName)
+			self.parent.chatBox.ShowText(self.text, self.editLayer.UpdateLevelName)
 	
 	def MouseOut(self, e):
 		if self.editLayer.mode:
 			self.parent.chatBox.RevertText()
-	
-	def UpdateLevelName(self, name):
-		self.parent.game.SetLevelName(name)
-		self.parent.chatBox.RevertText()
 
 class FeedbackLink(Label):
 	def __init__(self, parent):

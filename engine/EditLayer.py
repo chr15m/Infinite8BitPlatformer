@@ -212,7 +212,13 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		return self.portalDestinationIcon.destination
 	
 	def UpdateItemDescription(self, description):
+		self.RecordEdit({"action": "edit", "instruction": "itemdescription", "description": description, "objectid": self.lastHover.id})
 		self.lastHover.description = description
+		self.levelmanager.hud.chatBox.RevertText()
+	
+	def UpdateLevelName(self, name):
+		self.RecordEdit({"action": "edit", "instruction": "levelname", "name": name})
+		self.levelmanager.SetLevelName(name)
 		self.levelmanager.hud.chatBox.RevertText()
 	
 	def ToggleMode(self):
@@ -455,5 +461,11 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				elif i == "pendata":
 					# some some special data for this tool
 					self.networktools[data['id']].NetworkPenData(data)
+			# name changes
+			elif i == "levelname":
+				self.levelmanager.SetLevelName(data['name'])
+			elif i == "itemdescription":
+				prop = self.PropFromId(data['objectid'])
+				prop.description = i['description']
 		else:
 			print "dropped edit: ", data['editid'], "last:", self.level.LastEdit(), "levelid:", data['level'], "current:", "level" + self.level.id
