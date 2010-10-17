@@ -70,7 +70,13 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 			sfx.PlaySound("portal")
 			if self.game.Teleport(self.portal):
 				self.game.AddMessage("teleporting to " + self.portal.destination.split(":")[0])
-				
+	
+	def HitPlatform(self, platform):
+		# skip the first hitplatform of the game
+		if self.game.net.playerID and self.game.player == self:
+			self.SendCurrentMove()
+		#	self.SendMove(move="HitPlatform")
+		#pass
 	
 	###
 	### Concurrency related methods
@@ -183,7 +189,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	@chatboxShowing
 	def KeyDown_down(self, e):
 		self.ClimbDown()
-		self.SendMove(move="ClimbDonw")
+		self.SendMove(move="ClimbDown")
 	
 	@chatboxShowing
 	def KeyUp_down(self, e):
