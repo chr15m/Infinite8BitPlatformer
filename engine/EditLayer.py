@@ -211,6 +211,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	def GetPortalDestination(self):
 		return self.portalDestinationIcon.destination
 	
+	def ChangePortalDestination(self, portal, destination):
+		self.RecordEdit({"action": "edit", "instruction": "portaldestination", "destination": destination, "objectid": portal.id})
+		portal.destination = destination
+	
 	def UpdateItemDescription(self, description):
 		self.RecordEdit({"action": "edit", "instruction": "itemdescription", "description": description, "objectid": self.lastHover.id})
 		self.lastHover.description = description
@@ -410,6 +414,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	###
 	
 	def Network_edit(self, data):
+		print data
 		# record this in our level history
 		self.level.AddHistory(data)
 		# only perform this edit if we haven't seen it before
@@ -466,6 +471,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				self.levelmanager.SetLevelName(data['name'])
 			elif i == "itemdescription":
 				prop = self.PropFromId(data['objectid'])
-				prop.description = i['description']
+				prop.description = data['description']
+			elif i == "portaldestination":
+				prop = self.PropFromId(data['objectid'])
+				prop.destination = data['destination']
+				print prop, prop.destination
 		else:
 			print "dropped edit: ", data['editid'], "last:", self.level.LastEdit(), "levelid:", data['level'], "current:", "level" + self.level.id

@@ -22,7 +22,8 @@ class PortalIcon(ImageButton):
 			if dest:
 				if dest != newDest:
 					# we have a portal in memory, and we've selected a new one, so join them
-					self.parent.destination = dest
+					# need to proxy this through editLayer so it can do network stuff
+					self.parent.container.level.editLayer.ChangePortalDestination(self.parent, dest)
 					# send a message
 					self.parent.container.level.editLayer.levelmanager.AddMessage("portal destination set", None, 1.0)
 				# clear the portal destination thing
