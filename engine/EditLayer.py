@@ -258,10 +258,6 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	def On(self):
 		return self.mode and self.level
 	
-	def PropFromId(self, objectid):
-		objs = [o for o in self.level.layer.GetAll()+[self.level] if o.id == objectid]
-		return len(objs) and objs[0] or None
-	
 	###
 	###	Concurrency events
 	###
@@ -424,10 +420,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 			if i == "create":
 				self.level.Create(data['type'], {'rectangle': list(data['rectangle']), "id": data['objectid']})
 			elif i == "clone":
-				newsurface = self.level.Clone(self.PropFromId(data['objectid']), data['newobjectid'])
+				newsurface = self.level.Clone(self.level.PropFromId(data['objectid']), data['newobjectid'])
 				newsurface.Drag(data['pos'])
 			elif i == "delete":
-				delprop = self.PropFromId(data['objectid'])
+				delprop = self.level.PropFromId(data['objectid'])
 				allplayers = self.levelmanager.players.players
 				# check if any players have this as their last platform or platform
 				for p in allplayers:
@@ -446,17 +442,17 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				self.level.layer.RemoveProp(delprop)
 			# dragging objects around
 			elif i == "startdrag":
-				self.PropFromId(data['objectid']).Drag(data['pos'])
+				self.level.PropFromId(data['objectid']).Drag(data['pos'])
 			elif i == "drag":
-				self.PropFromId(data['objectid']).Drag(data['pos'])
+				self.level.PropFromId(data['objectid']).Drag(data['pos'])
 			elif i == "stopdrag":
-				self.PropFromId(data['objectid']).MouseUp()
+				self.level.PropFromId(data['objectid']).MouseUp()
 			# drawing tools over the network
 			elif i.startswith("pen"):
 				if i == "pendown":
 					# create the tool for this user
 					self.networktools[data['id']] = getattr(Tools, data['tool'])(self)
-					prop = self.PropFromId(data['objectid'])
+					prop = self.level.PropFromId(data['objectid'])
 					self.networktools[data['id']].NetworkPenDown(data['pos'], prop, data['color'])
 				elif i == "penmove":
 					self.networktools[data['id']].NetworkPenMove(data['pos'])
@@ -470,11 +466,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 			elif i == "levelname":
 				self.levelmanager.SetLevelName(data['name'])
 			elif i == "itemdescription":
-				prop = self.PropFromId(data['objectid'])
+				prop = self.level.PropFromId(data['objectid'])
 				prop.description = data['description']
 			elif i == "portaldestination":
-				prop = self.PropFromId(data['objectid'])
+				prop = self.level.PropFromId(data['objectid'])
 				prop.destination = data['destination']
-				print prop, prop.destination
 		else:
 			print "dropped edit: ", data['editid'], "last:", self.level.LastEdit(), "levelid:", data['level'], "current:", "level" + self.level.id

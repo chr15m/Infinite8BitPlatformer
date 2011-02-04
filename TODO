@@ -1,7 +1,9 @@
 * network server
 	* keep a copy of the level server side and make local modifications to it
 	* make level downloading work (md5sum, latest edit)
-	* accept 'new level' message
+	* OR: send 'start level update' and 'finish level update' messages + use spinner
+		* save after receiving 'finish level update' message
+	* accept 'new level' message - generate new level ID
 	* check protocol version number against clients
 	+ mirror commands to all users on the same level
 		+ chat events
@@ -10,12 +12,13 @@
 	+ level store
 
 * network client
-	* 'loading' spinner
 	* send 'collected item' message over the network
-	* send 'new level' message to the server
-	* send level md5 and edit info to server and download differing levels
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
+	* 'loading' spinner
+	* send 'new level' message to the server - wait for ID
+	* send level md5 and edit info to server and download differing levels
 	* send version number to server when connecting
+	* check whether new level name is unique over network
 	+ send 'landed on platform' event over the network
 	+ send name/object changes over the network
 		+ item description
@@ -36,6 +39,7 @@
 	+ send movements to the client
 
 * make background fill happen incrementally across frames
+	* OR: use spinner?
 
 * automatic crashdump reporting
 

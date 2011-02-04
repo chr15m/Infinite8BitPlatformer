@@ -121,6 +121,10 @@ class BitLevel(Level, SVGLoader, Paintable):
 	def GetEntities(self):
 		return [(o.type, dict([(s, o.__dict__[s]) for s in ("id", "destination", "rectangle", "description") if s in o.__dict__])) for o in self.layer.GetAll()]
 	
+	def PropFromId(self, objectid):
+		objs = [o for o in self.layer.GetAll()+[self] if o.id == objectid]
+		return len(objs) and objs[0] or None
+	
 	def PackSerial(self):
 		return {"level": {"name": self.displayName, "history": self.history, "entities": self.GetEntities(), "palette": self.palette, "background": self.bgColor, "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
 	

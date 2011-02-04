@@ -26,6 +26,9 @@ class LevelManager:
 			if not "level" + str(i) in self.levels.keys():
 				return str(i)
 	
+	def CurrentLevel(self):
+		return self.levels[self.level]
+	
 	def LoadLevel(self, name):
 		""" Run on LevelManager init to load all known levels into memory. """
 		# TODO: only load on demand
