@@ -29,6 +29,7 @@ class I8BPChannel(Channel):
 		# this player's last known state, such as last move performed, position etc.
 		self.state = {}
 		self.state["chat"] = []
+		self.state["item"] = []
 		self.lastUpdate = 0
 		Channel.__init__(self, *args, **kwargs)
 	
@@ -95,8 +96,13 @@ class I8BPChannel(Channel):
 	
 	@RequireID
 	def Network_item(self, data):
+		data["collected"] = time()
 		# the player got an item
 		self.SendToNeighbours(data)
+		# keep a record of items collected by this player on this level
+		self.state["item"].append(data)
+		# only remember the last few items collected
+		self.state["item"] =  self.state["item"][-5:]
 	
 	@RequireID
 	def Network_move(self, data):
@@ -109,7 +115,7 @@ class I8BPChannel(Channel):
 		# this client's player is saying something for others to hear
 		self.SendToNeighbours(data)
 		# add the latest message to the message stack
-		self.state["chat"].append(data["message"])
+		self.state["chat"].append(data)
 		# make sure we only remember the last few messages
 		self.state["chat"] =  self.state["chat"][-5:]
 	
@@ -125,8 +131,6 @@ class I8BPChannel(Channel):
 		self.SendToNeighbours({"action": "player_entering"})
 		# send the current history of level changes to the client
 		for d in self._server.GetLevelHistory(self.level)[data['editid']:]:
-			#t = d.copy()
-			#t["level"] = self.level
 			self.Send(d)
 		# send a save request back to the client to save the state of the current level once they have received all edits
 		#self.Send({"action": "save", "servertime": time()})
@@ -138,9 +142,15 @@ class I8BPChannel(Channel):
 			for s in n.state:
 				if n.state[s]:
 					print "STATE COPY:", n.state[s]
-					state = n.state[s].copy()
-					state["action"] = s
-					self.Send(state)
+					if type(n.state[s]) == type([]):
+						for z in n.state[s]:
+							state = z.copy()
+							state["action"] = s
+							self.Send(state)
+					else:
+						state = n.state[s].copy()
+						state["action"] = s
+						self.Send(state)
 	
 	@RequireID
 	def Network_leavelevel(self, data):

@@ -51,16 +51,13 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	
 	def Collide(self, who):
 		Character.Collide(self, who)
-		# TODO: if we land on a platform, SendCurrentMove()
-		
 		# TODO: check for a copy of the item instead of the actual item
 		if isinstance(who, Item) and who.visible and not who in self.inventory:
 			self.game.AddMessage("got" + (who.description and " " + who.description or ""), None, 2)
 			# TODO: add a copy of the item instead of the actual item
-			self.inventory.append(who)
-			who.Hide()
-			sfx.PlaySound("item")
-			#self.Send({"action": "item", "item_id": who.name})
+			self.Collect(who)
+			if self.game.player == self:
+				self.game.net.SendWithID({"action": "item", "objectid": who.id})
 		
 		if isinstance(who, Portal):
 			self.portal = who
@@ -75,8 +72,11 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		# skip the first hitplatform of the game
 		if self.game.net.playerID and self.game.player == self:
 			self.SendCurrentMove()
-		#	self.SendMove(move="HitPlatform")
-		#pass
+	
+	def Collect(self, item, counter=30):
+		self.inventory.append(item)
+		item.Hide(counter)
+		sfx.PlaySound("item")
 	
 	###
 	### Concurrency related methods
@@ -127,7 +127,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	
 	def Network_move(self, data):
 		if data['id'] == self.playerid:
-			print "Player move:", self.playerid, data
+			#print "Player move:", self.playerid, data
 			self.rectangle.Center(data['center'])
 			self.velocity = data['velocity']
 			if data['move'] in ["WalkRight", "WalkLeft", "StopRight", "StopLeft", "Jump"]:
@@ -140,6 +140,11 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	def Network_chat(self, data):
 		if data['id'] == self.playerid:
 			self.Say(data["message"])
+	
+	def Network_item(self, data):
+		print "collect item:", data
+		if data['id'] == self.playerid:
+			self.Collect(self.game.CurrentLevel().PropFromId(data['objectid']), counter=(30 - (int(data['servertime']) - int(data['collected']))))
 	
 	###
 	### Input events etc.

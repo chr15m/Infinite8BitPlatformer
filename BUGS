@@ -1,6 +1,8 @@
 * sound effects lag on vista 32 bit (ask jack casey) also on ubuntu (pulse audio?)
 	* tweak buffer sizes?
 
+* something is a bit wonky about keeping the last 5 messages and last 5 collected items on the level - use the actual expiry time instead
+
 * clicking on a widget and then dragging the mouse out breaks button state - requires a FocusLeft() method of some kind.
 
 * replace "e.key == [int]" with K_* instead

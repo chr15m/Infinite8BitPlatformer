@@ -12,13 +12,13 @@
 	+ level store
 
 * network client
-	* send 'collected item' message over the network
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
 	* 'loading' spinner
 	* send 'new level' message to the server - wait for ID
 	* send level md5 and edit info to server and download differing levels
 	* send version number to server when connecting
 	* check whether new level name is unique over network
+	+ send 'collected item' message over the network
 	+ send 'landed on platform' event over the network
 	+ send name/object changes over the network
 		+ item description

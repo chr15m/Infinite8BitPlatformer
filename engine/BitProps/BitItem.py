@@ -22,8 +22,8 @@ class BitItem(BitProp, Item):
 				self.Show()
 			self.box = None
 	
-	def Hide(self):
-		self.showCounter = 30
+	def Hide(self, counter=30):
+		self.showCounter = counter
 		self.visible = False
 	
 	def Show(self):
