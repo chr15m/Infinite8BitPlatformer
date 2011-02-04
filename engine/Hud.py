@@ -10,8 +10,7 @@ from PodSixNet.Connection import ConnectionListener, connection
 
 from engine.ChatBox import ChatBox
 
-class EditButton(ImageButton):
-	# why is this called EditButton? its the BackButton! (c'n'p relict?)
+class BackButton(ImageButton):
 	help_text = "back"
 	def __init__(self, parent):
 		self.parent = parent
@@ -70,12 +69,12 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		self.disconnectedIcon = ConnectedIcon(self)
-		self.editButton = EditButton(self)
+		self.backButton = BackButton(self)
 		self.chatBox = ChatBox(self, self.game.DoChatBox)
 		self.levelLabel = LevelNameLabel(self)
 		self.feedbacklink = FeedbackLink(self)
 		# edit button turns on the other buttons
-		self.Add(self.editButton)
+		self.Add(self.backButton)
 		self.Add(self.chatBox)
 		self.Add(self.levelLabel)
 		self.Add(self.feedbacklink)
