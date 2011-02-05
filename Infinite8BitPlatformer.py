@@ -29,7 +29,7 @@ config.SetFilename("Infinite8BitPlatformer.cfg")
 #s.Launch()
 
 from engine.Core import Core
-c = Core((len(argv) >= 2 and argv[1] != "profile") and argv[1] or "mccormick.cx")
+c = Core((len(argv) >= 2 and argv[1] != "profile") and argv[1] or "i8bp.infiniteplatformer.com")
 
 if "profile" in argv:
 	import cProfile as profile
