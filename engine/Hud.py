@@ -99,6 +99,13 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 	def Network_disconnected(self, data):
 		self.game.AddMessage('Disconnected from ' + self.game.serverhost, None, 5.0)
 	
+	def Network_leveldump(self, data):
+		if data['size']:
+			if data['progress'] == "start":
+				self.game.AddMessage("Receiving %d updates" % data['size'], None, 3.0)
+			else:
+				self.game.AddMessage("Done updating, saving level.", None, 3.0)
+	
 	###
 	###	Concurrency events
 	###

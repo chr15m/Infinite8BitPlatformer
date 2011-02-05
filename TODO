@@ -1,3 +1,5 @@
+FIX: low-level bug in podsixnet where things are being sent out-of-order on big sends (e.g. draw something and the updates-completed message arrives before the end of the draw).
+
 * network server
 	* keep a copy of the level server side and make local modifications to it
 	* make level downloading work (md5sum, latest edit)
@@ -12,8 +14,8 @@
 	+ level store
 
 * network client
-	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
 	* 'loading' spinner
+	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
 	* send 'new level' message to the server - wait for ID
 	* send level md5 and edit info to server and download differing levels
 	* send version number to server when connecting
@@ -38,8 +40,13 @@
 	+ icon shows if a connection is made
 	+ send movements to the client
 
+* make tooltips appear after a second, not instantly
+
+* make chat boxes avoid eachother
+
 * make background fill happen incrementally across frames
 	* OR: use spinner?
+	* OR: both?
 
 * automatic crashdump reporting
 

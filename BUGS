@@ -9,6 +9,44 @@
 
 * remove instances of "from resource import *" and replace with actual imported resources
 
+* when fill painting outside the box (other operations too?):
+Traceback (most recent call last):
+  File "Infinite8BitPlatformer.py", line 38, in <module>
+    c.Launch()
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Core.py", line 58, in Launch
+    Game.Launch(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Game.py", line 17, in Launch
+    self.Run()
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Core.py", line 93, in Run
+    Game.Run(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Game.py", line 27, in Run
+    Concurrent.Run(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Concurrent.py", line 38, in Run
+    self.Pump()
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Core.py", line 87, in Pump
+    Game.Pump(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Concurrent.py", line 45, in Pump
+    [o.Pump() for o in self.objects if hasattr(o, "Pump") and not self.frame % o.frequency]
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/EditLayer.py", line 271, in Pump
+    EventMonitor.Pump(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/EventHandlerPygame.py", line 68, in Pump
+    self.CallMethod("MouseDown", e)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/SelfCallMixin.py", line 8, in CallMethod
+    getattr(self, methodname)(args)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/EditLayer.py", line 60, in newfn
+    return fn(self, *args, **kwargs)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/EditLayer.py", line 349, in MouseDown
+    self.selected.OnMouseDown(e.pos)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Tools.py", line 25, in OnMouseDown
+    return self.PenDown(absolute, surface, self.parent.color)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Tools.py", line 122, in PenDown
+    self.currentSurface.Fill(pos, color, self.currentSurface == self.parent.level)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Paintable.py", line 30, in Fill
+    if isLevel and self.bitmap.Pixel(self.GetOffset(pos))[3] == 0:
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/ImagePygame.py", line 62, in Pixel
+    return self.surface.get_at(pos)
+IndexError: pixel index out of range
+
 Fixed
 -----
 

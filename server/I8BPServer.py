@@ -47,9 +47,14 @@ class I8BPChannel(Channel):
 	def SendToNeighbours(self, msg):
 		# always include my public session ID when sending to my neighbours
 		# always include the local server time for this message
-		msg.update({"id": self.ID, "servertime": time()})
+		msg.update({"id": self.ID})
+		self.AddServerTime(msg)
 		# send to all neighbours
 		[c.Send(msg) for c in self._server.GetNeighbours(self)]
+	
+	def AddServerTime(self, d):
+		d.update({"servertime": time()})
+		return d
 	
 	def NoIDError(self):
 		# this client tried to use the server without having a UUID first
@@ -125,15 +130,18 @@ class I8BPChannel(Channel):
 		# send them the state of other players, and the state of other players to them
 		if self.level:
 			self.SendToNeighbours({"action": "player_leaving"})
-		# TODO: check the md5 the client sent us and if it's different
-		# stream the lastest version of this level back to the user if they have an out of date copy
+		# set the level of this particular client
 		self.level = data['level']
+		# tell everyone else in the level we are entering
 		self.SendToNeighbours({"action": "player_entering"})
+		# get a list of changes to this level since we last visited
+		changes = self._server.GetLevelHistory(self.level)[data['editid']:]
+		# send the 'starting level dump' message
+		self.Send(self.AddServerTime({"action": "leveldump", "progress": "start", "size": len(changes)}))
 		# send the current history of level changes to the client
-		for d in self._server.GetLevelHistory(self.level)[data['editid']:]:
-			self.Send(d)
-		# send a save request back to the client to save the state of the current level once they have received all edits
-		#self.Send({"action": "save", "servertime": time()})
+		[self.Send(d) for d in changes]
+		# tell the client we have finished updating this level so they can end the progress meter and save a copy
+		self.Send(self.AddServerTime({"action": "leveldump", "progress": "end", "size": len(changes)}))
 		# send to this player all of the states of the other players in the room
 		for n in self._server.GetNeighbours(self):
 			# tell me about all my neighbours
@@ -141,7 +149,6 @@ class I8BPChannel(Channel):
 			# tell me about the states of all my neighbours
 			for s in n.state:
 				if n.state[s]:
-					print "STATE COPY:", n.state[s]
 					if type(n.state[s]) == type([]):
 						for z in n.state[s]:
 							state = z.copy()
