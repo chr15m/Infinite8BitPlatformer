@@ -104,21 +104,11 @@ class FamilyButton(ImageRadioButton):
 		self.parent.selected = self.name
 		self.parent.CallMethod("Pressed_" + self.name)
 
-class SaveButton(ImageButton):
-	help_text = "save"
-	def __init__(self, parent):
-		self.parent = parent
-		ImageButton.__init__(self, [Image(path.join("resources", "icons", "save.png")), Image(path.join("resources", "icons", "save-invert.png"))], [gfx.width - 60, 24])
-	
-	def Pressed(self):
-		self.parent.SaveLevel()
-
-
 class NewButton(ImageButton):
 	help_text = "new"
 	def __init__(self, parent):
 		self.parent = parent
-		ImageButton.__init__(self, [Image(path.join("resources","icons", "new.png")), Image(path.join("resources", "icons", "new-invert.png"))], [gfx.width - 94, 24])
+		ImageButton.__init__(self, [Image(path.join("resources","icons", "new.png")), Image(path.join("resources", "icons", "new-invert.png"))], [gfx.width - 60, 24])
 	
 	def Pressed(self):
 		self.parent.NewLevel()
@@ -169,7 +159,6 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.networktools = {}
 		
 		# the save button
-		self.editInterface.Add(SaveButton(self))
 		self.editInterface.Add(NewButton(self))
 		# portal destination selector
 		self.portalDestinationIcon = PortalDestinationIcon(self)
