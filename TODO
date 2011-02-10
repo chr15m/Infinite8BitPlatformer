@@ -60,6 +60,7 @@ Later
 * network server
 	* WNF: keep a copy of the level server side and make local modifications to it
 	* WNF: make level downloading work (md5sum, latest edit)
+	* check for data corruption in saved files - e.g. if a PenDown has no matching PenUp yet (someone was mid-draw when the level saved)
 
 * network client
 	* WNF: send level md5 and edit info to server and download differing levels

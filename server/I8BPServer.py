@@ -5,9 +5,19 @@ from uuid import uuid1
 import hashlib
 from os import listdir, path as ospath
 from json import loads, dumps
+from multiprocessing import Process, Queue
+from Queue import Empty
 
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
+
+# TODO: put these in an external config
+# directory containing level update save files
+HISTORYDIR = "server/history"
+# how often to check for new saves
+SAVEINTERVAL = 2
+# save after there have been no edits for this long
+SAVEAFTER = 30
 
 def RequireID(fn):
 	def RequireIDFn(self, data):
@@ -72,7 +82,7 @@ class I8BPChannel(Channel):
 	def Network(self, data):
 		# called any time data arrives from this client
 		# update with this last know update time
-		print 'GOT:', data
+		#print 'GOT:', data
 		self.lastUpdate = time()
 	
 	def Network_playerid(self, data):
@@ -179,11 +189,16 @@ class I8BPServer(Server):
 	
 	def __init__(self, *args, **kwargs):
 		Server.__init__(self, *args, **kwargs)
+		# list of all currently connected clients
 		self.clients = []
-		# TODO: make historydir come from config
-		self.levelHistory = self.LoadLevelHistories("server/history")
+		# load all level histories from the json files
+		self.levelHistory = self.LoadLevelHistories(HISTORYDIR)
+		# when was a level last saved
+		self.saved = {}
+		self.SetSaved(self.levelHistory.keys())
 		# non-secret per-session IDs
 		self.ids = 0
+		# log the start of the server process
 		self.Log('Infinite8BitPlatformer server listening on ' + ":".join([str(i) for i in kwargs['localaddr']]))
 	
 	def NewSessionID(self):
@@ -220,6 +235,11 @@ class I8BPServer(Server):
 		else:
 			return []
 	
+	def SetSaved(self, levelnames):
+		""" Set a list of levels as saved up to the latest point in history. """
+		for l in levelnames:
+			self.saved[l] = len(self.levelHistory[l])
+	
 	def Connected(self, client, addr):
 		# Sets the non-uuid non-secret ID for this session
 		client.SetID(self.NewSessionID())
@@ -241,7 +261,52 @@ class I8BPServer(Server):
 		return histories
 	
 	def Launch(self):
+		lastcheck = 0
+		# process for checking for levels to be saved
+		p = None
+		# queue to communicate with level saving process
+		q = Queue()
+		q.put("START", block=True)
 		while True:
 			self.Pump()
 			sleep(0.0001)
 			# periodically check for unsaved levels with changes and save them
+			if lastcheck < time() - SAVEINTERVAL and not q.empty():
+				# check if the running process has sent back a list of levels it has saved
+				try:
+					saved = q.get_nowait()
+				except Empty:
+					# in rare cases, q.empty() might have returned the wrong answer
+					saved = None
+				
+				# incase q.empty() returned the wrong answer
+				if not saved is None:
+					# if we actually saved some levels
+					if saved != "START":
+						# write a log about it
+						[self.Log("Saved: " + s) for s in saved]
+						# update our last saved array
+						self.SetSaved(saved)
+					# launch process to save all unsaved levels
+					p = Process(target=SaveLevelHistories, args=(q, self.levelHistory, self.saved)).start()
+					# update last checked time
+					lastcheck = time()
+
+# These run in a separate process/thread
+
+def SaveLevelHistory(levelname, history):
+	levelfile = file(ospath.join(HISTORYDIR, levelname) + ".json", "w")
+	levelfile.write(dumps(history))
+	levelfile.close()
+	return levelname
+
+def SaveLevelHistories(q, histories, lastsave):
+	# loop through each level and perform a json save if:
+	# 	the level has been modified since the last recorded save time
+	# 	the last edit was more than X seconds ago
+	q.put(
+		[SaveLevelHistory(l, histories[l]) 
+			for l in histories if 
+				lastsave[l] < len(histories[l]) and histories[l][-1]["servertime"] < time() - SAVEAFTER]
+		, block=True)
+
