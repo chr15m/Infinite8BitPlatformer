@@ -72,7 +72,9 @@ class LevelManager:
 					# add the source level to the history
 					self.AddHistory([self.level, (portal and portal.id) or (self.player.platform and self.player.platform.id) or (self.player.lastplatform and self.player.lastplatform.id) or "start"])
 				self.Remove(self.levels[self.level])
+				# remove the player from the current level
 				self.levels[self.level].RemovePlayerCamera()
+			# set my level to the new level
 			self.level = level
 			# if we're connected already, tell the server (otherwise we'll tell the server when we get the Network_connected callback)
 			self.net.SendWithID({"action": "setlevel", "level": str(self.level), "editid": self.levels[self.level].LastEdit()})
@@ -87,12 +89,18 @@ class LevelManager:
 				else:
 					# didn't find a portal, just pick the first platform
 					start = self.levels[self.level].layer.platforms[0].id
-			self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
+			# send the last move we did to the server
 			self.player.SendCurrentMove()
+			# add this level to the game
 			self.Add(self.levels[self.level])
+			# make the level editor aware of this level
 			self.editLayer.SetLevel(self.levels[level])
+			# add the edit layer back into the entity stack
 			self.Add(self.editLayer)
+			# set the hud level label to the level name
 			self.hud.levelLabel.text = self.levels[self.level].displayName
+			# put the camera on the player
+			self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
 	
 	def AddHistory(self, history):
 		if not self.levelHistory or not history == self.levelHistory[-1]:
