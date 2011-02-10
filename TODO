@@ -2,7 +2,8 @@
 	* accept 'new level' message - generate new level ID
 	* network callback to check a level name is not taken
 	* check protocol version number against clients
-	* periodically write level changes list to disk
+	* lock down permissions - only creator can edit own level
+	+ periodically write level changes list to disk
 	+ mirror commands to all users on the same level
 		+ chat events
 		+ move events
@@ -11,12 +12,13 @@
 
 * network client
 	* send 'new level' message to the server - wait for ID
+	* fix logic when switching levels if the destination level is completely unknown to us (no portals etc.)
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
-	* send version number to server when connecting
+	* send version number to server when connecting (throw special error to message screen if not)
 	* check whether new level name is unique over network
 	* 'loading' spinner when updating the level
+	* save and load unique server ID into local config file
 	* BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
-	* save and load my unique server ID into my config file
 	+ send 'collected item' message over the network
 	+ send 'landed on platform' event over the network
 	+ send name/object changes over the network
@@ -37,17 +39,14 @@
 	+ icon shows if a connection is made
 	+ send movements to the client
 
+* automatic crashdump reporting - catch all errors and throw a message screen
+	* special version updated message redirects to download site
+
 * make tooltips appear after a second, not instantly
 
 * make chat boxes/speech bubbles avoid eachother
 
-* make background fill happen incrementally across frames
-	* OR: use spinner?
-	* OR: both?
-
-* automatic crashdump reporting
-
-* automatic updates - use esky?
+* getting started on help page (how to create a new level and teleport to some good places)
 
 + fix ladder climbing keys - possible to just use up key for climb + jump?
 
@@ -56,6 +55,12 @@
 
 Later
 -----
+
+* automatic updates - use esky?
+
+* make background fill happen incrementally across frames
+	* OR: use spinner?
+	* OR: both?
 
 * network server
 	* WNF: keep a copy of the level server side and make local modifications to it
