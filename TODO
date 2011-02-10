@@ -2,6 +2,7 @@
 	* accept 'new level' message - generate new level ID
 	* network callback to check a level name is not taken
 	* check protocol version number against clients
+	* periodically write level changes list to disk
 	+ mirror commands to all users on the same level
 		+ chat events
 		+ move events
@@ -14,6 +15,8 @@
 	* send version number to server when connecting
 	* check whether new level name is unique over network
 	* 'loading' spinner when updating the level
+	* BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
+	* save and load my unique server ID into my config file
 	+ send 'collected item' message over the network
 	+ send 'landed on platform' event over the network
 	+ send name/object changes over the network
@@ -36,7 +39,7 @@
 
 * make tooltips appear after a second, not instantly
 
-* make chat boxes avoid eachother
+* make chat boxes/speech bubbles avoid eachother
 
 * make background fill happen incrementally across frames
 	* OR: use spinner?

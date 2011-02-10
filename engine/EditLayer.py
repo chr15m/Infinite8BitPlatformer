@@ -398,11 +398,13 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	###	Network events
 	###
 	
+	# when a leveldump is received (new leveldata from the server if we just joined a level)
 	def Network_leveldump(self, data):
 		# save the level if we have all the updated data
 		if data['size'] and data['progress'] == "end":
 			self.game.SaveLevel()
 	
+	# when another player edits this layer
 	def Network_edit(self, data):
 		print data
 		# record this in our level history
