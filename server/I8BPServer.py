@@ -3,6 +3,8 @@ from weakref import WeakKeyDictionary
 import sys
 from uuid import uuid1
 import hashlib
+from os import listdir, path as ospath
+from json import loads, dumps
 
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
@@ -92,12 +94,6 @@ class I8BPChannel(Channel):
 		if self.level:
 			editid = self._server.AddLevelHistory(self.level, data)
 		self.SendToNeighbours(data)
-		# if this was a level name change, the server needs to know about it
-		if data["action"] == "levelname":
-			self._server.ChangeLevelName(self.level, data["name"])
-			self.level = data["name"]
-		# tell the neighbours to save their level after each edit
-		#self.Send({"action": "save", "servertime": time()})
 	
 	@RequireID
 	def Network_item(self, data):
@@ -123,6 +119,11 @@ class I8BPChannel(Channel):
 		self.state["chat"].append(data)
 		# make sure we only remember the last few messages
 		self.state["chat"] =  self.state["chat"][-5:]
+	
+	@RequireID
+	def Network_haslevel(self, data):
+		# tests whether a particular level exists or not and tells this client
+		pass
 	
 	@RequireID
 	def Network_setlevel(self, data):
@@ -168,24 +169,6 @@ class I8BPChannel(Channel):
 	def Network_error(self, data):
 		print "Error!", data
 
-class Level:
-	""" Each level has an md5 of the zipfile we know about, and an array of other changes which have been applied to that level. """
-	def __init__(self, filename=None):
-		if filename:
-			self.filename = filename
-			md5hash = hashlib.md5()
-			md5hash.update(file(filename).read())
-			self.md5 = md5hash.hexdigest()
-		else:
-			# create a new unique file with a unique filename
-			pass
-		self.changes = []
-	
-	def Save(self, data):
-		file(self.filename)
-		self.changes = []
-		pass
-
 class I8BPServer(Server):
 	# This is an early, quite naive implementation of the game server.
 	# It's not secure in any way (e.g. it's very easy to snoop on other people's data, and a bit harder to impersonate them)
@@ -197,8 +180,8 @@ class I8BPServer(Server):
 	def __init__(self, *args, **kwargs):
 		Server.__init__(self, *args, **kwargs)
 		self.clients = []
-		self.levelHistory = {}
-		self.levelEditIds = {}
+		# TODO: make historydir come from config
+		self.levelHistory = self.LoadLevelHistories("server/history")
 		# non-secret per-session IDs
 		self.ids = 0
 		self.Log('Infinite8BitPlatformer server listening on ' + ":".join([str(i) for i in kwargs['localaddr']]))
@@ -224,12 +207,11 @@ class I8BPServer(Server):
 	def AddLevelHistory(self, level, data):
 		""" Add a level edit item to the history of changes of this level. """
 		# edit id/index
-		self.levelEditIds[level] = self.levelEditIds.get(level, 0) + 1
-		data.update({"editid": self.levelEditIds[level]})
 		if not self.levelHistory.has_key(level):
 			self.levelHistory[level] = []
 		self.levelHistory[level].append(data)
-		return self.levelEditIds[level]
+		data.update({"editid": len(self.levelHistory[level])})
+		return len(self.levelHistory[level])
 	
 	def GetLevelHistory(self, level):
 		""" Get the history of changes of this level. """
@@ -237,12 +219,6 @@ class I8BPServer(Server):
 			return self.levelHistory[level]
 		else:
 			return []
-	
-	def ChangeLevelName(self, oldname, newname):
-		self.levelHistory[newname] = self.levelHistory[oldname]
-		self.levelEditIds[newname] = self.levelHistory[oldname]
-		del self.levelHistory[oldname]
-		del self.levelEditIds[oldname]
 	
 	def Connected(self, client, addr):
 		# Sets the non-uuid non-secret ID for this session
@@ -255,8 +231,17 @@ class I8BPServer(Server):
 		self.clients.remove(client)
 		self.Log("Channel %d removed, %d left online" % (client.ID, len(self.clients)))
 	
+	def LoadLevelHistories(self, historydir):
+		histories = {}
+		for f in listdir(historydir):
+			if f.endswith(".json"):
+				levelfile = file(ospath.join(historydir, f))
+				histories[f[:-len(".json")]] = loads(levelfile.read())
+				levelfile.close()
+		return histories
+	
 	def Launch(self):
 		while True:
 			self.Pump()
 			sleep(0.0001)
-
+			# periodically check for unsaved levels with changes and save them
