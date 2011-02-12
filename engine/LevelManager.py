@@ -19,12 +19,7 @@ class LevelManager:
 		self.levelHistory = []
 		[self.LoadLevel(x[:-10]) for x in listdir(path.join("resources", "levels")) if x[-10:] == ".level.zip"]
 		self.SetLevel("level1", "start")
-	
-	def GetNewID(self):
-		# TODO: ask the server for a new Level ID
-		for i in xrange(1, 10000):
-			if not "level" + str(i) in self.levels.keys():
-				return str(i)
+		self.newLevelCallback = None
 	
 	def CurrentLevel(self):
 		return self.levels[self.level]
@@ -36,10 +31,13 @@ class LevelManager:
 		newlevel.Load()
 		self.levels["level" + name] = newlevel
 	
-	def NewLevel(self):
-		""" Creates a new level. """
-		# TODO: proxy this through the server
-		id = self.GetNewID()
+	def RequestNewLevel(self, callback):
+		""" Asks the server to create a new level. """
+		self.newLevelCallback = callback
+		self.net.SendWithID({"action": "newlevel"})
+	
+	def NewLocalLevel(self, id):
+		""" Makes a new locally cached level object. """
 		newlevel = BitLevel(id, self.editLayer)
 		self.levels["level" + id] = newlevel
 		return newlevel
@@ -121,8 +119,9 @@ class LevelManager:
 	### Network events
 	###
 	
-	#def Network_playerid(self, data):
-		# got my player ID, now send a new level i want to be on
-		#self.playerID = data['id']
-	#	self.net.SendWithID({"action": "setlevel", "id": self.net.playerID, "level": str(self.level)})
+	def Network_newlevel(self, data):
+		newlevel = self.NewLocalLevel(str(data['id']))
+		if self.newLevelCallback:
+			self.newLevelCallback(newlevel)
+			self.newLevelCallback = None
 

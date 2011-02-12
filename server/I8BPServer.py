@@ -131,9 +131,9 @@ class I8BPChannel(Channel):
 		self.state["chat"] =  self.state["chat"][-5:]
 	
 	@RequireID
-	def Network_haslevel(self, data):
-		# tests whether a particular level exists or not and tells this client
-		pass
+	def Network_newlevel(self, data):
+		# creates a new level on the server side and returns the level ID to the client
+		self.Send(self.AddServerTime({"action": "newlevel", "id": self._server.CreateLevel()}))
 	
 	@RequireID
 	def Network_setlevel(self, data):
@@ -191,6 +191,8 @@ class I8BPServer(Server):
 		Server.__init__(self, *args, **kwargs)
 		# list of all currently connected clients
 		self.clients = []
+		# the highest level ID we know about
+		self.lastLevelID = 0
 		# load all level histories from the json files
 		self.levelHistory = self.LoadLevelHistories(HISTORYDIR)
 		# when was a level last saved
@@ -218,6 +220,14 @@ class I8BPServer(Server):
 		newID = str(uuid1())
 		# TODO: check to make sure no ID gets used twice
 		return newID
+	
+	def CreateLevel(self):
+		self.lastLevelID += 1
+		levelname = "level" + str(self.lastLevelID)
+		self.levelHistory[levelname] = []
+		self.SetSaved([levelname])
+		self.Log("NEW: " + levelname)
+		return self.lastLevelID
 	
 	def AddLevelHistory(self, level, data):
 		""" Add a level edit item to the history of changes of this level. """
@@ -258,6 +268,11 @@ class I8BPServer(Server):
 				levelfile = file(ospath.join(historydir, f))
 				histories[f[:-len(".json")]] = loads(levelfile.read())
 				levelfile.close()
+				# make sure our highestLevelID is still valid
+				lID = int(f[len("level"):-len(".json")])
+				if lID > self.lastLevelID:
+					self.lastLevelID = lID
+				self.Log("LOAD: " + f)
 		return histories
 	
 	def Launch(self):
@@ -292,7 +307,7 @@ class I8BPServer(Server):
 					# update last checked time
 					lastcheck = time()
 
-# These run in a separate process/thread
+# These functions run in a separate process/thread
 
 def SaveLevelHistory(levelname, history):
 	levelfile = file(ospath.join(HISTORYDIR, levelname) + ".json", "w")

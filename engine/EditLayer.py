@@ -221,8 +221,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.levelmanager.SaveLevel()
 	
 	def NewLevel(self):
-		# create a new level and set it up
-		newlevel = self.levelmanager.NewLevel()
+		""" Request a new level from the server. """
+		self.levelmanager.RequestNewLevel(self.ReceivedNewLevel)
+	
+	def ReceivedNewLevel(self, newlevel):
 		newlevel.Initialise()
 		# create a platform at the destination
 		args = {'rectangle': [0.48, 0.495, 0.04, 0.01]}
@@ -242,6 +244,8 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		# send the portal creation commands over the network
 		args.update({"action": "edit", "instruction": "create", "type": "portal", "objectid": destportal.id})
 		self.RecordEdit(args)
+		# save the new level we have created to our local cache
+		self.levelmanager.SaveLevel()
 		#srcportal.destination = "level" + newlevel.name + ":" + destportal.id
 	
 	def On(self):
