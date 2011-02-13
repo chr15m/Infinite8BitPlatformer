@@ -49,6 +49,8 @@
 
 * BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
 
+* splash screen - "ABSOLUTELY NO WARRANTY" message
+
 + fix ladder climbing keys - possible to just use up key for climb + jump?
 
 + fix speech bubble/chat
@@ -79,9 +81,9 @@ Later
 	* /back command
 
 * TextInput class (PodSix)
-	+ fix arrow keys to move around in edit box (done - thanks julian!)
 	* key repeat
 	* copy/paste
+	+ fix arrow keys to move around in edit box (done - thanks julian!)
 
 * improve dying - fade then zap to last platform
 	* if there is no last platform, pick one from the level
@@ -140,3 +142,4 @@ Later
 
 * multiple bounding boxes per frame
 
+* parallax backgrounds
