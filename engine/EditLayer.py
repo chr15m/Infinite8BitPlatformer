@@ -228,7 +228,6 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.levelmanager.RequestNewLevel(self.ReceivedNewLevel)
 	
 	def ReceivedNewLevel(self, newlevel):
-		newlevel.Initialise()
 		# create a platform at the destination
 		args = {'rectangle': [0.48, 0.495, 0.04, 0.01]}
 		dest = newlevel.Create("platform", args)
@@ -412,11 +411,11 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	def Network_leveldump(self, data):
 		# save the level if we have all the updated data
 		if data['progress'] == "end":
+			if self.startDest:
+				self.game.GetOnStart(self.startDest)
+				self.startDest = None
 			if data['size']:
 				self.game.SaveLevel()
-			if self.startDest:
-				self.game.LevelDumpDone(self.startDest)
-				self.startDest = None
 	
 	# when another player edits this layer
 	def Network_edit(self, data):

@@ -39,6 +39,7 @@ class LevelManager:
 	def NewLocalLevel(self, id):
 		""" Makes a new locally cached level object. """
 		newlevel = BitLevel(id, self.editLayer)
+		newlevel.Initialise()
 		self.levels["level" + id] = newlevel
 		return newlevel
 	
@@ -119,11 +120,6 @@ class LevelManager:
 		# put the camera on the player
 		self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
 	
-	def LevelDumpDone(self, start):
-		# when a level dump is finished from the editlayer this is called
-		# to put us on a start point if we were looking for one
-		self.GetOnStart(start)
-	
 	def AddHistory(self, history):
 		if not self.levelHistory or not history == self.levelHistory[-1]:
 			self.levelHistory.append(history)
@@ -143,12 +139,16 @@ class LevelManager:
 			self.newLevelCallback = None
 	
 	def Network_haslevel(self, data):
-		# If we are connected make a request to switch level from the server (which will send back a list of changes)
-		newlevel = self.NewLocalLevel(data['level'][len("level"):])
-		# tell editlayer to send us a note when it has the portal we are looking for
-		self.editLayer.SetStartDest(data['start'])
-		# add the edit layer into the entity stack
-		self.Add(self.editLayer)
-		# actually do the joining of the level (but not the putting on start bit)
-		self.JoinLevel(data['level'])
+		if data['haslevel']:
+			# If we are connected make a request to switch level from the server (which will send back a list of changes)
+			newlevel = self.NewLocalLevel(data['level'][len("level"):])
+			# tell editlayer to send us a note when it has the portal we are looking for
+			self.editLayer.SetStartDest(data['start'])
+			# actually do the joining of the level (but not the putting on start bit)
+			self.JoinLevel(data['level'])
+			# add the edit layer into the entity stack
+			self.Add(self.editLayer)
+		else:
+			# TODO: put them back on the same level they were on
+			pass
 
