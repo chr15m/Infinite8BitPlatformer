@@ -136,6 +136,12 @@ class I8BPChannel(Channel):
 		self.Send(self.AddServerTime({"action": "newlevel", "id": self._server.CreateLevel()}))
 	
 	@RequireID
+	def Network_haslevel(self, data):
+		# checks if a particular level exists
+		data.update({"haslevel": self._server.levelHistory.has_key(data['level'])})
+		self.Send(self.AddServerTime(data))
+	
+	@RequireID
 	def Network_setlevel(self, data):
 		# the player has entered a particular level
 		# send them the state of other players, and the state of other players to them

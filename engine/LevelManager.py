@@ -58,8 +58,6 @@ class LevelManager:
 	
 	def SetLevel(self, level, start, portal=None, back=False):
 		""" Sets what level the current player is on. """
-		# If we are connected, make a request to switch level from the server (which will send back a list of changes)
-		# If we are not connected, do the old style switch
 		if level in self.levels.keys() and (start == "start" or start in self.levels[level].layer.names.keys()):
 			self.Remove(self.editLayer)
 			if self.level:
@@ -67,8 +65,14 @@ class LevelManager:
 			self.JoinLevel(level, start)
 			# add the edit layer into the entity stack
 			self.Add(self.editLayer)
-		#elif not level in self.levels.keys():
-		#	newlevel = self.NewLocalLevel(str(level[len("level"):]))
+		elif self.net.serverconnection == 1:
+			self.Remove(self.editLayer)
+			if self.level:
+				self.LeaveLevel(portal, back)
+			# ask the server whether the level exists
+			self.net.SendWithID({"action": "haslevel", "level": str(level), "start": start})
+		else:
+			self.game.AddMessage('Sorry, that level does not exist', None, 5.0)
 	
 	def LeaveLevel(self, portal=None, back=False):
 		# tell the server we've left this level
@@ -82,11 +86,25 @@ class LevelManager:
 		# remove the player from the current level
 		self.levels[self.level].RemovePlayerCamera()
 	
-	def JoinLevel(self, level, start):
+	def JoinLevel(self, level, start=None):
 		# set my level to the new level
 		self.level = level
 		# if we're connected already, tell the server (otherwise we'll tell the server when we get the Network_connected callback)
 		self.net.SendWithID({"action": "setlevel", "level": str(self.level), "editid": self.levels[self.level].LastEdit()})
+		# send the last move we did to the server
+		self.player.SendCurrentMove()
+		# add this level to the game
+		self.Add(self.levels[self.level])
+		# make the level editor aware of this level
+		self.editLayer.SetLevel(self.levels[level])
+		# set the hud level label to the level name
+		self.hud.levelLabel.text = self.levels[self.level].displayName
+		if start:
+			self.GetOnStart(start)
+		else:
+			self.levels[self.level].SetCamera(self.camera)
+	
+	def GetOnStart(self, start):
 		# add the destination to the history
 		self.AddHistory([self.level, start or "start"])
 		# make sure that start actually exists, otherwise find a random portal/platform to jump to
@@ -98,16 +116,13 @@ class LevelManager:
 			else:
 				# didn't find a portal, just pick the first platform
 				start = self.levels[self.level].layer.platforms[0].id
-		# send the last move we did to the server
-		self.player.SendCurrentMove()
-		# add this level to the game
-		self.Add(self.levels[self.level])
-		# make the level editor aware of this level
-		self.editLayer.SetLevel(self.levels[level])
-		# set the hud level label to the level name
-		self.hud.levelLabel.text = self.levels[self.level].displayName
 		# put the camera on the player
 		self.levels[self.level].SetPlayerCamera(self.player, self.camera, start)
+	
+	def LevelDumpDone(self, start):
+		# when a level dump is finished from the editlayer this is called
+		# to put us on a start point if we were looking for one
+		self.GetOnStart(start)
 	
 	def AddHistory(self, history):
 		if not self.levelHistory or not history == self.levelHistory[-1]:
@@ -126,4 +141,14 @@ class LevelManager:
 		if self.newLevelCallback:
 			self.newLevelCallback(newlevel)
 			self.newLevelCallback = None
+	
+	def Network_haslevel(self, data):
+		# If we are connected make a request to switch level from the server (which will send back a list of changes)
+		newlevel = self.NewLocalLevel(data['level'][len("level"):])
+		# tell editlayer to send us a note when it has the portal we are looking for
+		self.editLayer.SetStartDest(data['start'])
+		# add the edit layer into the entity stack
+		self.Add(self.editLayer)
+		# actually do the joining of the level (but not the putting on start bit)
+		self.JoinLevel(data['level'])
 

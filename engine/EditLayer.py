@@ -185,6 +185,9 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		
 		# for line tool
 		self.image_start = None
+		
+		# once we have received a level udpate from the server, we should tell the game about it
+		self.startDest = None
 	
 	def MakeId(self):
 		return 'prop-%s' % str(uuid1())
@@ -247,6 +250,9 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		# save the new level we have created to our local cache
 		self.levelmanager.SaveLevel()
 		#srcportal.destination = "level" + newlevel.name + ":" + destportal.id
+	
+	def SetStartDest(self, dest):
+		self.startDest = dest
 	
 	def On(self):
 		return self.mode and self.level
@@ -405,8 +411,12 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	# when a leveldump is received (new leveldata from the server if we just joined a level)
 	def Network_leveldump(self, data):
 		# save the level if we have all the updated data
-		if data['size'] and data['progress'] == "end":
-			self.game.SaveLevel()
+		if data['progress'] == "end":
+			if data['size']:
+				self.game.SaveLevel()
+			if self.startDest:
+				self.game.LevelDumpDone(self.startDest)
+				self.startDest = None
 	
 	# when another player edits this layer
 	def Network_edit(self, data):

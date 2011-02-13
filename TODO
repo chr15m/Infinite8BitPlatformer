@@ -12,6 +12,7 @@
 
 * network client
 	* fix logic when switching levels if the destination level is completely unknown to us (no portals etc.)
+	* fix /teleport for above
 	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
 	* send version number to server when connecting (throw special error to message screen if not)
 	* 'loading' spinner when updating the level
