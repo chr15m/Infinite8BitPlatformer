@@ -103,12 +103,9 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	def PlayerDied(self):
 		# if they don't have a last platform them pick the first platform on the level
 		destination = self.player.lastplatform and self.player.lastplatform.id or self.levels[self.level].layer.platforms[0].id
-		self.QueueLater(100, self.Restart, self.level, destination)
-		self.UnSetLevel()
+		self.QueueLater(100, self.JoinLevel, self.level, destination)
+		self.LeaveLevel()
 		self.Setup("oops!")
-	
-	def Restart(self, level, start):
-		self.SetLevel(level, start)
 	
 	def Teleport(self, portal):
 		parts = portal.destination.split(":")

@@ -65,10 +65,12 @@ class LevelManager:
 			if self.level:
 				self.LeaveLevel(portal, back)
 			self.JoinLevel(level, start)
+			# add the edit layer into the entity stack
+			self.Add(self.editLayer)
 		#elif not level in self.levels.keys():
 		#	newlevel = self.NewLocalLevel(str(level[len("level"):]))
 	
-	def LeaveLevel(self, portal, back):
+	def LeaveLevel(self, portal=None, back=False):
 		# tell the server we've left this level
 		self.net.SendWithID({"action": "leavelevel"})
 		# we don't care about any other players now
@@ -102,8 +104,6 @@ class LevelManager:
 		self.Add(self.levels[self.level])
 		# make the level editor aware of this level
 		self.editLayer.SetLevel(self.levels[level])
-		# add the edit layer into the entity stack
-		self.Add(self.editLayer)
 		# set the hud level label to the level name
 		self.hud.levelLabel.text = self.levels[self.level].displayName
 		# put the camera on the player
@@ -112,13 +112,6 @@ class LevelManager:
 	def AddHistory(self, history):
 		if not self.levelHistory or not history == self.levelHistory[-1]:
 			self.levelHistory.append(history)
-	
-	def UnSetLevel(self):
-		self.Remove(self.levels[self.level])
-		self.levels[self.level].RemovePlayerCamera()
-		# forget any other network players
-		self.players.Clear()
-		self.level = None
 	
 	def SetLevelName(self, name):
 		self.levels[self.level].displayName = name
