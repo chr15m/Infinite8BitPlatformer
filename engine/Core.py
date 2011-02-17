@@ -129,11 +129,11 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 			destination = " ".join(bits[1:])
 			matches = [l for l in self.levels if self.levels[l].displayName == destination]
 			if len(matches):
-				print 'match local'
 				self.TeleportToLevel(matches[0])
-			else:
-				print 'try remote'
+			elif self.net.serverconnection == 1:
 				self.net.SendWithID({"action": "findlevel", "name": destination})
+			else:
+				self.AddMessage("You are offline", None, 5.0)
 		elif text.startswith("/new"):
 			self.edit_layer.NewLevel()
 		elif text.startswith("/quit"):
@@ -162,9 +162,7 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	
 	def Network_foundlevel(self, data):
 		if data['level']:
-			print 'match remote'
 			self.TeleportToLevel(data['level'])
 		else:
-			print 'no remote'
 			self.AddMessage('No such level "%s"' % data['name'], time=1)
 

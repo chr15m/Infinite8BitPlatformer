@@ -73,7 +73,7 @@ class LevelManager:
 			# ask the server whether the level exists
 			self.net.SendWithID({"action": "haslevel", "level": str(level), "start": start})
 		else:
-			self.game.AddMessage('Sorry, that level does not exist', None, 5.0)
+			self.AddMessage('Sorry, that level does not exist', None, 5.0)
 	
 	def LeaveLevel(self, portal=None, back=False):
 		# tell the server we've left this level
@@ -151,4 +151,7 @@ class LevelManager:
 		else:
 			# TODO: put them back on the same level they were on
 			pass
+	
+	def Network_badlevelname(self, data):
+		self.AddMessage('That level name is taken', None, 5.0)
 

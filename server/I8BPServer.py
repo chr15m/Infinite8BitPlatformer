@@ -98,15 +98,33 @@ class I8BPChannel(Channel):
 	
 	@RequireID
 	def Network_edit(self, data):
+		# TODO: level name change is slightly different, remove the logic from here?
+		# whether or not to return this edit back to the user
+		copysender = False
+		# add the current level to our data
+		data.update({"level": self.level})
 		# some type of edit action
 		# network edits must record the level name where the change was made
-		data.update({"level": self.level})
-		if self.level:
-			editid = self._server.AddLevelHistory(self.level, data)
 		# check if this is a change to the level's name
 		if data['instruction'] == "levelname":
-			self._server.ChangeLevelName(self.level, data)
+			if not self._server.ChangeLevelName(self.level, data):
+				data.update({"action": "badlevelname"})
+				# the name was taken, send a message back to this user
+				self.Send(self.AddServerTime(data))
+				# bail out of this operation if the name was taken
+				return None
+			else:
+				# we want to send a levelname change back to the client
+				# who hasn't recorded it locally yet
+				copysender = True
+		# if we currently have a level, add this to our level history
+		if self.level:
+			editid = self._server.AddLevelHistory(self.level, data)
+		# send the changes to any neighbours currently in this level
 		self.SendToNeighbours(data)
+		# if we need to copy the sender of this edit, do so
+		if copysender:
+			self.Send(self.AddServerTime(data))
 	
 	@RequireID
 	def Network_item(self, data):
@@ -301,7 +319,9 @@ class I8BPServer(Server):
 		return self.levels[level].GetLastEditID()
 	
 	def ChangeLevelName(self, level, data):
-		self.levels[level].SetName(data['name'])
+		if self.FindLevel(data['name']) is None:
+			self.levels[level].SetName(data['name'])
+			return True
 	
 	def GetLevelHistory(self, level):
 		""" Get the history of changes of this level. """

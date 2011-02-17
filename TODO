@@ -41,6 +41,12 @@
 	+ icon shows if a connection is made
 	+ send movements to the client
 
+* BUG: cursor position isn't correct on different sized texts
+ 
+* BUG: in collecting items - network sends connect no matter how old
+
+* store items collected server side
+
 * automatic crashdump reporting - catch all errors and throw a message screen
 	* special version updated message redirects to download site
 

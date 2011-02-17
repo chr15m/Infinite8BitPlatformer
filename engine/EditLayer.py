@@ -213,8 +213,8 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.levelmanager.hud.chatBox.RevertText()
 	
 	def UpdateLevelName(self, name):
-		self.RecordEdit({"action": "edit", "instruction": "levelname", "name": name})
-		self.levelmanager.SetLevelName(name)
+		# don't actually record or perform this update until we receive it back from the server 
+		self.game.net.SendWithID({"action": "edit", "instruction": "levelname", "name": name})
 		self.levelmanager.hud.chatBox.RevertText()
 	
 	def ToggleMode(self):
@@ -406,6 +406,8 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	###
 	###	Network events
 	###
+	
+	# if a change-level name failed
 	
 	# when a leveldump is received (new leveldata from the server if we just joined a level)
 	def Network_leveldump(self, data):
