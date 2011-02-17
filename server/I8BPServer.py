@@ -138,7 +138,7 @@ class I8BPChannel(Channel):
 	@RequireID
 	def Network_haslevel(self, data):
 		# checks if a particular level exists
-		data.update({"haslevel": self._server.levelHistory.has_key(data['level'])})
+		data.update({"haslevel": self._server.levels.has_key(data['level'])})
 		self.Send(self.AddServerTime(data))
 	
 	@RequireID
@@ -185,6 +185,37 @@ class I8BPChannel(Channel):
 	def Network_error(self, data):
 		print "Error!", data
 
+class ServerLevel:
+	def __init__(self, ID, history=[], name=""):
+		self.ID = ID
+		if not name:
+			name = self.ID
+		self.name = name
+		self.SetHistory(history)
+	
+	def SetSaved(self):
+		self.saved = len(self.history)
+	
+	def SaveIfDue(self):
+		if self.saved < len(self.history) and self.history[-1]["servertime"] < time() - SAVEAFTER:
+			levelfile = file(ospath.join(HISTORYDIR, "level" + str(self.ID)) + ".json", "w")
+			levelfile.write(dumps({"name": self.name, "history": self.GetHistory()}))
+			levelfile.close()
+			return True
+	
+	def SetHistory(self, history):
+		self.history = history
+		self.saved = len(history)
+	
+	def AddHistory(self, data):
+		self.history.append(data)
+	
+	def GetLastEditID(self):
+		return len(self.history)
+	
+	def GetHistory(self):
+		return self.history
+
 class I8BPServer(Server):
 	# This is an early, quite naive implementation of the game server.
 	# It's not secure in any way (e.g. it's very easy to snoop on other people's data, and a bit harder to impersonate them)
@@ -200,22 +231,29 @@ class I8BPServer(Server):
 		# the highest level ID we know about
 		self.lastLevelID = 0
 		# load all level histories from the json files
-		self.levelHistory = self.LoadLevelHistories(HISTORYDIR)
-		# when was a level last saved
-		self.saved = {}
-		self.SetSaved(self.levelHistory.keys())
+		self.levels = self.LoadLevels(HISTORYDIR)
+		self.SetSaved(self.levels.keys())
 		# non-secret per-session IDs
 		self.ids = 0
 		# log the start of the server process
 		self.Log('Infinite8BitPlatformer server listening on ' + ":".join([str(i) for i in kwargs['localaddr']]))
 	
+	def Log(self, message):
+		print strftime("%Y-%m-%d %H:%M:%S") + " [" + str(time()) + "]", message
+	
+	### Player routines ###
+	
+	def Connected(self, client, addr):
+		# Sets the non-uuid non-secret ID for this session
+		client.SetID(self.NewSessionID())
+		# add this to our pool of known clients
+		self.clients.append(client)
+		self.Log("Channel %d connected, %d online" % (client.ID, len(self.clients)))
+	
 	def NewSessionID(self):
 		# Gets a new non-secret per-session ID for a new client
 		self.ids += 1
 		return self.ids
-	
-	def Log(self, message):
-		print strftime("%Y-%m-%d %H:%M:%S") + " [" + str(time()) + "]", message
 	
 	def GetNeighbours(self, player):
 		# returns all other clients who are in the same level as this one, except for itself
@@ -227,59 +265,56 @@ class I8BPServer(Server):
 		# TODO: check to make sure no ID gets used twice
 		return newID
 	
+	def RemoveClient(self, client):
+		self.clients.remove(client)
+		self.Log("Channel %d removed, %d left online" % (client.ID, len(self.clients)))
+	
+	### Level routines ###
+	
 	def CreateLevel(self):
 		self.lastLevelID += 1
 		levelname = "level" + str(self.lastLevelID)
-		self.levelHistory[levelname] = []
-		self.SetSaved([levelname])
+		self.levels[levelname] = ServerLevel(self.lastLevelID)
 		self.Log("NEW: " + levelname)
 		return self.lastLevelID
 	
 	def AddLevelHistory(self, level, data):
 		""" Add a level edit item to the history of changes of this level. """
 		# edit id/index
-		if not self.levelHistory.has_key(level):
-			self.levelHistory[level] = []
-		self.levelHistory[level].append(data)
-		data.update({"editid": len(self.levelHistory[level])})
-		return len(self.levelHistory[level])
+		self.levels[level].AddHistory(data)
+		data.update({"editid": self.levels[level].GetLastEditID()})
+		return self.levels[level].GetLastEditID()
 	
 	def GetLevelHistory(self, level):
 		""" Get the history of changes of this level. """
-		if self.levelHistory.has_key(level):
-			return self.levelHistory[level]
+		if self.levels.has_key(level):
+			return self.levels[level].GetHistory()
 		else:
 			return []
 	
 	def SetSaved(self, levelnames):
 		""" Set a list of levels as saved up to the latest point in history. """
 		for l in levelnames:
-			self.saved[l] = len(self.levelHistory[l])
+			self.levels[l].SetSaved()
 	
-	def Connected(self, client, addr):
-		# Sets the non-uuid non-secret ID for this session
-		client.SetID(self.NewSessionID())
-		# add this to our pool of known clients
-		self.clients.append(client)
-		self.Log("Channel %d connected, %d online" % (client.ID, len(self.clients)))
-	
-	def RemoveClient(self, client):
-		self.clients.remove(client)
-		self.Log("Channel %d removed, %d left online" % (client.ID, len(self.clients)))
-	
-	def LoadLevelHistories(self, historydir):
-		histories = {}
+	def LoadLevels(self, historydir):
+		levels = {}
 		for f in listdir(historydir):
 			if f.endswith(".json"):
 				levelfile = file(ospath.join(historydir, f))
-				histories[f[:-len(".json")]] = loads(levelfile.read())
+				# json data for this level
+				leveldata = loads(levelfile.read())
+				# close off the levelfile since we no longer need it
 				levelfile.close()
-				# make sure our highestLevelID is still valid
+				# get the level ID number out of the filename
 				lID = int(f[len("level"):-len(".json")])
+				# create a new level
+				levels[f[:-len(".json")]] = ServerLevel(lID, leveldata['history'], leveldata['name'])
+				# make sure our highestLevelID is still valid
 				if lID > self.lastLevelID:
 					self.lastLevelID = lID
 				self.Log("LOAD: " + f)
-		return histories
+		return levels
 	
 	def Launch(self):
 		lastcheck = 0
@@ -288,9 +323,10 @@ class I8BPServer(Server):
 		# queue to communicate with level saving process
 		q = Queue()
 		q.put("START", block=True)
+		
+		# just keep doing this forever
 		while True:
 			self.Pump()
-			sleep(0.0001)
 			# periodically check for unsaved levels with changes and save them
 			if lastcheck < time() - SAVEINTERVAL and not q.empty():
 				# check if the running process has sent back a list of levels it has saved
@@ -309,25 +345,17 @@ class I8BPServer(Server):
 						# update our last saved array
 						self.SetSaved(saved)
 					# launch process to save all unsaved levels
-					p = Process(target=SaveLevelHistories, args=(q, self.levelHistory, self.saved)).start()
+					p = Process(target=SaveLevelHistories, args=(q, self.levels)).start()
 					# update last checked time
 					lastcheck = time()
+			# make sure we don't eat 100% of CPU
+			sleep(0.0001)
 
 # These functions run in a separate process/thread
 
-def SaveLevelHistory(levelname, history):
-	levelfile = file(ospath.join(HISTORYDIR, levelname) + ".json", "w")
-	levelfile.write(dumps(history))
-	levelfile.close()
-	return levelname
-
-def SaveLevelHistories(q, histories, lastsave):
+def SaveLevelHistories(q, levels):
 	# loop through each level and perform a json save if:
 	# 	the level has been modified since the last recorded save time
 	# 	the last edit was more than X seconds ago
-	q.put(
-		[SaveLevelHistory(l, histories[l]) 
-			for l in histories if 
-				lastsave[l] < len(histories[l]) and histories[l][-1]["servertime"] < time() - SAVEAFTER]
-		, block=True)
+	q.put([l for l in levels if levels[l].SaveIfDue()], block=True)
 
