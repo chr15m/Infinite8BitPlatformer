@@ -125,13 +125,15 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 			webbrowser.open("http://infiniteplatformer.com/info/help")
 		elif text.startswith("/teleport"):
 			bits = text.split(" ")
-			if len(bits) == 2:
-				destination = bits[1]
-				matches = [l for l in self.levels if self.levels[l].displayName == destination]
-				if len(matches):
-					self.TeleportToLevel(matches[0])
-				else:
-					self.AddMessage('No such level "%s"' % destination, time=1)
+			# TODO: support x,y locations and named portals
+			destination = " ".join(bits[1:])
+			matches = [l for l in self.levels if self.levels[l].displayName == destination]
+			if len(matches):
+				print 'match local'
+				self.TeleportToLevel(matches[0])
+			else:
+				print 'try remote'
+				self.net.SendWithID({"action": "findlevel", "name": destination})
 		elif text.startswith("/new"):
 			self.edit_layer.NewLevel()
 		elif text.startswith("/quit"):
@@ -153,4 +155,16 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	
 	def KeyDown_escape(self, e):
 		self.Quit()
+	
+	###
+	### Network events
+	###
+	
+	def Network_foundlevel(self, data):
+		if data['level']:
+			print 'match remote'
+			self.TeleportToLevel(data['level'])
+		else:
+			print 'no remote'
+			self.AddMessage('No such level "%s"' % data['name'], time=1)
 

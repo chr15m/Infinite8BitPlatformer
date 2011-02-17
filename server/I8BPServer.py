@@ -103,6 +103,9 @@ class I8BPChannel(Channel):
 		data.update({"level": self.level})
 		if self.level:
 			editid = self._server.AddLevelHistory(self.level, data)
+		# check if this is a change to the level's name
+		if data['instruction'] == "levelname":
+			self._server.ChangeLevelName(self.level, data)
 		self.SendToNeighbours(data)
 	
 	@RequireID
@@ -140,6 +143,12 @@ class I8BPChannel(Channel):
 		# checks if a particular level exists
 		data.update({"haslevel": self._server.levels.has_key(data['level'])})
 		self.Send(self.AddServerTime(data))
+	
+	@RequireID
+	def Network_findlevel(self, data):
+		if data.get('name'):
+			data.update({"action": "foundlevel", "level": self._server.FindLevel(name=data['name'])})
+			self.Send(self.AddServerTime(data))
 	
 	@RequireID
 	def Network_setlevel(self, data):
@@ -193,8 +202,14 @@ class ServerLevel:
 		self.name = name
 		self.SetHistory(history)
 	
+	def MatchName(self, name):
+		return name == self.name
+	
 	def SetSaved(self):
 		self.saved = len(self.history)
+	
+	def SetName(self, name):
+		self.name = name
 	
 	def SaveIfDue(self):
 		if self.saved < len(self.history) and self.history[-1]["servertime"] < time() - SAVEAFTER:
@@ -285,6 +300,9 @@ class I8BPServer(Server):
 		data.update({"editid": self.levels[level].GetLastEditID()})
 		return self.levels[level].GetLastEditID()
 	
+	def ChangeLevelName(self, level, data):
+		self.levels[level].SetName(data['name'])
+	
 	def GetLevelHistory(self, level):
 		""" Get the history of changes of this level. """
 		if self.levels.has_key(level):
@@ -296,6 +314,12 @@ class I8BPServer(Server):
 		""" Set a list of levels as saved up to the latest point in history. """
 		for l in levelnames:
 			self.levels[l].SetSaved()
+	
+	def FindLevel(self, name):
+		""" Finds a level by it's user visible name. """
+		for l in self.levels:
+			if self.levels[l].MatchName(name):
+				return l
 	
 	def LoadLevels(self, historydir):
 		levels = {}
