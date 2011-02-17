@@ -1,5 +1,4 @@
 * network server
-	* send protocol version number on connect
 	* disconnect clients who have the wrong version number
 	* lock down permissions - only creator can edit own level
 	+ periodically write level changes list to disk
@@ -12,11 +11,11 @@
 	+ network callback to check a level name is not taken
 
 * network client
-	* check whether level name exists already before changing it
-	* try to auto-reconnect after disconnect - exponential retries up to 5 mins apart
-	* send version number to server when connecting (throw special error to message screen if not)
-	* 'loading' spinner when updating the level
+	* try to auto-reconnect if not connected, every 10 seconds
+	* send version number to server when connecting (throw special error to message screen if disconnected)
+	* 'loading' spinner when updating a level
 	* save and load unique client ID into local config file
+	+ check whether level name exists already before changing it
 	+ fix /teleport for levels we do not have
 	+ fix logic when switching levels if the destination level is completely unknown to us (no portals etc.)
 	+ check whether new level name is unique over network
@@ -42,10 +41,9 @@
 	+ send movements to the client
 
 * BUG: cursor position isn't correct on different sized texts
+	e.g. level name change different lengths
  
-* BUG: in collecting items - network sends connect no matter how old
-
-* store items collected server side
+* BUG: in collecting items - network sends collected message of 30 seconds no matter how old
 
 * automatic crashdump reporting - catch all errors and throw a message screen
 	* special version updated message redirects to download site
@@ -67,6 +65,8 @@
 
 Later
 -----
+
+* store items collected server side
 
 * make clients accept the i8bp://levelname/portal and i8bp://levelname/x/y format to launch the game and teleport
 
