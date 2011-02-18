@@ -66,7 +66,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		if self.portal:
 			sfx.PlaySound("portal")
 			if self.game.Teleport(self.portal):
-				self.game.AddMessage("teleporting...")
+				self.game.AddMessage("teleporting...", time=2.0)
 	
 	def HitPlatform(self, platform):
 		# skip the first hitplatform of the game

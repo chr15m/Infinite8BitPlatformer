@@ -54,7 +54,7 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		LevelManager.__init__(self)
 	
 	def Launch(self):
-		self.net.Connect(self.serverhost)
+		self.net.Connect()
 		Game.Launch(self)
 	
 	#def Instructions(self):

@@ -72,7 +72,7 @@ class I8BPChannel(Channel):
 		# this client tried to use the server without having a UUID first
 		# we'll tell them and disconnect them and log it
 		self.Send({"server_error": "You don't have a UUID yet, or you supplied the wrong UUID."})
-		self.Disconnect()
+		self.close()
 		self._server.Log("No ID Error! Client %d (%s)" % (self.ID, self.playerID))
 	
 	##################################

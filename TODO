@@ -1,6 +1,7 @@
 * network server
 	* disconnect clients who have the wrong version number
 	* lock down permissions - only creator can edit own level
+	* fix bug where message and item collections are not tied to levels (clear both on level change?)
 	+ periodically write level changes list to disk
 	+ mirror commands to all users on the same level
 		+ chat events
@@ -11,7 +12,6 @@
 	+ network callback to check a level name is not taken
 
 * network client
-	* try to auto-reconnect if not connected, every 10 seconds
 	* send version number to server when connecting (throw special error to message screen if disconnected)
 	* 'loading' spinner when updating a level
 	* save and load unique client ID into local config file
@@ -77,13 +77,14 @@ Later
 	* OR: both?
 
 * network server
-	* WNF: keep a copy of the level server side and make local modifications to it
-	* WNF: make level downloading work (md5sum, latest edit)
 	* check for data corruption in saved files - e.g. if a PenDown has no matching PenUp yet (someone was mid-draw when the level saved)
 	* make the server email any exceptions to the admin
 	* make settings configurable
+	* WNF: keep a copy of the level server side and make local modifications to it
+	* WNF: make level downloading work (md5sum, latest edit)
 
 * network client
+	* try to auto-reconnect if not connected, every 10 seconds
 	* WNF: send level md5 and edit info to server and download differing levels
 
 * chat box functionality

@@ -97,7 +97,8 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 			connection.Close()
 	
 	def Network_disconnected(self, data):
-		self.game.AddMessage('Disconnected from ' + self.game.serverhost, None, 5.0)
+		#self.game.AddMessage('Disconnected from ' + self.game.serverhost, None, 5.0)
+		pass
 	
 	def Network_leveldump(self, data):
 		if data['size']:

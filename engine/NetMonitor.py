@@ -1,5 +1,5 @@
 import sys
-from time import sleep
+from time import sleep, time
 from random import choice, random, randint
 from string import letters
 
@@ -15,6 +15,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 		self.serverconnection = 0
 		self.playerID = None
 		self.queued = {}
+		self.lastConnect = 0
 		# randomly have an ID already (clients which have connected before)
 		#if randint(0, 1) and len(self.demo_ids):
 		#	self.playerID = self.demo_ids.pop()
@@ -22,9 +23,13 @@ class NetMonitor(ConnectionListener, Concurrent):
 		#else:
 			# request a new UUID secret player ID to begin with
 	
-	def Connect(self, host):
-		connection.DoConnect((host, 31415))
-		self.Send({"action": "playerid"})
+	def Connect(self):
+		self.lastConnect = time()
+		connection.DoConnect((self.parent.serverhost, 31415))
+		packet = {"action": "playerid"}
+		if self.playerID:
+			packet.update({"id": self.playerID})
+		self.Send(packet)
 	
 	def SendWithID(self, data):
 		# send a data packet with this player's ID included, unless they don't have one
@@ -49,6 +54,9 @@ class NetMonitor(ConnectionListener, Concurrent):
 		connection.Pump()
 		ConnectionListener.Pump(self)
 		Concurrent.Pump(self)
+		# try and reconnect every 30 seconds
+		if self.serverconnection != 1 and time() > self.lastConnect + 30:
+			self.Connect()
 	
 	def ResendQueue(self):
 		for a in self.queued:
