@@ -29,13 +29,17 @@ config.SetFilename("Infinite8BitPlatformer.cfg")
 #s.Launch()
 
 from engine.Core import Core
+from engine.ExceptionHandler import ExceptionHandler
 c = Core((len(argv) >= 2 and argv[1] != "profile") and argv[1] or "i8bp.infiniteplatformer.com")
 
 if "profile" in argv:
 	import cProfile as profile
 	profile.run('c.Launch()')
 else:
-	c.Launch()
+	try:
+		c.Launch()
+	except:
+		ExceptionHandler().Launch()
 
 # save the config file on exit
 config.Save()

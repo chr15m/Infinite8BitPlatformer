@@ -15,6 +15,7 @@
 	* send version number to server when connecting (throw special error to message screen if disconnected)
 	* 'loading' spinner when updating a level
 	* save and load unique client ID into local config file
+	* throw special message screen if disconnected/unable to connect to the server
 	+ check whether level name exists already before changing it
 	+ fix /teleport for levels we do not have
 	+ fix logic when switching levels if the destination level is completely unknown to us (no portals etc.)
