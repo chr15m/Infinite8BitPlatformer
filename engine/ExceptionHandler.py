@@ -5,8 +5,7 @@ import traceback
 from PodSix.Resource import *
 from PodSix.Game import Game
 
-class ReportedException(Exception):
-	pass
+from engine.NetMonitor import NetMonitorErrorException, NetMonitorDisconnectionException
 
 class ExceptionHandler(Game, EventMonitor):
 	def __init__(self):
@@ -24,9 +23,9 @@ class ExceptionHandler(Game, EventMonitor):
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([640, 200])
 		#gfx.SetSize([800, 450])
-		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
-		self.message = str(value)
-		#gfx.WrapText(self, text, maxwidth, font='default')
+		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width)
+		#self.message = str(value)
+		self.message = gfx.WrapText(str(value), 0.8)
 		Game.__init__(self)
 		EventMonitor.__init__(self)
 	
@@ -36,7 +35,8 @@ class ExceptionHandler(Game, EventMonitor):
 	
 	def Run(self):
 		gfx.screen.blit(self.face, [16, 16])
-		gfx.DrawText(self.message, pos={"left": 0.1, "top": 0.05}, color=[255, 255, 255])
+		for l in range(len(self.message)):
+			gfx.DrawText(self.message[l], pos={"left": 0.1, "top": 0.05 + 0.05 * l}, color=[255, 255, 255])
 		Game.Run(self)
 		gfx.Flip()
 	

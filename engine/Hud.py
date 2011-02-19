@@ -9,7 +9,6 @@ from PodSix.GUI.Label import Label
 from PodSixNet.Connection import ConnectionListener, connection
 
 from engine.ChatBox import ChatBox
-from engine.ExceptionHandler import ReportedException
 
 class BackButton(ImageButton):
 	help_text = "back"
@@ -92,14 +91,15 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 	def Network_connected(self, data):
 		self.game.AddMessage('Connected to ' + self.game.serverhost, None, 5.0)
 	
-	def Network_error(self, data):
-		self.game.AddMessage('error: ' + data['error'][1], None, 5.0)
-		if self.game.net.serverconnection:
-			connection.Close()
+	#def Network_error(self, data):
+	#	self.game.AddMessage('error: ' + data['error'][1], None, 5.0)
+	#	if self.game.net.serverconnection:
+	#		connection.Close()
 	
-	def Network_disconnected(self, data):
-		#self.game.AddMessage('Disconnected from ' + self.game.serverhost, None, 5.0)
-		raise ReportedException("Disconnected from %s" % self.game.serverhost)
+	#def Network_disconnected(self, data):
+	#	#self.game.AddMessage('Disconnected from ' + self.game.serverhost, None, 5.0)
+	#	print self.game.net.serverconnection
+	#	raise ReportedException("Disconnected from %s" % self.game.serverhost)
 	
 	def Network_leveldump(self, data):
 		if data['size']:

@@ -7,6 +7,12 @@ from PodSix.Concurrent import Concurrent
 
 from PodSixNet.Connection import connection, ConnectionListener
 
+class NetMonitorErrorException(Exception):
+	pass
+
+class NetMonitorDisconnectionException(Exception):
+	pass
+
 class NetMonitor(ConnectionListener, Concurrent):
 	def __init__(self, parent):
 		self.parent = parent
@@ -94,9 +100,11 @@ class NetMonitor(ConnectionListener, Concurrent):
 			self.ResendQueue()
 	
 	def Network_error(self, data):
-		self.serverconnection = 2
-		connection.Close()
+		raise NetMonitorErrorException("Problem with the server connection: %s" % data['error'][1])
+		#self.serverconnection = 2
+		#connection.Close()
 	
 	def Network_disconnected(self, data):
-		self.serverconnection = 2
+		raise NetMonitorDisconnectionException("Oops, disconnected from the server")
+		#self.serverconnection = 2
 
