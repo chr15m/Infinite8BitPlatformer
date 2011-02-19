@@ -41,20 +41,20 @@
 	+ icon shows if a connection is made
 	+ send movements to the client
 
-* BUG: cursor position isn't correct on different sized texts
-	e.g. level name change different lengths
- 
-* BUG: in collecting items - network sends collected message of 30 seconds no matter how old
-
 * make tooltips appear after a second, not instantly
 
 * make chat boxes/speech bubbles avoid eachother
 
-* getting started on help page (how to create a new level and teleport to some good places)
-
 * BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
 
-* splash screen - "ABSOLUTELY NO WARRANTY" message
+* BUG: cursor position isn't correct on different sized texts
+	e.g. level name change different lengths
+
+* BUG: in collecting items - network sends collected message of 30 seconds no matter how old
+
+* splash screen - "ABSOLUTELY NO WARRANTY" message + credits
+
++ getting started on help page (how to create a new level and teleport to some good places)
 
 + automatic crashdump reporting - catch all errors and throw a message screen
 
