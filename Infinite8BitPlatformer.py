@@ -18,28 +18,28 @@ import PodSix
 PodSix.engine = "pygame"
 from PodSix.Resource import *
 
-if platform == "win32":
-	gfx.SetIcon(os.path.join("resources", "icon.gif"))
-
-from PodSix.Config import config
-config.SetFilename("Infinite8BitPlatformer.cfg")
-
 #from PodSix.SplashScreen import SplashScreen
 #s = SplashScreen()
 #s.Launch()
 
 from engine.Core import Core
 from engine.ExceptionHandler import ExceptionHandler
-c = Core((len(argv) >= 2 and argv[1] != "profile") and argv[1] or "i8bp.infiniteplatformer.com")
 
-if "profile" in argv:
-	import cProfile as profile
-	profile.run('c.Launch()')
-else:
-	try:
+try:
+	if platform == "win32":
+		gfx.SetIcon(os.path.join("resources", "icon.gif"))
+	
+	from PodSix.Config import config
+	config.SetFilename("Infinite8BitPlatformer.cfg")
+	
+	c = Core((len(argv) >= 2 and argv[1] != "profile") and argv[1] or "i8bp.infiniteplatformer.com")
+	if "profile" in argv:
+		import cProfile as profile
+		profile.run('c.Launch()')
+	else:
 		c.Launch()
-	except:
-		ExceptionHandler().Launch()
+	# save the config file on exit
+	config.Save()
+except:
+	ExceptionHandler().Launch()
 
-# save the config file on exit
-config.Save()

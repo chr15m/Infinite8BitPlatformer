@@ -15,7 +15,7 @@
 	* send version number to server when connecting (throw special error to message screen if disconnected)
 	* 'loading' spinner when updating a level
 	* save and load unique client ID into local config file
-	* throw special message screen if disconnected/unable to connect to the server
+	+ throw special message screen if disconnected/unable to connect to the server
 	+ check whether level name exists already before changing it
 	+ fix /teleport for levels we do not have
 	+ fix logic when switching levels if the destination level is completely unknown to us (no portals etc.)
@@ -46,9 +46,6 @@
  
 * BUG: in collecting items - network sends collected message of 30 seconds no matter how old
 
-* automatic crashdump reporting - catch all errors and throw a message screen
-	* special version updated message redirects to download site
-
 * make tooltips appear after a second, not instantly
 
 * make chat boxes/speech bubbles avoid eachother
@@ -58,6 +55,8 @@
 * BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
 
 * splash screen - "ABSOLUTELY NO WARRANTY" message
+
++ automatic crashdump reporting - catch all errors and throw a message screen
 
 + fix ladder climbing keys - possible to just use up key for climb + jump?
 

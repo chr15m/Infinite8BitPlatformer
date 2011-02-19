@@ -1,6 +1,11 @@
 from os import path
 import sys
 import traceback
+import cStringIO
+import webbrowser
+import base64
+import urllib
+import gzip
 
 from PodSix.Resource import *
 from PodSix.Game import Game
@@ -14,18 +19,24 @@ class ExceptionHandler(Game, EventMonitor):
 		print exctype, value
 		# now print the traceback out as per usual
 		traceback.print_exc()
-		# now collect the value of the traceback into our file like object
-		# traceback.print_exc(file=myfile)
+		self.ziptrace = None
 		#sfx.LoadSound('splash')
 		#sfx.PlaySound('splash')
 		self.face = pygame.image.load(path.join(*["resources", "icons", "sad-invert.png"]))
 		self.bgColor = (255, 255, 255)
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([640, 200])
-		#gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width)
-		#self.message = str(value)
+		# if this is not a known exception then we want the crashdump
+		if not exctype in [NetMonitorErrorException, NetMonitorDisconnectionException]:
+			value = "Argh, Infinite 8-Bit Platformer crashed! Click here to send us a crash-report so we can fix the bug. Thank you!"
+			# now collect the value of the traceback into our file like object
+			catcherror = cStringIO.StringIO()
+			# wrap the error catcher in gzip
+			traceback.print_exc(file=gzip.GzipFile(fileobj=catcherror, mode="w"))
+			self.ziptrace = catcherror.getvalue()
 		self.message = gfx.WrapText(str(value), 0.8)
+		
 		Game.__init__(self)
 		EventMonitor.__init__(self)
 	
@@ -44,5 +55,7 @@ class ExceptionHandler(Game, EventMonitor):
 		self.Quit()
 	
 	def MouseDown(self, e):
+		if self.ziptrace:
+			webbrowser.open("http://infiniteplatformer.com/feedback?" + urllib.urlencode({"trace": base64.b64encode(self.ziptrace)}))
 		self.Quit()
 
