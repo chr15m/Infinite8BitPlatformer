@@ -7,10 +7,15 @@ from PodSix.Concurrent import Concurrent
 
 from PodSixNet.Connection import connection, ConnectionListener
 
-class NetMonitorErrorException(Exception):
+from server.version import VERSION
+
+class NetErrorException(Exception):
 	pass
 
-class NetMonitorDisconnectionException(Exception):
+class NetDisconnectionException(Exception):
+	pass
+
+class NetBadVersionException(Exception):
 	pass
 
 class NetMonitor(ConnectionListener, Concurrent):
@@ -32,7 +37,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 	def Connect(self):
 		self.lastConnect = time()
 		connection.DoConnect((self.parent.serverhost, 31415))
-		packet = {"action": "playerid"}
+		packet = {"action": "playerid", "version": VERSION}
 		if self.playerID:
 			packet.update({"id": self.playerID})
 		self.Send(packet)
@@ -99,12 +104,15 @@ class NetMonitor(ConnectionListener, Concurrent):
 		if self.playerID:
 			self.ResendQueue()
 	
+	def Network_badversion(self, data):
+		raise NetBadVersionException(data['message'])
+	
 	def Network_error(self, data):
-		raise NetMonitorErrorException("Problem with the server connection: %s" % data['error'][1])
+		raise NetErrorException("Problem with the server connection: %s" % data['error'][1])
 		#self.serverconnection = 2
 		#connection.Close()
 	
 	def Network_disconnected(self, data):
-		raise NetMonitorDisconnectionException("Oops, disconnected from the server")
+		raise NetDisconnectionException("Oops, disconnected from the server")
 		#self.serverconnection = 2
 

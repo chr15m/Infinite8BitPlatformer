@@ -8,6 +8,8 @@ from json import loads, dumps
 from multiprocessing import Process, Queue
 from Queue import Empty
 
+from version import VERSION
+
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
 
@@ -72,7 +74,7 @@ class I8BPChannel(Channel):
 		# this client tried to use the server without having a UUID first
 		# we'll tell them and disconnect them and log it
 		self.Send({"server_error": "You don't have a UUID yet, or you supplied the wrong UUID."})
-		self.close()
+		self.close_when_done()
 		self._server.Log("No ID Error! Client %d (%s)" % (self.ID, self.playerID))
 	
 	##################################
@@ -94,7 +96,14 @@ class I8BPChannel(Channel):
 		# this id is secret and persistent, and not known by any other client
 		else:
 			self.playerID = self._server.GetNewPlayerID(self)
-		self.Send({"action": "playerid", "id": self.playerID})
+		# check that the client protocol version is new enough to play with us
+		clientversion = data.get('version', -1)
+		if clientversion < VERSION:
+			self.Send({"action": "badversion", "message": "You are running version %d of the client protocol, but the server is %d." % (clientversion, VERSION), "version": VERSION})
+			#self.close_when_done()
+			self._server.Log("VERSION MISMATCH: %d / server %d" % (clientversion, VERSION))
+		else:
+			self.Send({"action": "playerid", "id": self.playerID, "version": VERSION})
 	
 	@RequireID
 	def Network_edit(self, data):

@@ -10,32 +10,37 @@ import gzip
 from PodSix.Resource import *
 from PodSix.Game import Game
 
-from engine.NetMonitor import NetMonitorErrorException, NetMonitorDisconnectionException
+from engine.NetMonitor import NetErrorException, NetDisconnectionException, NetBadVersionException
 
 class ExceptionHandler(Game, EventMonitor):
 	def __init__(self):
 		# before anything, fetch the exception that was thrown and it's value
 		exctype, value = sys.exc_info()[:2]
-		print exctype, value
 		# now print the traceback out as per usual
 		traceback.print_exc()
-		self.ziptrace = None
 		#sfx.LoadSound('splash')
 		#sfx.PlaySound('splash')
-		self.face = pygame.image.load(path.join(*["resources", "icons", "sad-invert.png"]))
 		self.bgColor = (255, 255, 255)
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([640, 200])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width)
 		# if this is not a known exception then we want the crashdump
-		if not exctype in [NetMonitorErrorException, NetMonitorDisconnectionException]:
+		if not exctype in [NetErrorException, NetDisconnectionException, NetBadVersionException]:
 			value = "Argh, Infinite 8-Bit Platformer crashed! Click here to send us a crash-report so we can fix the bug. Thank you!"
 			# now collect the value of the traceback into our file like object
 			catcherror = cStringIO.StringIO()
 			# wrap the error catcher in gzip
 			traceback.print_exc(file=gzip.GzipFile(fileobj=catcherror, mode="w"))
-			self.ziptrace = catcherror.getvalue()
-		self.message = gfx.WrapText(str(value), 0.8)
+			ziptrace = catcherror.getvalue()
+			self.destination = "http://infiniteplatformer.com/feedback?" + urllib.urlencode({"trace": base64.b64encode(ziptrace)})
+		
+		if exctype == NetBadVersionException:
+			self.message = gfx.WrapText("A new version of the game is available! Click here to visit http://infiniteplatformer.com/download to get the latest version.", 0.8)
+			self.destination = "http://infiniteplatformer.com/download"
+			self.face = pygame.image.load(path.join(*["resources", "icons", "happy-invert.png"]))
+		else:
+			self.message = gfx.WrapText(str(value), 0.8)
+			self.face = pygame.image.load(path.join(*["resources", "icons", "sad-invert.png"]))
 		
 		Game.__init__(self)
 		EventMonitor.__init__(self)
@@ -55,7 +60,7 @@ class ExceptionHandler(Game, EventMonitor):
 		self.Quit()
 	
 	def MouseDown(self, e):
-		if self.ziptrace:
-			webbrowser.open("http://infiniteplatformer.com/feedback?" + urllib.urlencode({"trace": base64.b64encode(self.ziptrace)}))
+		if self.destination:
+			webbrowser.open(self.destination)
 		self.Quit()
 

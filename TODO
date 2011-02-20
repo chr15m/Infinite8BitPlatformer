@@ -1,7 +1,7 @@
 * network server
-	* disconnect clients who have the wrong version number
 	* lock down permissions - only creator can edit own level
 	* fix bug where message and item collections are not tied to levels (clear both on level change?)
+	+ disconnect clients who have the wrong version number
 	+ periodically write level changes list to disk
 	+ mirror commands to all users on the same level
 		+ chat events
@@ -12,9 +12,9 @@
 	+ network callback to check a level name is not taken
 
 * network client
-	* send version number to server when connecting (throw special error to message screen if disconnected)
 	* 'loading' spinner when updating a level
 	* save and load unique client ID into local config file
+	+ send version number to server when connecting (throw special error to message screen if disconnected)
 	+ throw special message screen if disconnected/unable to connect to the server
 	+ check whether level name exists already before changing it
 	+ fix /teleport for levels we do not have
@@ -52,7 +52,7 @@
 
 * BUG: in collecting items - network sends collected message of 30 seconds no matter how old
 
-* splash screen - "ABSOLUTELY NO WARRANTY" message + credits
+* splash screen - "ABSOLUTELY NO WARRANTY" message + thanks/credits
 
 + getting started on help page (how to create a new level and teleport to some good places)
 
