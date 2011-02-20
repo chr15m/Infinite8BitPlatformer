@@ -94,7 +94,7 @@ class I8BPChannel(Channel):
 		# this id is secret and persistent, and not known by any other client
 		else:
 			self.playerID = self._server.GetNewPlayerID(self)
-			self.Send({"action": "playerid", "id": self.playerID})
+		self.Send({"action": "playerid", "id": self.playerID})
 	
 	@RequireID
 	def Network_edit(self, data):
