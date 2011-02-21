@@ -1,6 +1,6 @@
 * network server
 	* lock down permissions - only creator can edit own level
-	* fix bug where message and item collections are not tied to levels (clear both on level change?)
+	* item collects should be tied to levels
 	+ disconnect clients who have the wrong version number
 	+ periodically write level changes list to disk
 	+ mirror commands to all users on the same level
@@ -14,6 +14,7 @@
 * network client
 	* 'loading' spinner when updating a level
 	* save and load unique client ID into local config file
+	* use message 'when' timestamp to not show old messages
 	+ send version number to server when connecting (throw special error to message screen if disconnected)
 	+ throw special message screen if disconnected/unable to connect to the server
 	+ check whether level name exists already before changing it
@@ -43,7 +44,7 @@
 
 * make tooltips appear after a second, not instantly
 
-* make chat boxes/speech bubbles avoid eachother
+* make chat boxes/speech bubbles avoid eachother (or stack them on the character's head?)
 
 * BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
 
