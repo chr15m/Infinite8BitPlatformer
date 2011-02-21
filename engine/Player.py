@@ -43,6 +43,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	###
 	
 	def Die(self):
+		print "Player %s died" % str(self.playerid)
 		sfx.PlaySound("die")
 		if self.game.player == self:
 			self.game.PlayerDied()
@@ -123,6 +124,9 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	def SendCurrentMove(self):
 		self.SendMove(move=self.lastmove)
 	
+	def SendChat(self, text):
+		self.game.net.SendWithID({"action": "chat", "message": text})
+	
 	def Network_move(self, data):
 		if data['id'] == self.playerid:
 			#print "Player move:", self.playerid, data
@@ -132,17 +136,16 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 				# force the animation update
 				getattr(self, data['move'])(force=True)
 	
-	def SendChat(self, text):
-		    self.game.net.SendWithID({"action": "chat", "message":text})
-	
 	def Network_chat(self, data):
 		if data['id'] == self.playerid:
 			self.Say(data["message"])
 	
 	def Network_item(self, data):
 		if data['id'] == self.playerid:
-			print data['servertime'] - data['collected']
-			self.Collect(self.game.CurrentLevel().PropFromId(data['objectid']), counter=(ITEMHIDETIME - (int(data['servertime']) - int(data['collected']))))
+			if data['collected'] > data['servertime'] - ITEMHIDETIME:
+				self.Collect(self.game.CurrentLevel().PropFromId(data['objectid']), counter=(ITEMHIDETIME - (int(data['servertime']) - int(data['collected']))))
+			else:
+				print 'ignored collect:', data
 	
 	###
 	### Input events etc.

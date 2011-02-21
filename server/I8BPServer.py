@@ -36,7 +36,7 @@ class I8BPChannel(Channel):
 		self.level = None
 		# this player's last known state, such as last move performed, position etc.
 		self.state = {}
-		self.state["chat"] = []
+		self.state["chat"] = {}
 		self.state["item"] = []
 		self.lastUpdate = 0
 		Channel.__init__(self, *args, **kwargs)
@@ -147,12 +147,11 @@ class I8BPChannel(Channel):
 	
 	@RequireID
 	def Network_chat(self, data):
+		data["when"] = time()
 		# this client's player is saying something for others to hear
 		self.SendToNeighbours(data)
 		# add the latest message to the message stack
-		self.state["chat"].append(data)
-		# make sure we only remember the last few messages
-		self.state["chat"] =  self.state["chat"][-5:]
+		self.state["chat"] = data
 	
 	@RequireID
 	def Network_newlevel(self, data):
@@ -192,7 +191,7 @@ class I8BPChannel(Channel):
 		# send to this player all of the states of the other players in the room
 		for n in self._server.GetNeighbours(self):
 			# tell me about all my neighbours
-			self.Send({"action": "player_entering", "id": n.ID, "servertime": time()})
+			self.Send(self.AddServerTime({"action": "player_entering", "id": n.ID}))
 			# tell me about the states of all my neighbours
 			for s in n.state:
 				if n.state[s]:
@@ -200,11 +199,11 @@ class I8BPChannel(Channel):
 						for z in n.state[s]:
 							state = z.copy()
 							state["action"] = s
-							self.Send(state)
+							self.Send(self.AddServerTime(state))
 					else:
 						state = n.state[s].copy()
 						state["action"] = s
-						self.Send(state)
+						self.Send(self.AddServerTime(state))
 	
 	@RequireID
 	def Network_leavelevel(self, data):
