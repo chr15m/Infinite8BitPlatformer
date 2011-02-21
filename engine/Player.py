@@ -12,9 +12,7 @@ from PodSixNet.Connection import ConnectionListener
 from engine.Sprite import Sprite
 from engine.SpeechBubble import SpeechBubble
 
-import math
-import pygame
-import pygame.gfxdraw
+from settings import ITEMHIDETIME
 
 def chatboxShowing(fn):
 	def newfn(self, *args, **kwargs):
@@ -142,9 +140,9 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 			self.Say(data["message"])
 	
 	def Network_item(self, data):
-		print "collect item:", data
 		if data['id'] == self.playerid:
-			self.Collect(self.game.CurrentLevel().PropFromId(data['objectid']), counter=(30 - (int(data['servertime']) - int(data['collected']))))
+			print data['servertime'] - data['collected']
+			self.Collect(self.game.CurrentLevel().PropFromId(data['objectid']), counter=(ITEMHIDETIME - (int(data['servertime']) - int(data['collected']))))
 	
 	###
 	### Input events etc.

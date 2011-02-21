@@ -3,6 +3,8 @@ from PodSix.Resource import *
 
 from BitProp import BitProp
 
+from settings import ITEMHIDETIME
+
 class BitItem(BitProp, Item):
 	color = [255, 255, 0]
 	def __init__(self, *args, **kwargs):
@@ -22,7 +24,7 @@ class BitItem(BitProp, Item):
 				self.Show()
 			self.box = None
 	
-	def Hide(self, counter=30):
+	def Hide(self, counter=ITEMHIDETIME):
 		self.showCounter = counter
 		self.visible = False
 	

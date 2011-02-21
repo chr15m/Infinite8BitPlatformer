@@ -52,6 +52,8 @@
 
 * BUG: in collecting items - network sends collected message of 30 seconds no matter how old
 
+* BUG: on initial connect, send valid current player move (so new connected player isn't invisible)
+
 * splash screen - "ABSOLUTELY NO WARRANTY" message + thanks/credits
 
 + getting started on help page (how to create a new level and teleport to some good places)
@@ -67,6 +69,8 @@ Later
 -----
 
 * store items collected server side
+
+* when a collected item disappears, make the edit layer take it incase the taker has left already
 
 * make clients accept the i8bp://levelname/portal and i8bp://levelname/x/y format to launch the game and teleport
 

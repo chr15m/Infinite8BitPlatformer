@@ -13,13 +13,7 @@ from version import VERSION
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
 
-# TODO: put these in an external config
-# directory containing level update save files
-HISTORYDIR = "server/history"
-# how often to check for new saves
-SAVEINTERVAL = 2
-# save after there have been no edits for this long
-SAVEAFTER = 30
+import settings
 
 def RequireID(fn):
 	def RequireIDFn(self, data):
@@ -239,8 +233,8 @@ class ServerLevel:
 		self.name = name
 	
 	def SaveIfDue(self):
-		if self.saved < len(self.history) and self.history[-1]["servertime"] < time() - SAVEAFTER:
-			levelfile = file(ospath.join(HISTORYDIR, "level" + str(self.ID)) + ".json", "w")
+		if self.saved < len(self.history) and self.history[-1]["servertime"] < time() - settings.SAVEAFTER:
+			levelfile = file(ospath.join(settings.HISTORYDIR, "level" + str(self.ID)) + ".json", "w")
 			levelfile.write(dumps({"name": self.name, "history": self.GetHistory()}))
 			levelfile.close()
 			return True
@@ -273,7 +267,7 @@ class I8BPServer(Server):
 		# the highest level ID we know about
 		self.lastLevelID = 0
 		# load all level histories from the json files
-		self.levels = self.LoadLevels(HISTORYDIR)
+		self.levels = self.LoadLevels(settings.HISTORYDIR)
 		self.SetSaved(self.levels.keys())
 		# non-secret per-session IDs
 		self.ids = 0
@@ -381,7 +375,7 @@ class I8BPServer(Server):
 		while True:
 			self.Pump()
 			# periodically check for unsaved levels with changes and save them
-			if lastcheck < time() - SAVEINTERVAL and not q.empty():
+			if lastcheck < time() - settings.SAVEINTERVAL and not q.empty():
 				# check if the running process has sent back a list of levels it has saved
 				try:
 					saved = q.get_nowait()
