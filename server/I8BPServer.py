@@ -37,7 +37,6 @@ class I8BPChannel(Channel):
 		# this player's last known state, such as last move performed, position etc.
 		self.state = {}
 		self.state["chat"] = {}
-		self.state["item"] = []
 		self.lastUpdate = 0
 		Channel.__init__(self, *args, **kwargs)
 	
@@ -131,13 +130,7 @@ class I8BPChannel(Channel):
 	
 	@RequireID
 	def Network_item(self, data):
-		data["collected"] = time()
-		# the player got an item
-		self.SendToNeighbours(data)
-		# keep a record of items collected by this player on this level
-		self.state["item"].append(data)
-		# only remember the last few items collected
-		self.state["item"] =  self.state["item"][-5:]
+		self.SendToNeighbours(self._server.Collect(self.level, data))
 	
 	@RequireID
 	def Network_move(self, data):
@@ -204,6 +197,9 @@ class I8BPChannel(Channel):
 						state = n.state[s].copy()
 						state["action"] = s
 						self.Send(self.AddServerTime(state))
+		# send to this player all items-collected notices
+		for i in self._server.levels[self.level].GetCollectedItems():
+			self.Send(self.AddServerTime(i))
 	
 	@RequireID
 	def Network_leavelevel(self, data):
@@ -220,6 +216,7 @@ class ServerLevel:
 		if not name:
 			name = self.ID
 		self.name = name
+		self.itemsCollected = []
 		self.SetHistory(history)
 	
 	def MatchName(self, name):
@@ -250,6 +247,27 @@ class ServerLevel:
 	
 	def GetHistory(self):
 		return self.history
+	
+	def Collect(self, data):
+		data["collected"] = time()
+		# keep a record of items collected by this player on this level
+		self.itemsCollected.append(data)
+		self.PurgeOldCollects()
+		return data
+	
+	def GetCollectedItems(self):
+		self.PurgeOldCollects()
+		return self.itemsCollected
+	
+	def PurgeOldCollects(self):
+		removes = []
+		# find any expired item collect notices
+		for i in self.itemsCollected:
+			if i['collected'] <= time() - settings.ITEMHIDETIME:
+				removes.append(i)
+		# remove the ones we found
+		for r in removes:
+			self.itemsCollected.remove(r)
 
 class I8BPServer(Server):
 	# This is an early, quite naive implementation of the game server.
@@ -284,7 +302,7 @@ class I8BPServer(Server):
 		# add this to our pool of known clients
 		self.clients.append(client)
 		self.Log("Channel %d connected, %d online" % (client.ID, len(self.clients)))
-	
+		
 	def NewSessionID(self):
 		# Gets a new non-secret per-session ID for a new client
 		self.ids += 1
@@ -298,11 +316,17 @@ class I8BPServer(Server):
 		# make a new secret player ID and add it to our pool
 		newID = str(uuid1())
 		# TODO: check to make sure no ID gets used twice
+		# hmmm, really? Isn't that the point of uuids?
 		return newID
 	
 	def RemoveClient(self, client):
 		self.clients.remove(client)
 		self.Log("Channel %d removed, %d left online" % (client.ID, len(self.clients)))
+	
+	### Item (Level + Player) routes ###
+	
+	def Collect(self, level, data):
+		return self.levels[level].Collect(data)
 	
 	### Level routines ###
 	
@@ -314,7 +338,7 @@ class I8BPServer(Server):
 		return self.lastLevelID
 	
 	def AddLevelHistory(self, level, data):
-		""" Add a level edit item to the history of changes of this level. """
+		""" Add a level edit command to the history of changes of this level. """
 		# edit id/index
 		self.levels[level].AddHistory(data)
 		data.update({"editid": self.levels[level].GetLastEditID()})
