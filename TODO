@@ -1,6 +1,6 @@
 * network server
 	* lock down permissions - only creator can edit own level
-	* item collects should be tied to levels
+	+ item collects should be tied to levels
 	+ disconnect clients who have the wrong version number
 	+ periodically write level changes list to disk
 	+ mirror commands to all users on the same level
@@ -14,7 +14,6 @@
 * network client
 	* 'loading' spinner when updating a level
 	* save and load unique client ID into local config file
-	* use message 'when' timestamp to not show old messages
 	+ send version number to server when connecting (throw special error to message screen if disconnected)
 	+ throw special message screen if disconnected/unable to connect to the server
 	+ check whether level name exists already before changing it
@@ -42,20 +41,18 @@
 	+ icon shows if a connection is made
 	+ send movements to the client
 
-* make tooltips appear after a second, not instantly
+* BUG: on initial connect, send valid current player move (so new connected player isn't invisible)
 
-* make chat boxes/speech bubbles avoid eachother (or stack them on the character's head?)
+* stack chat boxes vertically above players
 
 * BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
 
 * BUG: cursor position isn't correct on different sized texts
 	e.g. level name change different lengths
 
-* BUG: in collecting items - network sends collected message of 30 seconds no matter how old
-
-* BUG: on initial connect, send valid current player move (so new connected player isn't invisible)
-
 * splash screen - "ABSOLUTELY NO WARRANTY" message + thanks/credits
+
++ BUG: in collecting items - network sends collected message of 30 seconds no matter how old
 
 + getting started on help page (how to create a new level and teleport to some good places)
 
@@ -66,8 +63,14 @@
 + fix speech bubble/chat
 	+ word wrap
 
+### RELEASE ###
+
 Later
 -----
+
+* make tooltips appear after a second, not instantly
+
+* make chat boxes/speech bubbles avoid eachother
 
 * store items collected server side
 
@@ -89,6 +92,7 @@ Later
 	* WNF: make level downloading work (md5sum, latest edit)
 
 * network client
+	* use message 'when' timestamp to not show old messages
 	* try to auto-reconnect if not connected, every 10 seconds
 	* WNF: send level md5 and edit info to server and download differing levels
 

@@ -77,7 +77,8 @@ class I8BPChannel(Channel):
 	def Network(self, data):
 		# called any time data arrives from this client
 		# update with this last know update time
-		#print 'GOT:', data
+		if "debug" in sys.argv:
+			self._server.Log('RECEIVED: ' + str(data))
 		self.lastUpdate = time()
 	
 	def Network_playerid(self, data):
