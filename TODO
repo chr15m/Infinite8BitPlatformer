@@ -41,8 +41,6 @@
 	+ icon shows if a connection is made
 	+ send movements to the client
 
-* stack chat boxes vertically above players
-
 * BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
 
 * BUG: cursor position isn't correct on different sized texts
@@ -62,6 +60,8 @@
 	+ word wrap
 
 + BUG: on initial connect, send valid current player move (so new connected player isn't invisible)
+
++ stack chat boxes vertically above players
 
 ### RELEASE ###
 

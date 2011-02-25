@@ -108,11 +108,11 @@ class NetMonitor(ConnectionListener, Concurrent):
 		raise NetBadVersionException(data['message'])
 	
 	def Network_error(self, data):
-		raise NetErrorException("Problem with the server connection: %s" % data['error'][1])
+		raise NetErrorException("Problem with the server connection: %s\n\nAre you online?" % data['error'][1])
 		#self.serverconnection = 2
 		#connection.Close()
 	
 	def Network_disconnected(self, data):
-		raise NetDisconnectionException("Oops, disconnected from the server")
+		raise NetDisconnectionException("Oops, disconnected from the server.")
 		#self.serverconnection = 2
 
