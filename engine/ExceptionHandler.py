@@ -24,6 +24,10 @@ class ExceptionHandler(Game, EventMonitor):
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([640, 200])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width)
+		
+		# by default don't open a browser window
+		self.destination = None
+		
 		# if this is not a known exception then we want the crashdump
 		if not exctype in [NetErrorException, NetDisconnectionException, NetBadVersionException]:
 			value = "Argh, Infinite 8-Bit Platformer crashed! Click here to send us a crash-report so we can fix the bug. Thank you!"
