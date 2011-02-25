@@ -27,6 +27,8 @@ class PlayerManager(ConnectionListener):
 			p.SetLevel(self.GetLevel())
 			self.players[data['id']] = p
 			p.Pump()
+		else:
+			print 'already have this player ID!'
 	
 	def Network_player_leaving(self, data):
 		if self.players.has_key(data['id']):
@@ -37,3 +39,4 @@ class PlayerManager(ConnectionListener):
 		for p in self.players:
 			self.game.levels[self.game.level].RemoveCharacter(self.players[p])
 		self.players = {}
+

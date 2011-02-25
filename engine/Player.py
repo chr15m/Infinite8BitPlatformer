@@ -120,6 +120,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 	def SendMove(self, **move):
 		move.update({"action": "move", "center": self.rectangle.Center(), "velocity": self.velocity})
 		self.game.net.SendWithID(move)
+		self.lastmove = move['move']
 	
 	def SendCurrentMove(self):
 		self.SendMove(move=self.lastmove)
@@ -132,9 +133,11 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 			#print "Player move:", self.playerid, data
 			self.rectangle.Center(data['center'])
 			self.velocity = data['velocity']
-			if data['move'] in ["WalkRight", "WalkLeft", "StopRight", "StopLeft", "Jump"]:
+			if data['move'] in ["WalkRight", "WalkLeft", "StopRight", "StopLeft", "Jump", "StopUp", "StopDown", "ClimbUp", "ClimbDown"]:
 				# force the animation update
 				getattr(self, data['move'])(force=True)
+			else:
+				print "Invalid move:", data['move']
 	
 	def Network_chat(self, data):
 		if data['id'] == self.playerid:

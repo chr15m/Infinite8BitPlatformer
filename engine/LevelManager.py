@@ -92,8 +92,6 @@ class LevelManager:
 		self.level = level
 		# if we're connected already, tell the server (otherwise we'll tell the server when we get the Network_connected callback)
 		self.net.SendWithID({"action": "setlevel", "level": str(self.level), "editid": self.levels[self.level].LastEdit()})
-		# send the last move we did to the server
-		self.player.SendCurrentMove()
 		# add this level to the game
 		self.Add(self.levels[self.level])
 		# make the level editor aware of this level
@@ -104,6 +102,8 @@ class LevelManager:
 			self.GetOnStart(start)
 		else:
 			self.levels[self.level].SetCamera(self.camera)
+		# send the last move we did to the server
+		self.player.SendCurrentMove()
 	
 	def GetOnStart(self, start):
 		# add the destination to the history
