@@ -23,7 +23,7 @@ class SpeechBubble(TimedText):
 			# fix new pos relative to player
 			# TODO: make speech bubbles avoid players and other speech bubbles on a 'rope' from the player
 			r = self.player.level.camera.TranslateRectangle(self.player.rectangle)
-			self.pos = {"left": r.Right() / gfx.width, "bottom": r.Top() / gfx.width}
+			self.pos = {"centerx": r.CenterX() / gfx.width, "bottom": (r.Top() - 4) / gfx.width}
 			# draw a nice box
 			gfx.DrawRect([self.rect.left - 3, self.rect.top - 3, self.rect.width + 7, self.rect.height + 7], self.white, 0)
 			gfx.DrawLines([(self.rect.left - 3, self.rect.top - 4), (self.rect.right + 4, self.rect.top - 4)], self.black, False)
