@@ -4,6 +4,7 @@ from random import choice, random, randint
 from string import letters
 
 from PodSix.Concurrent import Concurrent
+from PodSix.Config import config
 
 from PodSixNet.Connection import connection, ConnectionListener
 
@@ -24,7 +25,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 		Concurrent.__init__(self)
 		# do we have a current connection with the server?
 		self.serverconnection = 0
-		self.playerID = None
+		self.playerID = config.Get("playerID", default=None)
 		self.queued = {}
 		self.lastConnect = 0
 		# randomly have an ID already (clients which have connected before)
@@ -89,7 +90,9 @@ class NetMonitor(ConnectionListener, Concurrent):
 	def Network_playerid(self, data):
 		# got my player ID, now send a new level i want to be on
 		self.playerID = data['id']
-		#self.SendWithID({"action": "setlevel", "level": choice(self.levels)})
+		# remember my unique player ID in the local config
+		config.Set("playerID", self.playerID)
+		# if we have any network stuff queued up, send it again
 		self.ResendQueue()
 	
 	def Network_player_entering(self, data):

@@ -13,7 +13,7 @@
 
 * network client
 	* 'loading' spinner when updating a level
-	* save and load unique client ID into local config file
+	+ save and load unique client ID into local config file
 	+ send version number to server when connecting (throw special error to message screen if disconnected)
 	+ throw special message screen if disconnected/unable to connect to the server
 	+ check whether level name exists already before changing it
@@ -61,8 +61,6 @@
 + BUG: on initial connect, send valid current player move (so new connected player isn't invisible)
 
 + stack chat boxes vertically above players
-
-### RELEASE ###
 
 Later
 -----

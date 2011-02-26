@@ -1,13 +1,13 @@
 * sound effects lag on vista 32 bit (ask jack casey) also on ubuntu (pulse audio?)
-	* tweak buffer sizes?
-
-* something is a bit wonky about keeping the last 5 messages and last 5 collected items on the level - use the actual expiry time instead
+	(seems to be fixed on ubuntu by installing pulseaudio sdl drivers)
 
 * clicking on a widget and then dragging the mouse out breaks button state - requires a FocusLeft() method of some kind.
 
 * replace "e.key == [int]" with K_* instead
 
 * remove instances of "from resource import *" and replace with actual imported resources
+
+* occasionally tooltips barf in certain instances
 
 * when fill painting outside the box (other operations too?):
 Traceback (most recent call last):
