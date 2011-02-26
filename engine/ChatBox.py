@@ -56,6 +56,7 @@ class ChatBox(TextInput):
 		self.text = text
 		self.visible = True
 		self.callback = callback
+		self.cursor_pos = len(self.text)
 	
 	def RevertText(self):
 		if self.oldText:
@@ -65,6 +66,7 @@ class ChatBox(TextInput):
 			self.callback = self.oldCallback
 			self.oldCallback = None
 		self.visible = False
+		self.cursor_pos = len(self.text)
 	
 	def Hide(self):
 		self.visible = False

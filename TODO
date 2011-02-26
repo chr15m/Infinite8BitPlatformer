@@ -43,10 +43,9 @@
 
 * BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
 
-* BUG: cursor position isn't correct on different sized texts
-	e.g. level name change different lengths
-
 * splash screen - "ABSOLUTELY NO WARRANTY" message + thanks/credits
+
++ BUG: cursor position isn't correct on different sized texts e.g. level name change different lengths
 
 + BUG: in collecting items - network sends collected message of 30 seconds no matter how old
 
