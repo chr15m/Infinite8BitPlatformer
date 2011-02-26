@@ -1,0 +1,2 @@
+ * Character animation editing
+ * Item collecting and inventory
