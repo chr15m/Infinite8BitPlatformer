@@ -13,6 +13,7 @@
 
 * network client
 	* 'loading' spinner when updating a level
+	* make PenMove message be self sufficient (includes start of line too)
 	+ save and load unique client ID into local config file
 	+ send version number to server when connecting (throw special error to message screen if disconnected)
 	+ throw special message screen if disconnected/unable to connect to the server
@@ -65,7 +66,7 @@
 Later
 -----
 
-* make tooltips appear after a second, not instantly
++ make tooltips appear after a second, not instantly
 
 * make chat boxes/speech bubbles avoid eachother
 
