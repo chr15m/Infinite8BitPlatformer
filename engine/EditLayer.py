@@ -1,5 +1,5 @@
 from random import randint
-from sys import maxint
+from sys import maxint, argv
 from os import path
 from uuid import uuid1
 
@@ -421,7 +421,8 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	
 	# when another player edits this layer
 	def Network_edit(self, data):
-		print data
+		if "debug" in argv:
+			print "edit data:", data
 		# record this in our level history
 		self.level.AddHistory(data)
 		# only perform this edit if we haven't seen it before

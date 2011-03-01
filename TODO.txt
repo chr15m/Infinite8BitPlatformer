@@ -44,6 +44,12 @@
 
 * splash screen - "ABSOLUTELY NO WARRANTY" message + thanks/credits
 
+* Put revision number in the crashdump report (create build.json file in build script?)
+
+* Check out Julian's changes to dying animation
+
++ BUG: julian's level crash
+
 + BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
 
 + BUG: cursor position isn't correct on different sized texts e.g. level name change different lengths
@@ -65,8 +71,6 @@
 
 Later
 -----
-
-+ make tooltips appear after a second, not instantly
 
 * make chat boxes/speech bubbles avoid eachother
 
@@ -111,8 +115,6 @@ Later
 * Make player not be white-on-white on light levels
 
 * make notifications 'slots' based instead of counter based
-
-+ add a history to the editing of a level
 
 * rollovers for edit buttons
 
@@ -162,3 +164,8 @@ Later
 * multiple bounding boxes per frame
 
 * parallax backgrounds
+
++ add a history to the editing of a level
+
++ make tooltips appear after a second, not instantly
+
