@@ -9,6 +9,7 @@ from PodSix.GUI.Label import Label
 from PodSixNet.Connection import ConnectionListener, connection
 
 from engine.ChatBox import ChatBox
+from engine.Progress import Progress
 
 class BackButton(ImageButton):
 	help_text = "back"
@@ -73,13 +74,15 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 		self.chatBox = ChatBox(self, self.game.DoChatBox)
 		self.levelLabel = LevelNameLabel(self)
 		self.feedbacklink = FeedbackLink(self)
+		self.progress = Progress(self)
 		# edit button turns on the other buttons
 		self.Add(self.backButton)
 		self.Add(self.chatBox)
 		self.Add(self.levelLabel)
 		self.Add(self.feedbacklink)
 		self.Add(self.disconnectedIcon)
-		self.priority = 2
+		self.Add(self.progress)
+		self.priority = 3
 	
 	###
 	###	Network events
@@ -114,8 +117,9 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 	
 	def Pump(self):
 		ConnectionListener.Pump(self)
-		Concurrent.Pump(self)
-		EventMonitor.Pump(self)	
+		if not self.progress.showing:
+			Concurrent.Pump(self)
+			EventMonitor.Pump(self)	
 	
 	def Update(self):
 		Concurrent.Update(self)

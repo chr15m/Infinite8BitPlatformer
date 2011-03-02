@@ -172,6 +172,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.colorPicker = ColorPicker(self)
 		self.editInterface.Add(self.colorPicker)
 		self.lastHover = None
+		self.loadProgress = 0
 		
 		# for some tools we need to know where the mouse button down event happened, so we can rubber band and the like...
 		self.mouseDownPosition = [None,None]
@@ -262,7 +263,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	
 	def Pump(self):
 		ConnectionListener.Pump(self)
-		if self.levelmanager.net.serverconnection == 1:
+		if self.levelmanager.net.serverconnection == 1 and not self.game.hud.progress.showing:
 			if self.On():
 				self.editInterface.Pump()
 				Concurrent.Pump(self)
@@ -407,8 +408,6 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	###	Network events
 	###
 	
-	# if a change-level name failed
-	
 	# when a leveldump is received (new leveldata from the server if we just joined a level)
 	def Network_leveldump(self, data):
 		# save the level if we have all the updated data
@@ -418,11 +417,19 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				self.startDest = None
 			if data['size']:
 				self.game.SaveLevel()
+				self.game.hud.progress.Hide()
+		else:
+			if data['size']:
+				self.game.hud.progress.Show(data['size'])
+				self.loadProgress = data['size']
 	
 	# when another player edits this layer
 	def Network_edit(self, data):
 		if "debug" in argv:
 			print "edit data:", data
+		if self.loadProgress:
+			self.loadProgress -= 1
+			self.game.hud.progress.Value(self.loadProgress)
 		# record this in our level history
 		self.level.AddHistory(data)
 		# only perform this edit if we haven't seen it before

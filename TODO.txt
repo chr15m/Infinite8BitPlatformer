@@ -11,8 +11,8 @@
 	+ accept 'new level' message - generate new level ID
 	+ network callback to check a level name is not taken
 
-* network client
-	* 'loading' spinner when updating a level
++ network client
+	+ 'loading' spinner when updating a level
 	+ save and load unique client ID into local config file
 	+ send version number to server when connecting (throw special error to message screen if disconnected)
 	+ throw special message screen if disconnected/unable to connect to the server
