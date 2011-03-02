@@ -13,7 +13,6 @@
 
 * network client
 	* 'loading' spinner when updating a level
-	* make PenMove message be self sufficient (includes start of line too)
 	+ save and load unique client ID into local config file
 	+ send version number to server when connecting (throw special error to message screen if disconnected)
 	+ throw special message screen if disconnected/unable to connect to the server
@@ -46,8 +45,6 @@
 
 * Put revision number in the crashdump report (create build.json file in build script?)
 
-* Check out Julian's changes to dying animation
-
 + BUG: julian's level crash
 
 + BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
@@ -72,6 +69,8 @@
 Later
 -----
 
+* Check out Julian's changes to game over animation
+
 * make chat boxes/speech bubbles avoid eachother
 
 * store items collected server side
@@ -94,6 +93,7 @@ Later
 	* WNF: make level downloading work (md5sum, latest edit)
 
 * network client
+	* make PenMove message be self sufficient (includes start of line too)
 	* use message 'when' timestamp to not show old messages
 	* try to auto-reconnect if not connected, every 10 seconds
 	* WNF: send level md5 and edit info to server and download differing levels

@@ -3,6 +3,10 @@ from sys import platform, argv
 import os
 from shutil import rmtree, copytree
 import zipfile
+try:
+	from simplejson import dumps
+except ImportError:
+	from json import dumps
 
 from bzrlib.branch import Branch
 
@@ -23,19 +27,22 @@ clean()
 platforms = {
 	"darwin": ("osx", ".app", "dist/Infinite8BitPlatformer.app/Contents/Resources"),
 	"win32": ("windows", "", "dist"),
+	"linux2": ("linux", "", "dist"),
 }
 
 # more convenient representation of the platform config
 config = {
+	"platform": platform,
 	"os": platforms[platform][0],
 	"extension": platforms[platform][1],
 	"resources": platforms[platform][2],
+	"revno": revno,
 	}
 
-# output the correct VERSION file for this build
-print "Writing VERSION file"
-version_file = file(os.path.join("resources", "VERSION"), "w")
-version_file.write("%s\n%s\n%s\n" % (revno, config["os"], config["extension"] + ".zip"))
+# output the build.json config file for this build
+print "Writing build.json file"
+version_file = file(os.path.join("resources", "build.json"), "w")
+version_file.write(dumps(config))
 version_file.close()
 
 ### PLATFORM SPECIFIC SECTION ###
@@ -78,7 +85,7 @@ elif platform == "win32":
 	options = {
 		"script": app + ".py",
 		"icon_resources": [(1, os.path.join("resources", "main.ico"))],
-	}	
+	}
 	resources = ['resources',]
 	
 	# force the py2exe build
@@ -97,6 +104,9 @@ elif platform == "win32":
 	
 	# get rid of simplejson directory
 	rmtree("simplejson")
+elif platform == "linux2":
+	os.mkdir(platforms[platform][2])
+	copytree("resources", os.path.join("dist", "resources"))
 
 ### PLATFORM SECTION DONE ###
 
