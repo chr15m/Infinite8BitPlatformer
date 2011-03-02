@@ -69,13 +69,21 @@
 Later
 -----
 
+* new clients should appear on a random level with high popularity and not too many users already
+
+* 'like' button lets you like a particular place on a particular level
+
+* 'share' button lets you share a particular location on social media
+
+* the players last level and position should be remembered between sessions and taken back there when they start up
+
+* pixel collisions after bounding box collisions
+
 * Check out Julian's changes to game over animation
 
 * make chat boxes/speech bubbles avoid eachother
 
 * store items collected server side
-
-* when a collected item disappears, make the edit layer take it incase the taker has left already
 
 * make clients accept the i8bp://levelname/portal and i8bp://levelname/x/y format to launch the game and teleport
 
@@ -164,6 +172,12 @@ Later
 * multiple bounding boxes per frame
 
 * parallax backgrounds
+
+* ability to crouch
+
+* message/sign object which displays text to the user
+
++ when a collected item disappears, make the edit layer take it incase the taker has left already
 
 + add a history to the editing of a level
 

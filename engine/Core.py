@@ -26,6 +26,7 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		gfx.SetSize([800, 450])
 		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
 		gfx.LoadFont("FreeSans", 18.0 / gfx.width, "chat")
+		gfx.LoadFont("FreeSans", 10.0 / gfx.width, "speech")
 		#gfx.LoadFont("FreeSans", 8.0 / gfx.width, "tiny")
 		sfx.LoadSound("item")
 		sfx.LoadSound("portal")

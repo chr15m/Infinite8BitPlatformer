@@ -10,6 +10,7 @@ class SpeechBubble(TimedText):
 		if not kwargs.has_key('time') or not kwargs['time']:
 			kwargs['time'] = 0.2
 		kwargs['color'] = [75, 75, 75]
+		#kwargs['font'] = 'speech'
 		
 		self.black = [0, 0, 0]
 		self.white = [255, 255, 255, 150]
