@@ -23,6 +23,14 @@ def RequireID(fn):
 			self.NoIDError()
 	return RequireIDFn
 
+def RequirePermissions(fn):
+	def RequirePermissionsFn(self, data):
+		if not self.Level().IsLocked() or self.Level().CanEdit(self):
+			fn(self, data)
+		else:
+			self.NoPermissionError()
+	return RequirePermissionsFn
+
 class I8BPChannel(Channel):
 	"""
 	This is the server representation of a single connected client.
@@ -70,6 +78,12 @@ class I8BPChannel(Channel):
 		self.close_when_done()
 		self._server.Log("No ID Error! Client %d (%s)" % (self.ID, self.playerID))
 	
+	def NoPermissionError(self):
+		# this client tried to edit a level without having permission to do so
+		self.Send({"action": "permission", "permission": "You do not have permission to edit this level."})
+		#self.close_when_done()
+		self._server.Log("Permission error: Client %d (%s)" % (self.ID, self.playerID))
+	
 	##################################
 	### Network specific callbacks ###
 	##################################
@@ -97,8 +111,10 @@ class I8BPChannel(Channel):
 			#self.close_when_done()
 			self._server.Log("VERSION MISMATCH: %d / server %d" % (clientversion, VERSION))
 		else:
+			self._server.Log("Player %d has ID %s" % (self.ID, self.playerID))
 			self.Send({"action": "playerid", "id": self.playerID, "version": VERSION})
 	
+	@RequirePermissions
 	@RequireID
 	def Network_edit(self, data):
 		# TODO: level name change is slightly different, remove the logic from here?
@@ -131,7 +147,7 @@ class I8BPChannel(Channel):
 	
 	@RequireID
 	def Network_item(self, data):
-		self.SendToNeighbours(self._server.Collect(self.level, data))
+		self.SendToNeighbours(self.Level().Collect(data))
 	
 	@RequireID
 	def Network_move(self, data):
@@ -147,10 +163,15 @@ class I8BPChannel(Channel):
 		# add the latest message to the message stack
 		self.state["chat"] = data
 	
+	@RequirePermissions
+	@RequireID
+	def Network_lock(self, data):
+		self.SendToNeighbours(self.Level().Lock(data))
+	
 	@RequireID
 	def Network_newlevel(self, data):
 		# creates a new level on the server side and returns the level ID to the client
-		self.Send(self.AddServerTime({"action": "newlevel", "id": self._server.CreateLevel()}))
+		self.Send(self.AddServerTime({"action": "newlevel", "id": self._server.CreateLevel(self)}))
 	
 	@RequireID
 	def Network_haslevel(self, data):
@@ -201,6 +222,8 @@ class I8BPChannel(Channel):
 		# send to this player all items-collected notices
 		for i in self._server.levels[self.level].GetCollectedItems():
 			self.Send(self.AddServerTime(i))
+		# tell the player whether they are an editor of this level or not
+		self.Send(self.AddServerTime({"action": "editor", "editor": self.Level().CanEdit(self), "locked": self.Level().IsLocked()}))
 	
 	@RequireID
 	def Network_leavelevel(self, data):
@@ -210,12 +233,18 @@ class I8BPChannel(Channel):
 	
 	def Network_error(self, data):
 		print "Error!", data
+	
+	# shortcut to get the level object corresponding to my current level
+	def Level(self):
+		return self._server.Level(self.level)
 
 class ServerLevel:
-	def __init__(self, ID, history=[], name=""):
+	def __init__(self, ID, history=[], name="", owner="", locked=False):
 		self.ID = ID
 		if not name:
 			name = self.ID
+		self.locked = locked
+		self.owner = owner
 		self.name = name
 		self.itemsCollected = []
 		self.SetHistory(history)
@@ -232,7 +261,12 @@ class ServerLevel:
 	def SaveIfDue(self):
 		if self.saved < len(self.history) and self.history[-1]["servertime"] < time() - settings.SAVEAFTER:
 			levelfile = file(ospath.join(settings.HISTORYDIR, "level" + str(self.ID)) + ".json", "w")
-			levelfile.write(dumps({"name": self.name, "history": self.GetHistory()}))
+			levelfile.write(dumps({
+				"name": self.name,
+				"history": self.GetHistory(),
+				"owner": self.owner,
+				"locked": self.locked,
+			}))
 			levelfile.close()
 			return True
 	
@@ -256,6 +290,10 @@ class ServerLevel:
 		self.PurgeOldCollects()
 		return data
 	
+	def Lock(self, data):
+		self.locked = data['locked']
+		return data
+	
 	def GetCollectedItems(self):
 		self.PurgeOldCollects()
 		return self.itemsCollected
@@ -269,13 +307,15 @@ class ServerLevel:
 		# remove the ones we found
 		for r in removes:
 			self.itemsCollected.remove(r)
+	
+	def CanEdit(self, client):
+		return client.playerID == self.owner
+	
+	def IsLocked(self):
+		return self.locked
 
 class I8BPServer(Server):
-	# This is an early, quite naive implementation of the game server.
-	# It's not secure in any way (e.g. it's very easy to snoop on other people's data, and a bit harder to impersonate them)
-	# Don't use this server for serious, important conversations. It's only marginally more secure than email.
-	
-	# TODO: disconnect clients with the wrong version
+	""" Manages client connections and server side data store. """
 	channelClass = I8BPChannel
 	
 	def __init__(self, *args, **kwargs):
@@ -316,25 +356,19 @@ class I8BPServer(Server):
 	def GetNewPlayerID(self, channel):
 		# make a new secret player ID and add it to our pool
 		newID = str(uuid1())
-		# TODO: check to make sure no ID gets used twice
-		# hmmm, really? Isn't that the point of uuids?
+		# TODO: actually store all known IDs in a json file so we can check spoofers
 		return newID
 	
 	def RemoveClient(self, client):
 		self.clients.remove(client)
 		self.Log("Channel %d removed, %d left online" % (client.ID, len(self.clients)))
 	
-	### Item (Level + Player) routes ###
-	
-	def Collect(self, level, data):
-		return self.levels[level].Collect(data)
-	
 	### Level routines ###
 	
-	def CreateLevel(self):
+	def CreateLevel(self, client):
 		self.lastLevelID += 1
 		levelname = "level" + str(self.lastLevelID)
-		self.levels[levelname] = ServerLevel(self.lastLevelID)
+		self.levels[levelname] = ServerLevel(self.lastLevelID, owner=client.playerID)
 		self.Log("NEW: " + levelname)
 		return self.lastLevelID
 	
@@ -368,10 +402,14 @@ class I8BPServer(Server):
 			if self.levels[l].MatchName(name):
 				return l
 	
+	def Level(self, name):
+		return self.levels[name]
+	
 	def LoadLevels(self, historydir):
 		levels = {}
 		for f in listdir(historydir):
 			if f.endswith(".json"):
+				self.Log("LOAD: " + f)
 				levelfile = file(ospath.join(historydir, f))
 				# json data for this level
 				leveldata = loads(levelfile.read())
@@ -380,11 +418,10 @@ class I8BPServer(Server):
 				# get the level ID number out of the filename
 				lID = int(f[len("level"):-len(".json")])
 				# create a new level
-				levels[f[:-len(".json")]] = ServerLevel(lID, leveldata['history'], leveldata['name'])
+				levels[f[:-len(".json")]] = ServerLevel(lID, leveldata['history'], leveldata['name'], leveldata['owner'], leveldata['locked'])
 				# make sure our highestLevelID is still valid
 				if lID > self.lastLevelID:
 					self.lastLevelID = lID
-				self.Log("LOAD: " + f)
 		return levels
 	
 	def Launch(self):

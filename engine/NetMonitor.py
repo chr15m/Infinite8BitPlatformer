@@ -26,6 +26,9 @@ class NetMonitor(ConnectionListener, Concurrent):
 		# do we have a current connection with the server?
 		self.serverconnection = 0
 		self.playerID = config.Get("playerID", default=None)
+		findarg = [a[9:] for a in sys.argv if a.startswith("playerid=")]
+		if findarg:
+			self.playerID = findarg[0]
 		self.queued = {}
 		self.lastConnect = 0
 		# randomly have an ID already (clients which have connected before)
@@ -118,4 +121,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 	def Network_disconnected(self, data):
 		raise NetDisconnectionException("Oops, disconnected from the server.")
 		#self.serverconnection = 2
+	
+	def Network_permission(self, data):
+		raise NetDisconnectionException("Server disconnected you:\n\n%s" % data['permission'])
 

@@ -108,10 +108,39 @@ class NewButton(ImageButton):
 	help_text = "new"
 	def __init__(self, parent):
 		self.parent = parent
-		ImageButton.__init__(self, [Image(path.join("resources","icons", "new.png")), Image(path.join("resources", "icons", "new-invert.png"))], [gfx.width - 60, 24])
+		ImageButton.__init__(self, [Image(path.join("resources","icons", "new.png")), Image(path.join("resources", "icons", "new-invert.png"))], [gfx.width - 96, 24])
 	
 	def Pressed(self):
 		self.parent.NewLevel()
+
+class LockButton(ImageButton):
+	help_text = "lock"
+	def __init__(self, parent):
+		self.parent = parent
+		self.allow = False
+		self.alts = [
+			[Image(path.join("resources","icons", "lock-open-invert.png")), Image(path.join("resources", "icons", "lock-closed-invert.png"))],
+			[Image(path.join("resources","icons", "lock-open.png")), Image(path.join("resources", "icons", "lock-closed.png"))],
+		]
+		ImageButton.__init__(self, self.alts[1 * self.allow], [gfx.width - 60, 24], toggle=True)
+	
+	def Set(self, locked, allow=None):
+		if not allow is None:
+			self.allow = allow
+		self.down = locked
+		self.images = self.alts[1 * self.allow]
+	
+	def MouseDown(self, e):
+		if self.allow:
+			ImageButton.MouseDown(self, e)
+	
+	def MouseUp(self, e):
+		if self.allow:
+			ImageButton.MouseUp(self, e)
+	
+	def Pressed(self):
+		if self.allow:
+			self.parent.ToggleLocked()
 
 class EditButton(ImageButton):
 	help_text = "edit"
@@ -137,6 +166,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.mode = False
 		self.level = None
 		self.editButton = EditButton(self)
+		self.lockButton = LockButton(self)
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		# make sure we are placed in front of other things
@@ -160,6 +190,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		
 		# the save button
 		self.editInterface.Add(NewButton(self))
+		self.editInterface.Add(self.lockButton)
 		# portal destination selector
 		self.portalDestinationIcon = PortalDestinationIcon(self)
 		self.editInterface.Add(self.portalDestinationIcon)
@@ -217,6 +248,9 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		# don't actually record or perform this update until we receive it back from the server 
 		self.game.net.SendWithID({"action": "edit", "instruction": "levelname", "name": name})
 		self.levelmanager.hud.chatBox.RevertText()
+	
+	def ToggleLocked(self):
+		self.game.net.SendWithID({"action": "lock", "locked": self.lockButton.down})
 	
 	def ToggleMode(self):
 		self.mode = self.editButton.down
@@ -407,6 +441,13 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	###
 	###	Network events
 	###
+	
+	# when we are told whether we are an editor of this level and whether it is locked
+	def Network_editor(self, data):
+		self.lockButton.Set(data['locked'], data['editor'])
+	
+	def Network_lock(self, data):
+		self.lockButton.Set(data['locked'])
 	
 	# when a leveldump is received (new leveldata from the server if we just joined a level)
 	def Network_leveldump(self, data):
