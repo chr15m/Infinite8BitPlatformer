@@ -115,7 +115,10 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 			return True
 	
 	def TeleportToLevel(self, displayName):
-		levelname = self.levels[displayName].name
+		if self.levels.get(displayName):
+			levelname = self.levels[displayName].name
+		else:
+			levelname = displayName[len("level"):]
 		self.SetLevel("level" + levelname, "start")
 	
 	def Back(self):
