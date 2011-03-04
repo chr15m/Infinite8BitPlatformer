@@ -141,6 +141,9 @@ class LockButton(ImageButton):
 	def Pressed(self):
 		if self.allow:
 			self.parent.ToggleLocked()
+	
+	def CanEdit(self):
+		return self.allow or not self.down
 
 class EditButton(ImageButton):
 	help_text = "edit"
@@ -167,6 +170,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.level = None
 		self.editButton = EditButton(self)
 		self.lockButton = LockButton(self)
+		self.newButton = NewButton(self)
 		Concurrent.__init__(self)
 		EventMonitor.__init__(self)
 		# make sure we are placed in front of other things
@@ -189,7 +193,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		self.networktools = {}
 		
 		# the save button
-		self.editInterface.Add(NewButton(self))
+		self.editInterface.Add(self.newButton)
 		self.editInterface.Add(self.lockButton)
 		# portal destination selector
 		self.portalDestinationIcon = PortalDestinationIcon(self)
@@ -299,9 +303,14 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		ConnectionListener.Pump(self)
 		if self.levelmanager.net.serverconnection == 1 and not self.game.hud.progress.showing:
 			if self.On():
-				self.editInterface.Pump()
-				Concurrent.Pump(self)
-				EventMonitor.Pump(self)
+				if self.lockButton.CanEdit():
+					self.editInterface.Pump()
+					Concurrent.Pump(self)
+					EventMonitor.Pump(self)
+				else:
+					self.editButton.Pump()
+					self.lockButton.Pump()
+					self.newButton.Pump()
 			else:
 				self.editButton.Pump()
 	
@@ -316,13 +325,17 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	def Draw(self):
 		if self.levelmanager.net.serverconnection == 1:
 			if self.On():
-				Concurrent.Draw(self)
-				if self.mode and self.level.camera:
-					[o.DrawEdit() for o in self.level.layer.GetAll() if o in self.level.camera.GetVisible()]
-				self.editInterface.Draw()
-				self.editButton.Draw()
-			
-				self.pentool.Draw()
+				if self.lockButton.CanEdit():
+					Concurrent.Draw(self)
+					if self.mode and self.level.camera:
+						[o.DrawEdit() for o in self.level.layer.GetAll() if o in self.level.camera.GetVisible()]
+					self.editInterface.Draw()
+					self.editButton.Draw()
+					self.pentool.Draw()
+				else:
+					self.editButton.Draw()
+					self.lockButton.Draw()
+					self.newButton.Draw()
 			else:
 				self.editButton.Draw()
 	

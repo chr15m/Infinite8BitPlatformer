@@ -1,6 +1,6 @@
 * network server
-	* lock down permissions - only creator can edit own level if locked
 	* keep track of all known player IDs and periodically save them out to disk
+	+ lock down permissions - only creator can edit own level if locked
 	+ item collects should be tied to levels
 	+ disconnect clients who have the wrong version number
 	+ periodically write level changes list to disk
@@ -48,9 +48,9 @@
 
 * BUG: if level takes a long time for client to build/refresh then the other clients will see them die a million times.
 
-* BUG: permissions error message is wrapped all wrong
++ BUG: permissions error message is wrapped all wrong
 
-* BUG: clicking lock button without permissions should not cause a permissions error (send nothing)
++ BUG: clicking lock button without permissions should not cause a permissions error (send nothing)
 
 + BUG: julian's level crash
 
