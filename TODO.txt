@@ -1,5 +1,6 @@
 * network server
 	* lock down permissions - only creator can edit own level if locked
+	* keep track of all known player IDs and periodically save them out to disk
 	+ item collects should be tied to levels
 	+ disconnect clients who have the wrong version number
 	+ periodically write level changes list to disk
