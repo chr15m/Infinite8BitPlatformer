@@ -93,8 +93,9 @@ class NetMonitor(ConnectionListener, Concurrent):
 	def Network_playerid(self, data):
 		# got my player ID, now send a new level i want to be on
 		self.playerID = data['id']
-		# remember my unique player ID in the local config
-		config.Set("playerID", self.playerID)
+		# remember my unique player ID in the local config (unless it's a testing one from the command line)
+		if not len([a for a in sys.argv if a.startswith("playerid=")]):
+			config.Set("playerID", self.playerID)
 		# if we have any network stuff queued up, send it again
 		self.ResendQueue()
 	
