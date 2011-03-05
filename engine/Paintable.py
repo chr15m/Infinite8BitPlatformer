@@ -27,7 +27,7 @@ class Paintable:
 	
 	def Fill(self, pos, color, isLevel):
 		# if it's a fully transparent level pixel, change the BG
-		if isLevel and self.bitmap.Pixel(self.GetOffset(pos))[3] == 0:
+		if isLevel and self.bitmap.Pixel(self.GetOffset(pos))[:3] == (255, 0, 255):
 			self.bgColor = tuple(color[:3])
 		# otherwise floodfill this sucker
 		else:

@@ -48,6 +48,8 @@
 
 * BUG: if level takes a long time for client to build/refresh then the other clients will see them die a million times.
 
++ BUG: levels should have transparent backgrounds
+
 + BUG: permissions error message is wrapped all wrong
 
 + BUG: clicking lock button without permissions should not cause a permissions error (send nothing)

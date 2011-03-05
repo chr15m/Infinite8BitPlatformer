@@ -106,7 +106,8 @@ class BitLevel(Level, SVGLoader, Paintable):
 		sub = self.bitmap.SubImage(box,copy=True)		#.Scale((box.Width() * config.zoom, box.Height() * config.zoom), self.scaledbitmap)
 		
 		# this sub contains alpha. So lets fill those areas with the background colour
-		sub.RemoveAlpha(self.bgColor)
+		#sub.RemoveAlpha(self.bgColor)
+		sub.RemoveAlpha()
 				
 		return sub, topleft, bottomright
 		

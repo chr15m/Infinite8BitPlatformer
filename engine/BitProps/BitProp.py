@@ -66,7 +66,7 @@ class BitProp(Paintable):
 		sub = self.bitmap.Copy()
 		sub.RemoveAlpha()
 		return sub, [0,0], [self.rectangle.Right(),self.rectangle.Bottom()]
-		
+	
 	def PasteSubImage(self, image, pos):
 		self.bitmap.Blit(image, pos)
 			
