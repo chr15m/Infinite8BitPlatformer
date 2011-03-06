@@ -27,11 +27,11 @@ class Paintable:
 	
 	def Fill(self, pos, color, isLevel):
 		# if it's a fully transparent level pixel, change the BG
-		if isLevel and self.bitmap.Pixel(self.GetOffset(pos))[:3] == (255, 0, 255):
-			self.bgColor = tuple(color[:3])
+		#if isLevel and self.bitmap.Pixel(self.GetOffset(pos))[:3] == (255, 0, 255):
+		#	self.bgColor = tuple(color[:3])
 		# otherwise floodfill this sucker
-		else:
-			self.bitmap.FloodFill(self.GetOffset(pos), color)
+		#else:
+		self.bitmap.FloodFill(self.GetOffset(pos), color)
 	
 	def PlotRandomPoint(self, pos, radius, color):
 		""" Plot a random point on the currentSurface a distance 'radius' away from pos (spray paint) """
