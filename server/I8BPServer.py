@@ -98,6 +98,7 @@ class I8BPChannel(Channel):
 	
 	def Network_playerid(self, data):
 		# either player has supplied their unique player ID, in which case we remember it
+		# TODO: check against server's clientData to make sure they supplied a valid ID
 		if data.has_key("id"):
 			self.playerID = data['id']
 		# or client has asked for a new unique, persistent, secret UUID
@@ -323,10 +324,12 @@ class I8BPServer(Server):
 		Server.__init__(self, *args, **kwargs)
 		# list of all currently connected clients
 		self.clients = []
+		# list of all known client IDs
+		self.clientData = self.LoadClientData()
 		# the highest level ID we know about
 		self.lastLevelID = 0
 		# load all level histories from the json files
-		self.levels = self.LoadLevels(settings.HISTORYDIR)
+		self.levels = self.LoadLevels()
 		self.SetSaved(self.levels.keys())
 		# non-secret per-session IDs
 		self.ids = 0
@@ -360,12 +363,30 @@ class I8BPServer(Server):
 	def GetNewPlayerID(self, channel):
 		# make a new secret player ID and add it to our pool
 		newID = str(uuid1())
-		# TODO: actually store all known IDs in a json file so we can check spoofers
+		# remember all clients we have ever created
+		self.clientData[newID] = True
 		return newID
 	
 	def RemoveClient(self, client):
 		self.clients.remove(client)
 		self.Log("Channel %d removed, %d left online" % (client.ID, len(self.clients)))
+	
+	def LoadClientData(self):
+		clientdatadir = settings.CLIENTDATADIR
+		clientdata = {}
+		for f in listdir(clientdatadir):
+			if f.endswith(".json"):
+				self.Log("LOAD CLIENT: " + f)
+				clientdatafile = file(ospath.join(clientdatadir, f))
+				# json data for the client
+				cdata = loads(clientdatafile.read())
+				# close the client data file since we no longer need it
+				clientdatafile.close()
+				# get this client's private ID
+				cID = f[:-len(".json")]
+				# load up the 
+				clientdata[cID] = cdata
+		return clientdata
 	
 	### Level routines ###
 	
@@ -409,11 +430,12 @@ class I8BPServer(Server):
 	def Level(self, name):
 		return self.levels[name]
 	
-	def LoadLevels(self, historydir):
+	def LoadLevels(self):
+		historydir = settings.HISTORYDIR
 		levels = {}
 		for f in listdir(historydir):
 			if f.endswith(".json"):
-				self.Log("LOAD: " + f)
+				self.Log("LOAD LEVEL: " + f)
 				levelfile = file(ospath.join(historydir, f))
 				# json data for this level
 				leveldata = loads(levelfile.read())
@@ -453,21 +475,30 @@ class I8BPServer(Server):
 					# if we actually saved some levels
 					if saved != "START":
 						# write a log about it
-						[self.Log("Saved: " + s) for s in saved]
+						[self.Log("Saved %s: %s" % s) for s in saved]
 						# update our last saved array
-						self.SetSaved(saved)
+						self.SetSaved([s[1] for s in saved if s[0] == "LEVEL"])
 					# launch process to save all unsaved levels
-					p = Process(target=SaveLevelHistories, args=(q, self.levels)).start()
+					p = Process(target=SaveData, args=(q, self.levels, self.clientData)).start()
 					# update last checked time
 					lastcheck = time()
 			# make sure we don't eat 100% of CPU
 			sleep(0.0001)
 
-# These functions run in a separate process/thread
+### Separate thread/process for handling disk IO etc. ###
 
-def SaveLevelHistories(q, levels):
+def SaveData(q, levels, clientdata):
+	# save any unsaved client data/ids
+	savedclients = []
+	for c in clientdata.keys():
+		clientfile = ospath.join(settings.CLIENTDATADIR, c + ".json")
+		if not ospath.isfile(clientfile):
+			f = file(clientfile, "w")
+			f.write(dumps(True))
+			f.close()
+			savedclients.append(("CLIENT", c))
 	# loop through each level and perform a json save if:
 	# 	the level has been modified since the last recorded save time
 	# 	the last edit was more than X seconds ago
-	q.put([l for l in levels if levels[l].SaveIfDue()], block=True)
+	q.put([("LEVEL", l) for l in levels if levels[l].SaveIfDue()] + savedclients, block=True)
 

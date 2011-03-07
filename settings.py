@@ -6,6 +6,8 @@ import os
 
 # directory containing level update save files
 HISTORYDIR = "server/history"
+# directory where all client data is saved
+CLIENTDATADIR = "server/clientdata"
 # how often to check for new saves
 SAVEINTERVAL = 2
 # save after there have been no edits for this long
