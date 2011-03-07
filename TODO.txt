@@ -48,6 +48,10 @@
 
 * BUG: if level takes a long time for client to build/refresh then the other clients will see them die a million times.
 
++ BUG: create new level, teleport to the teleporter, one million messages sent to server
+
++ BUG: are they being sent updates for all levels for some reason?
+
 + BUG: levels should have transparent backgrounds
 
 + BUG: permissions error message is wrapped all wrong
@@ -77,6 +81,8 @@
 
 Later
 -----
+
+* message/sign object which displays text to the user (JOHN RATKE HAS DONE, MERGE)
 
 * unknown command message for slash commands that we do not know
 
@@ -189,8 +195,6 @@ Later
 * parallax backgrounds
 
 * ability to crouch
-
-* message/sign object which displays text to the user
 
 + when a collected item disappears, make the edit layer take it incase the taker has left already
 

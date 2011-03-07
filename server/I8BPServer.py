@@ -7,6 +7,7 @@ from os import listdir, path as ospath
 from json import loads, dumps
 from multiprocessing import Process, Queue
 from Queue import Empty
+from pprint import pprint
 
 from version import VERSION
 
@@ -247,7 +248,7 @@ class ServerLevel:
 		self.owner = owner
 		self.name = name
 		self.itemsCollected = []
-		self.SetHistory(history)
+		self.SetHistory(history[:])
 	
 	def MatchName(self, name):
 		return name == self.name
@@ -334,6 +335,9 @@ class I8BPServer(Server):
 	
 	def Log(self, message):
 		print strftime("%Y-%m-%d %H:%M:%S") + " [" + str(time()) + "]", message
+	
+	def DumpLevels(self):
+		print "HISTORIES:", pprint([(l, self.levels[l].history) for l in self.levels])
 	
 	### Player routines ###
 	

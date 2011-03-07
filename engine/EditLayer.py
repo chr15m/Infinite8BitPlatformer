@@ -481,13 +481,13 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	def Network_edit(self, data):
 		if "debug" in argv:
 			print "edit data:", data
-		if self.loadProgress:
-			self.loadProgress -= 1
-			self.game.hud.progress.Value(self.loadProgress)
-		# record this in our level history
-		self.level.AddHistory(data)
 		# only perform this edit if we haven't seen it before
 		if self.level.LastEdit() <= data['editid'] and data['level'] == "level" + self.level.id:
+			if self.loadProgress:
+				self.loadProgress -= 1
+				self.game.hud.progress.Value(self.loadProgress)
+			# record this in our level history
+			self.level.AddHistory(data)
 			# what edit instruction have we been sent?
 			i = data.get('instruction', "")
 			if i == "create":
