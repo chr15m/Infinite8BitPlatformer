@@ -1,4 +1,4 @@
-* network server
++ network server
 	+ keep track of all known player IDs and periodically save them out to disk
 	+ lock down permissions - only creator can edit own level if locked
 	+ item collects should be tied to levels
@@ -48,7 +48,13 @@
 
 * BUG: if level takes a long time for client to build/refresh then the other clients will see them die a million times.
 
-* BUG: fill tool (probably others too) pass through back button
+* BUG: if first action is line draw + drag something funky is going on (crash)
+
+* BUG: make a new level, do some edits (e.g. lines), go back, teleport to level - edits are doubled up
+
++ BUG: fill tool (probably others too) pass through back button
+
++ BUG: receiving one update every single time, say what?
 
 + BUG: create new level, teleport to the teleporter, one million messages sent to server
 

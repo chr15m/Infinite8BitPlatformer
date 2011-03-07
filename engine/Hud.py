@@ -9,7 +9,6 @@ from PodSix.GUI.Label import Label
 from PodSixNet.Connection import ConnectionListener, connection
 
 from engine.ChatBox import ChatBox
-from engine.Progress import Progress
 
 class BackButton(ImageButton):
 	help_text = "back"
@@ -47,6 +46,7 @@ class FeedbackLink(Label):
 	
 	def MouseDown(self, e):
 		if self.InRect(e.pos):
+			self.triggered = True
 			webbrowser.open("http://infiniteplatformer.com/feedback")
 
 class ConnectedIcon(Concurrent, Image):
@@ -74,15 +74,13 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 		self.chatBox = ChatBox(self, self.game.DoChatBox)
 		self.levelLabel = LevelNameLabel(self)
 		self.feedbacklink = FeedbackLink(self)
-		self.progress = Progress(self)
 		# edit button turns on the other buttons
 		self.Add(self.backButton)
 		self.Add(self.chatBox)
 		self.Add(self.levelLabel)
 		self.Add(self.feedbacklink)
 		self.Add(self.disconnectedIcon)
-		self.Add(self.progress)
-		self.priority = 3
+		self.priority = 1.5
 	
 	###
 	###	Network events
@@ -117,7 +115,7 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 	
 	def Pump(self):
 		ConnectionListener.Pump(self)
-		if not self.progress.showing:
+		if not self.game.progress.showing:
 			Concurrent.Pump(self)
 			EventMonitor.Pump(self)	
 	

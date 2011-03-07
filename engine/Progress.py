@@ -3,8 +3,7 @@ from PodSix.Resource import *
 from PodSix.Concurrent import Concurrent
 
 class Progress(Concurrent):
-	def __init__(self, parent):
-		self.parent = parent
+	def __init__(self):
 		Concurrent.__init__(self)
 		self.sprite = Image(file=file("resources/progress.png"))
 		self.showing = False
@@ -12,6 +11,7 @@ class Progress(Concurrent):
 		self.value = 0
 		self.width = 142
 		self.height = 20
+		self.priority = 5
 	
 	def Draw(self):
 		if self.showing:

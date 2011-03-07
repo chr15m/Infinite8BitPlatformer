@@ -96,7 +96,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		ConnectionListener.Pump(self)
 		Character.Pump(self)
 		# network players ignore events (keypresses, joysticks etc.)
-		if not self.playerid and not self.game.hud.progress.showing:
+		if not self.playerid and not self.game.progress.showing:
 			EventMonitor.Pump(self)
 	###
 	### Wrapper method

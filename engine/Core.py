@@ -16,6 +16,7 @@ from engine.BitCamera import BitCamera
 from engine.LevelManager import LevelManager
 from engine.NetMonitor import NetMonitor
 from engine.PlayerManager import PlayerManager
+from engine.Progress import Progress
 
 class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	def __init__(self, server="mccormick.cx"):
@@ -45,6 +46,9 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		self.Add(self.hud)
 		# global tooltip singleton
 		self.Add(tooltip)
+		# progress bar should go above everything else
+		self.progress = Progress()
+		self.Add(self.progress)
 		# set tooltip font
 		#tooltip.font = "tiny"
 		# Create player and camera and put some text on the screen

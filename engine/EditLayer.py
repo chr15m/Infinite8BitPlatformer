@@ -301,7 +301,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	
 	def Pump(self):
 		ConnectionListener.Pump(self)
-		if self.levelmanager.net.serverconnection == 1 and not self.game.hud.progress.showing:
+		if self.levelmanager.net.serverconnection == 1 and not self.game.progress.showing:
 			if self.On():
 				if self.lockButton.CanEdit():
 					self.editInterface.Pump()
@@ -353,7 +353,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	
 	@editOn
 	def MouseDown(self, e):
-		if not len([o for o in self.editInterface.objects + self.objects + [p.icon for p in self.level.layer.portals] if hasattr(o, 'triggered') and o.triggered]):
+		if not len([o for o in self.editInterface.objects + self.objects + [p.icon for p in self.level.layer.portals] + self.game.hud.objects if hasattr(o, 'triggered') and o.triggered]):
 			self.down = True
 			if self.selected in ['platform', 'ladder', 'portal', 'item']:
 				self.rect = EditBox(e.pos, self.level.camera, Rectangle([float(x) / gfx.width for x in self.level.sizerect]))
@@ -471,10 +471,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				self.startDest = None
 			if data['size']:
 				self.game.SaveLevel()
-				self.game.hud.progress.Hide()
+				self.game.progress.Hide()
 		else:
 			if data['size']:
-				self.game.hud.progress.Show(data['size'])
+				self.game.progress.Show(data['size'])
 				self.loadProgress = data['size']
 	
 	# when another player edits this layer
@@ -482,10 +482,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		if "debug" in argv:
 			print "edit data:", data
 		# only perform this edit if we haven't seen it before
-		if self.level.LastEdit() <= data['editid'] and data['level'] == "level" + self.level.id:
+		if self.level.LastEdit() < data['editid'] and data['level'] == "level" + self.level.id:
 			if self.loadProgress:
 				self.loadProgress -= 1
-				self.game.hud.progress.Value(self.loadProgress)
+				self.game.progress.Value(self.loadProgress)
 			# record this in our level history
 			self.level.AddHistory(data)
 			# what edit instruction have we been sent?
