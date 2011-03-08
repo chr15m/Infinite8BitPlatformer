@@ -12,6 +12,10 @@ class PlayerManager(ConnectionListener):
 	def Pump(self):
 		ConnectionListener.Pump(self)
 	
+	def ActivateAll(self):
+		for p in self.players:
+			self.players[p].Activate()
+	
 	###
 	### Network events
 	###
@@ -34,6 +38,17 @@ class PlayerManager(ConnectionListener):
 		if self.players.has_key(data['id']):
 			self.game.levels[self.game.level].RemoveCharacter(self.players[data['id']])
 			del self.players[data['id']]
+	
+	# when a leveldump is received (new leveldata from the server if we just joined a level)
+	def Network_leveldump(self, data):
+		if data['progress'] == "end":
+			# tell the server we are now active
+			self.game.net.SendWithID({"action": "activate"})
+	
+	# we have received a new block of players from a level we just joined, so activate them all
+	def Network_playerdump(self, data):
+		if data['progress'] == "end":
+			self.ActivateAll()
 	
 	def Clear(self):
 		for p in self.players:

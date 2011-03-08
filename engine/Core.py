@@ -67,7 +67,7 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	
 	def Setup(self, message="", callback=None, time=None):
 		# create our main player with id 0
-		self.player = Player(self, 0, [0, 0, 11.0 / gfx.width, 12.0 / gfx.width])
+		self.player = Player(self, 0, [0, 0, 11.0 / gfx.width, 12.0 / gfx.width], active=True)
 		self.camera = BitCamera([0, 0, 1.0 / config.zoom, float(gfx.height) / gfx.width / config.zoom], tracking=self.player)
 		if message:
 			self.AddMessage(message, callback, time)

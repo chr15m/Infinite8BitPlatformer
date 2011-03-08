@@ -1,8 +1,8 @@
-* BUG: if level takes a long time for client to build/refresh then the other clients will see them die a million times.
-
 * splash screen
 
 * Put revision number in the crashdump report (create build.json file in build script?)
+
++ BUG: if level takes a long time for client to build/refresh then the other clients will see them die a million times.
 
 + BUG: if first action is line draw + drag something funky is going on (crash)
 

@@ -165,6 +165,10 @@ class I8BPChannel(Channel):
 		# add the latest message to the message stack
 		self.state["chat"] = data
 	
+	@RequireID
+	def Network_activate(self, data):
+		self.SendToNeighbours(data)
+	
 	@RequirePermissions
 	@RequireID
 	def Network_lock(self, data):
@@ -221,6 +225,8 @@ class I8BPChannel(Channel):
 						state = n.state[s].copy()
 						state["action"] = s
 						self.Send(self.AddServerTime(state))
+		# tell the client we have finished updating this level so they can end the progress meter and save a copy
+		self.Send(self.AddServerTime({"action": "playerdump", "progress": "end"}))
 		# send to this player all items-collected notices
 		for i in self._server.levels[self.level].GetCollectedItems():
 			self.Send(self.AddServerTime(i))

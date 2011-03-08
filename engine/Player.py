@@ -33,6 +33,7 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		self.hspeed = self.hspeed / config.zoom
 		self.jump = self.jump / config.zoom
 		self.framerate = 25
+		self.active = kwargs.get("active", False)
 		Sprite.__init__(self, "player", ["stand.left", "stand.right", "walk.left", "walk.right", "jump.left", "jump.right"])
 		for action in self.actions:
 			for img in self.actions[action]:
@@ -87,10 +88,11 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		#gfx.DrawRect(self.level.camera.TranslateRectangle(self.rectangle), [255, 200, 200], 1)
 	
 	def Update(self):
-		Character.Update(self)
-		if self.velocity[1] > 3.0 / config.zoom:
-			self.Die()
-		self.portal = None
+		if self.active:
+			Character.Update(self)
+			if self.velocity[1] > 3.0 / config.zoom:
+				self.Die()
+			self.portal = None
 	
 	def Pump(self):
 		ConnectionListener.Pump(self)
@@ -98,6 +100,10 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 		# network players ignore events (keypresses, joysticks etc.)
 		if not self.playerid and not self.game.progress.showing:
 			EventMonitor.Pump(self)
+	
+	def Activate(self):
+		self.active = True
+	
 	###
 	### Wrapper method
 	###
@@ -149,6 +155,10 @@ class Player(Character, EventMonitor, Sprite, ConnectionListener):
 				self.Collect(self.game.CurrentLevel().PropFromId(data['objectid']), counter=(ITEMHIDETIME - (int(data['servertime']) - int(data['collected']))))
 			else:
 				print 'ignored collect:', data
+	
+	def Network_activate(self, data):
+		if data['id'] == self.playerid:
+			self.Activate()
 	
 	###
 	### Input events etc.
