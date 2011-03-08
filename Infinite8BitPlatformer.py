@@ -1,18 +1,21 @@
 import os
 from sys import platform, path, argv
 
+if platform == "win32" and "library.zip" in path[0]:
+	# one level up from library.zip
+	os.chdir(os.sep.join(path[0].split(os.sep)[:-1]))
+else:
+	os.chdir(path[0])
+
+# this has to happen before psyco import because of some kind of bug
+from engine.BuildFile import buildfile
+
 try:
 	import psyco           # psyco does not exist on 64 bit platforms
 	psyco.full()
 except ImportError:
 	print "Psyco not available"
 	pass
-
-if platform == "win32" and "library.zip" in path[0]:
-	# one level up from library.zip
-	os.chdir(os.sep.join(path[0].split(os.sep)[:-1]))
-else:
-	os.chdir(path[0])
 
 import PodSix
 PodSix.engine = "pygame"

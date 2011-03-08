@@ -6,11 +6,13 @@ import webbrowser
 import base64
 import urllib
 import gzip
+from pprint import pformat
 
 from PodSix.Resource import *
 from PodSix.Game import Game
 
 from engine.NetMonitor import NetErrorException, NetDisconnectionException, NetBadVersionException
+from engine.BuildFile import buildfile
 
 class ExceptionHandler(Game, EventMonitor):
 	def __init__(self):
@@ -33,8 +35,14 @@ class ExceptionHandler(Game, EventMonitor):
 			value = "Argh, Infinite 8-Bit Platformer crashed! Click here to send us a crash-report so we can fix the bug. Thank you!"
 			# now collect the value of the traceback into our file like object
 			catcherror = cStringIO.StringIO()
+			# prepare a zipfile filter to push everything through
+			zipout = gzip.GzipFile(fileobj=catcherror, mode="w")
 			# wrap the error catcher in gzip
-			traceback.print_exc(file=gzip.GzipFile(fileobj=catcherror, mode="w"))
+			traceback.print_exc(file=zipout)
+			# append the buildfile information to the zip we are sending
+			zipout.write("\n\nBuild info JSON:\n" + pformat(buildfile.GetInfo()))
+			zipout.close()
+			# get the result out
 			ziptrace = catcherror.getvalue()
 			self.destination = "http://infiniteplatformer.com/feedback?" + urllib.urlencode({"trace": base64.b64encode(ziptrace)})
 		

@@ -115,7 +115,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 		raise NetBadVersionException(data['message'])
 	
 	def Network_error(self, data):
-		raise NetErrorException("Problem with the server connection: %s\n\nAre you online?" % data['error'][1])
+		raise NetErrorException("Problem with the server connection: %s\nAre you online?\nMaybe the server is down." % data['error'][1])
 		#self.serverconnection = 2
 		#connection.Close()
 	
