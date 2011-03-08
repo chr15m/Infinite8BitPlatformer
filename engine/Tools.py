@@ -21,7 +21,7 @@ class DrawTool(ImageRadioButton):
 		coordinates = self.parent.level.camera.FromScreenCoordinates(pos)
 		surface = self.parent.GetPropUnderMouse(coordinates)
 		absolute = [int(x * gfx.width) for x in coordinates]
-		self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendown", "tool": self.__class__.__name__, "pos": absolute, "objectid": surface.id, "color": tuple(self.parent.color)})
+		self.parent.RecordEdit({"action": "edit", "instruction": "pendown", "tool": self.__class__.__name__, "pos": absolute, "objectid": surface.id, "color": tuple(self.parent.color)})
 		return self.PenDown(absolute, surface, self.parent.color)
 	
 	def PenDown(self, pos, surface, color):
@@ -37,7 +37,7 @@ class DrawTool(ImageRadioButton):
 	def OnMouseMove(self, pos):
 		absolute = [int(x * gfx.width) for x in self.parent.level.camera.FromScreenCoordinates(pos)]
 		if self.mouseDown:
-			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penmove", "tool": self.__class__.__name__, "pos": absolute})
+			self.parent.RecordEdit({"action": "edit", "instruction": "penmove", "tool": self.__class__.__name__, "pos": absolute})
 		return self.PenMove(absolute)
 	
 	def NetworkPenMove(self, pos):
@@ -50,7 +50,7 @@ class DrawTool(ImageRadioButton):
 	
 	def OnMouseUp(self, pos):
 		if not self.currentSurface != self:
-			self.parent.game.net.SendWithID({"action": "edit", "instruction": "penup", "tool": self.__class__.__name__})
+			self.parent.RecordEdit({"action": "edit", "instruction": "penup", "tool": self.__class__.__name__})
 		return self.PenUp()
 	
 	def NetworkPenUp(self):
@@ -152,7 +152,7 @@ class AirbrushTool(DrawTool):
 		if self.currentSurface:
 			xpos, ypos = self.currentSurface.PlotRandomPoint(pos, self.radius, self.color)
 			# make sure the paint happens remotely too
-			self.parent.game.net.SendWithID({"action": "edit", "instruction": "pendata", "tool": "AirbrushTool", "pos": [xpos, ypos], "objectid": self.currentSurface.id, "color": tuple(self.color)})
+			self.parent.RecordEdit({"action": "edit", "instruction": "pendata", "tool": "AirbrushTool", "pos": [xpos, ypos], "objectid": self.currentSurface.id, "color": tuple(self.color)})
 			self.position = pos
 		return pos, lastPos
 	
