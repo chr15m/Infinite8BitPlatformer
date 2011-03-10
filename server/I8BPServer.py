@@ -8,6 +8,10 @@ from json import loads, dumps
 from multiprocessing import Process, Queue
 from Queue import Empty
 from pprint import pprint
+# needed for traceback email handling
+import traceback
+import cStringIO
+import smtplib
 
 from version import VERSION
 
@@ -53,7 +57,7 @@ class I8BPChannel(Channel):
 		# When the socket is closed, this gets fired
 		# tell my neighbours i have left
 		self.SendToNeighbours({"action": "player_leaving"})
-		self._server.Log('Client %d (%s) disconnected' % (self.ID, self.playerID))
+		self._server.Log('DISCONNECT: Client %d (%s) disconnected' % (self.ID, self.playerID))
 		self._server.RemoveClient(self)
 	
 	def SetID(self, ID):
@@ -77,13 +81,13 @@ class I8BPChannel(Channel):
 		# we'll tell them and disconnect them and log it
 		self.Send({"server_error": "You don't have a UUID yet, or you supplied the wrong UUID."})
 		self.close_when_done()
-		self._server.Log("No ID Error! Client %d (%s)" % (self.ID, self.playerID))
+		self._server.Log("ERROR: No ID Error! Client %d (%s)" % (self.ID, self.playerID))
 	
 	def NoPermissionError(self):
 		# this client tried to edit a level without having permission to do so
 		self.Send({"action": "permission", "permission": "You do not have permission to edit this level."})
 		#self.close_when_done()
-		self._server.Log("Permission error: Client %d (%s)" % (self.ID, self.playerID))
+		self._server.Log("ERROR: Permission error: Client %d (%s)" % (self.ID, self.playerID))
 	
 	##################################
 	### Network specific callbacks ###
@@ -113,7 +117,7 @@ class I8BPChannel(Channel):
 			#self.close_when_done()
 			self._server.Log("VERSION MISMATCH: %d / server %d" % (clientversion, VERSION))
 		else:
-			self._server.Log("Player %d has ID %s" % (self.ID, self.playerID))
+			self._server.Log("VERSION: Player %d has ID %s" % (self.ID, self.playerID))
 			self.Send({"action": "playerid", "id": self.playerID, "version": VERSION})
 	
 	@RequirePermissions
@@ -340,7 +344,7 @@ class I8BPServer(Server):
 		# non-secret per-session IDs
 		self.ids = 0
 		# log the start of the server process
-		self.Log('Infinite8BitPlatformer server listening on ' + ":".join([str(i) for i in kwargs['localaddr']]))
+		self.Log('LAUNCH: Infinite8BitPlatformer server listening on ' + ":".join([str(i) for i in kwargs['localaddr']]))
 	
 	def Log(self, message):
 		print strftime("%Y-%m-%d %H:%M:%S") + " [" + str(time()) + "]", message
@@ -355,7 +359,7 @@ class I8BPServer(Server):
 		client.SetID(self.NewSessionID())
 		# add this to our pool of known clients
 		self.clients.append(client)
-		self.Log("Channel %d connected, %d online" % (client.ID, len(self.clients)))
+		self.Log("CONNECT: Channel %d connected, %d online" % (client.ID, len(self.clients)))
 		
 	def NewSessionID(self):
 		# Gets a new non-secret per-session ID for a new client
@@ -375,7 +379,7 @@ class I8BPServer(Server):
 	
 	def RemoveClient(self, client):
 		self.clients.remove(client)
-		self.Log("Channel %d removed, %d left online" % (client.ID, len(self.clients)))
+		self.Log("REMOVE: Channel %d removed, %d left online" % (client.ID, len(self.clients)))
 	
 	def LoadClientData(self):
 		clientdatadir = settings.CLIENTDATADIR
@@ -481,7 +485,7 @@ class I8BPServer(Server):
 					# if we actually saved some levels
 					if saved != "START":
 						# write a log about it
-						[self.Log("Saved %s: %s" % s) for s in saved]
+						[self.Log("SAVED %s: %s" % s) for s in saved]
 						# update our last saved array
 						self.SetSaved([s[1] for s in saved if s[0] == "LEVEL"])
 					# launch process to save all unsaved levels
@@ -491,7 +495,7 @@ class I8BPServer(Server):
 			# make sure we don't eat 100% of CPU
 			sleep(0.0001)
 
-### Separate thread/process for handling disk IO etc. ###
+### Separate thread/process for handling disk IO, emails, etc. ###
 
 def SaveData(q, levels, clientdata):
 	# save any unsaved client data/ids
@@ -507,4 +511,53 @@ def SaveData(q, levels, clientdata):
 	# 	the level has been modified since the last recorded save time
 	# 	the last edit was more than X seconds ago
 	q.put([("LEVEL", l) for l in levels if levels[l].SaveIfDue()] + savedclients, block=True)
+
+def SendExceptionEmail(message=None, logger=None):
+	if not message:
+		# before anything, fetch the exception that was thrown and it's value
+		exctype, value = sys.exc_info()[:2]
+		# now print the traceback out as per usual
+		traceback.print_exc()
+		# now catch the actual exception text
+		catcherror = cStringIO.StringIO()
+		traceback.print_exc(file=catcherror)
+		message = catcherror.getvalue()
+	
+	def DoSend(msg, settings):
+		if settings.SERVER_EMAIL_EXCEPTIONS and settings.ADMIN_EMAIL:
+			s = None
+			# use ssl email if the user specified it
+			if settings.EMAIL_USE_SSL:
+				s = smtplib.SMTP_SSL(settings.EMAIL_HOST, settings.EMAIL_PORT)
+			else:
+				s = smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
+			
+			# set up the TLS stuff if specified
+			if settings.EMAIL_USE_TLS:
+				s.ehlo()
+				s.starttls()
+				s.ehlo()
+			
+			# log in if they supplied smtp login details
+			if settings.EMAIL_USERNAME:
+				s.login(settings.EMAIL_USERNAME, settings.EMAIL_PASSWORD)
+			
+			# create the full text of the actual email to sent
+			fulltext = (
+				"From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n" %
+				(settings.ADMIN_EMAIL, settings.ADMIN_EMAIL, "Infinite8BitPlatformerServer crash")
+			) + msg
+			
+			# try to send it, and we're done
+			s.sendmail(settings.ADMIN_EMAIL, [settings.ADMIN_EMAIL], fulltext)
+			s.quit()
+	
+	logline = "EMAIL: server exception sender launched to email '%s'" % settings.ADMIN_EMAIL
+	if logger:
+		logger()
+	else:
+		print logline
+	
+	# launch a new process to perform the actual sending of the email so it doesn't block the server
+	Process(target=DoSend, args=(message, settings)).start()
 
