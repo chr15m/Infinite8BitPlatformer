@@ -1,4 +1,18 @@
+* catch all server exceptions and email them to admin
+
+* fix the levels to their final layout for release
+
+* write server launch script
+
 * splash screen
+
+* menu with credits and website link
+
+--- RELEASE ---
+
++ enable psyco in server
+
++ set up live server online
 
 + Put revision number in the crashdump report (create build.json file in build script?)
 
@@ -104,6 +118,8 @@ Later
 
 * pixel collisions after bounding box collisions
 
+* fix collision detection to take into account velocity of players as well as position
+
 * Check out Julian's changes to game over animation
 
 * make chat boxes/speech bubbles avoid eachother
@@ -127,6 +143,8 @@ Later
 	* WNF: make level downloading work (md5sum, latest edit)
 	* proper disconnect when finished command (accounts for channel buffer)
 	+ make settings configurable
+
+* customiseable level sizes
 
 * network client
 	* make PenMove message be self sufficient (includes start of line too)
