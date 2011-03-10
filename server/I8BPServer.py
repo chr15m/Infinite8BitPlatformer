@@ -89,6 +89,13 @@ class I8BPChannel(Channel):
 		#self.close_when_done()
 		self._server.Log("ERROR: Permission error: Client %d (%s)" % (self.ID, self.playerID))
 	
+	# shortcut to get the level object corresponding to my current level
+	def Level(self):
+		return self._server.Level(self.level)
+	
+	def Error(self, err):
+		SendExceptionEmail(logger=self._server.Log)
+	
 	##################################
 	### Network specific callbacks ###
 	##################################
@@ -112,6 +119,7 @@ class I8BPChannel(Channel):
 			self.playerID = self._server.GetNewPlayerID(self)
 		# check that the client protocol version is new enough to play with us
 		clientversion = data.get('version', -1)
+		print b
 		if clientversion < VERSION:
 			self.Send({"action": "badversion", "message": "You are running version %d of the client protocol, but the server is %d." % (clientversion, VERSION), "version": VERSION})
 			#self.close_when_done()
@@ -245,10 +253,6 @@ class I8BPChannel(Channel):
 	
 	def Network_error(self, data):
 		print "Error!", data
-	
-	# shortcut to get the level object corresponding to my current level
-	def Level(self):
-		return self._server.Level(self.level)
 
 class ServerLevel:
 	def __init__(self, ID, history=[], name="", owner="", locked=False):
@@ -512,10 +516,24 @@ def SaveData(q, levels, clientdata):
 	# 	the last edit was more than X seconds ago
 	q.put([("LEVEL", l) for l in levels if levels[l].SaveIfDue()] + savedclients, block=True)
 
+# TODO: put this in it's own module
+
 def SendExceptionEmail(message=None, logger=None):
+	def DoLog(msg):
+		if logger:
+			logger(msg)
+		else:
+			print msg
+	
+	# before anything, fetch the exception that was thrown and it's value
+	exctype, value = sys.exc_info()[:2]
+	
+	# ignore ctrl-C
+	if exctype == KeyboardInterrupt:
+		DoLog("\nEXIT: keyboard interrupt")
+		return
+	
 	if not message:
-		# before anything, fetch the exception that was thrown and it's value
-		exctype, value = sys.exc_info()[:2]
 		# now print the traceback out as per usual
 		traceback.print_exc()
 		# now catch the actual exception text
@@ -551,12 +569,8 @@ def SendExceptionEmail(message=None, logger=None):
 			# try to send it, and we're done
 			s.sendmail(settings.ADMIN_EMAIL, [settings.ADMIN_EMAIL], fulltext)
 			s.quit()
-	
-	logline = "EMAIL: server exception sender launched to email '%s'" % settings.ADMIN_EMAIL
-	if logger:
-		logger()
-	else:
-		print logline
+		
+	DoLog("EMAIL: server exception sender launched to email '%s'" % settings.ADMIN_EMAIL)
 	
 	# launch a new process to perform the actual sending of the email so it doesn't block the server
 	Process(target=DoSend, args=(message, settings)).start()
