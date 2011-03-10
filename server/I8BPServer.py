@@ -119,7 +119,6 @@ class I8BPChannel(Channel):
 			self.playerID = self._server.GetNewPlayerID(self)
 		# check that the client protocol version is new enough to play with us
 		clientversion = data.get('version', -1)
-		print b
 		if clientversion < VERSION:
 			self.Send({"action": "badversion", "message": "You are running version %d of the client protocol, but the server is %d." % (clientversion, VERSION), "version": VERSION})
 			#self.close_when_done()
