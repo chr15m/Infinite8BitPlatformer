@@ -3,8 +3,10 @@ from sys import platform, argv
 import os
 from shutil import rmtree, copytree
 import zipfile
+using_simplejson = False
 try:
 	from simplejson import dumps
+	using_simplejson = True
 except ImportError:
 	from json import dumps
 
@@ -51,13 +53,15 @@ version_file.close()
 if platform == "darwin":
 	# add mac specific options
 	options = {
-		'includes': ['simplejson', 'pygame'],
+		'includes': ['pygame'],
 		'resources': ['resources',],
 		'argv_emulation': True,
 		'iconfile': 'resources/icon.icns',
 		'semi_standalone': False,
 	}
-
+	if using_simplejson:
+		options['includes'].insert(0, 'simplejson')
+	
 	# force the py2app build
 	argv.insert(1, "py2app")
 	
@@ -71,15 +75,16 @@ elif platform == "win32":
 	import py2exe
 	
 	# hack to include simplejson egg in the build
-	import pkg_resources
-	eggs = pkg_resources.require("simplejson")
-	from setuptools.archive_util import unpack_archive
-	for egg in eggs:
-		if os.path.isdir(egg.location):
-			copytree(egg.location, ".")
-		else:
-			unpack_archive(egg.location, ".")
-			rmtree("EGG-INFO")
+	if using_simplejson:
+		import pkg_resources
+		eggs = pkg_resources.require("simplejson")
+		from setuptools.archive_util import unpack_archive
+		for egg in eggs:
+			if os.path.isdir(egg.location):
+				copytree(egg.location, ".")
+			else:
+				unpack_archive(egg.location, ".")
+				rmtree("EGG-INFO")
 	
 	# windows specific options
 	options = {
@@ -102,8 +107,9 @@ elif platform == "win32":
 		print 'Copying resource "%s"' % r
 		copytree(r, os.path.join("dist", r))
 	
-	# get rid of simplejson directory
-	rmtree("simplejson")
+	if using_simplejson:
+		# get rid of simplejson directory
+		rmtree("simplejson")
 elif platform == "linux2":
 	os.mkdir(platforms[platform][2])
 	copytree("resources", os.path.join("dist", "resources"))
