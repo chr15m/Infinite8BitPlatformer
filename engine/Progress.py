@@ -1,3 +1,5 @@
+import os
+
 from PodSix.Resource import *
 
 from PodSix.Concurrent import Concurrent
@@ -5,7 +7,7 @@ from PodSix.Concurrent import Concurrent
 class Progress(Concurrent):
 	def __init__(self):
 		Concurrent.__init__(self)
-		self.sprite = Image(file=file("resources/progress.png"))
+		self.sprite = Image(file=os.path.join("resources", "progress.png"))
 		self.showing = False
 		self.maximum = 1
 		self.value = 0
