@@ -25,7 +25,7 @@ class ExceptionHandler(Game, EventMonitor):
 		self.bgColor = (255, 255, 255)
 		gfx.Caption('Infinite 8-bit Platformer')
 		gfx.SetSize([640, 200])
-		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width)
+		gfx.LoadFont("freaky_fonts_ca", 16.0 / gfx.width, "default")
 		
 		# by default don't open a browser window
 		self.destination = None
