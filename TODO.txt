@@ -1,10 +1,24 @@
-* fix the levels to their final layout for release
+* BUG: editing at the same time is fubar (conflicting edit numbers)
 
-* write server launch script
+* BUG: player dying bug is still happening when you join a level and the other player is updating
+
+* BUG: clear chatbox after speaking (buggy at the moment)
+
+* BUG: level must be named before you can set it as a teleport dest
+
+* don't send a chat every time you see a player (expire chat messages just like collects)
+
+* indicator that someone is typing a message
+
+* fix the levels to their final layout for release
 
 * splash screen
 
 * menu with credits and website link
+
+* show progress indicator on background paint
+
+* write server launch script (custom named python for ps display)
 
 --- RELEASE ---
 
@@ -103,6 +117,8 @@
 
 Later
 -----
+
+* a way to move the camera without moving the player around
 
 * message/sign object which displays text to the user (JOHN RATKE HAS DONE, MERGE)
 
