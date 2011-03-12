@@ -3,6 +3,8 @@ from sys import platform, argv
 import os
 from shutil import rmtree, copytree
 import zipfile
+# TODO: do we really need to still support simplejson?
+# if OSX builds for 2.6 let's ditch it
 using_simplejson = False
 try:
 	from simplejson import dumps
@@ -73,7 +75,36 @@ if platform == "darwin":
 	)
 elif platform == "win32":
 	import py2exe
+	import pygame
+	import glob
+	import sys
 	
+	# hack to patch in win32com support
+	# http://www.py2exe.org/index.cgi/win32com.shell
+	# ...
+	# ModuleFinder can't handle runtime changes to __path__, but win32com uses them
+	try:
+	    # py2exe 0.6.4 introduced a replacement modulefinder.
+	    # This means we have to add package paths there, not to the built-in
+	    # one.  If this new modulefinder gets integrated into Python, then
+	    # we might be able to revert this some day.
+	    # if this doesn't work, try import modulefinder
+	    try:
+		import py2exe.mf as modulefinder
+	    except ImportError:
+		import modulefinder
+	    import win32com
+	    for p in win32com.__path__[1:]:
+		modulefinder.AddPackagePath("win32com", p)
+	    for extra in ["win32com.shell"]: #,"win32com.mapi"
+		__import__(extra)
+		m = sys.modules[extra]
+		for p in m.__path__[1:]:
+		    modulefinder.AddPackagePath(extra, p)
+	except ImportError:
+	    # no build path setup, no worries.
+	    pass
+
 	# hack to include simplejson egg in the build
 	if using_simplejson:
 		import pkg_resources
@@ -93,6 +124,57 @@ elif platform == "win32":
 	}
 	resources = ['resources',]
 	
+	# horrible monkey patch to make sdl mixer include work (say what?)
+	# http://www.python-forum.org/pythonforum/viewtopic.php?f=3&t=19455&start=0
+	origIsSystemDLL = py2exe.build_exe.isSystemDLL
+	def isSystemDLL(pathname):
+	        if os.path.basename(pathname).lower() in ("libogg-0.dll", "sdl_ttf.dll"):
+	                return 0
+	        return origIsSystemDLL(pathname)
+	py2exe.build_exe.isSystemDLL = isSystemDLL
+	
+	# stuff for shrinking the final binary
+	# http://www.moviepartners.com/blog/2009/03/20/making-py2exe-play-nice-with-pygame/
+	INCLUDE_STUFF = ['encodings', "encodings.latin_1", "psyco", "pygame", "win32com.shell"]
+	
+	MODULE_EXCLUDES =[
+		'email',
+		'AppKit',
+		'Foundation',
+		'bdb',
+		'difflib',
+		'tcl',
+		'Tkinter',
+		'Tkconstants',
+		'curses',
+		'distutils',
+		'setuptools',
+		#'urllib',
+		#'urllib2',
+		#'urlparse',
+		#'BaseHTTPServer',
+		'_LWPCookieJar',
+		'_MozillaCookieJar',
+		'ftplib',
+		'gopherlib',
+		#'_ssl',
+		'htmllib',
+		'httplib',
+		#'mimetools',
+		'mimetypes',
+		#'rfc822',
+		'tty',
+		#'webbrowser',
+		#'socket',
+		#'hashlib',
+		#'base64',
+		'compiler',
+		'pydoc',
+		'bzrlib',
+	]
+	
+	# the rest of this stuff is from the original
+	
 	# force the py2exe build
 	argv.insert(1, "py2exe")
 	
@@ -100,6 +182,18 @@ elif platform == "win32":
 	setup(
 		setup_requires = ['py2exe'],
 		windows=[options],
+		options = {
+			"py2exe": {
+				"optimize": 2,
+				"includes": INCLUDE_STUFF,
+				"compressed": 1,
+				#"ascii": 1,
+				"bundle_files": 2,
+				"ignores": ['tcl', 'AppKit', 'Numeric', 'Foundation'],
+				"excludes": MODULE_EXCLUDES
+			}
+		},
+		zipfile = None,
 	)
 	
 	# manually copy resources as I couldn't get it to happen with py2exe
@@ -110,6 +204,7 @@ elif platform == "win32":
 	if using_simplejson:
 		# get rid of simplejson directory
 		rmtree("simplejson")
+
 elif platform == "linux2":
 	os.mkdir(platforms[platform][2])
 	copytree("resources", os.path.join("dist", "resources"))

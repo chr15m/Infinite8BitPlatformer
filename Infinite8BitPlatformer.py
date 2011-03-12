@@ -1,9 +1,8 @@
 import os
 from sys import platform, path, argv
 
-if platform == "win32" and "library.zip" in path[0]:
-	# one level up from library.zip
-	os.chdir(os.sep.join(path[0].split(os.sep)[:-1]))
+if platform == "win32" and (path[0].endswith(".exe") or path[0].endswith(".zip")):
+	os.chdir(os.path.dirname(path[0]))
 else:
 	os.chdir(path[0])
 
