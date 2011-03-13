@@ -482,12 +482,11 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 		if "debug" in argv:
 			print "edit data:", data
 		# only perform this edit if we haven't seen it before
-		if self.level.LastEdit() < data['editid'] and data['level'] == "level" + self.level.id:
+		# (test by trying to record it in our history)
+		if data['level'] == "level" + self.level.id and self.level.AddHistory(data):
 			if self.loadProgress:
 				self.loadProgress -= 1
 				self.game.progress.Value(self.loadProgress)
-			# record this in our level history
-			self.level.AddHistory(data)
 			# what edit instruction have we been sent?
 			i = data.get('instruction', "")
 			if i == "create":
@@ -544,5 +543,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 			elif i == "portaldestination":
 				prop = self.level.PropFromId(data['objectid'])
 				prop.destination = data['destination']
+			else:
+				print "whoa, no such edit!"
 		else:
-			print "dropped edit: ", data['editid'], "last:", self.level.LastEdit(), "levelid:", data['level'], "current:", "level" + self.level.id
+			print "dropped edit: ", data['editid'], "last:", self.level.LastEdit(), "historysize:", len(self.level.history), "levelid:", data['level'], "current:", "level" + self.level.id
