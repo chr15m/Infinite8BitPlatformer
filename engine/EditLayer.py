@@ -448,7 +448,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	### Records an edit to the level history, and also to the network
 	
 	def RecordEdit(self, edit):
-		self.level.AddHistory(edit)
+		self.level.AddLocalLevelHistory(edit)
 		self.game.net.SendWithID(edit)
 	
 	###
@@ -483,7 +483,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 			print "edit data:", data
 		# only perform this edit if we haven't seen it before
 		# (test by trying to record it in our history)
-		if data['level'] == "level" + self.level.id and self.level.AddHistory(data):
+		if data['level'] == "level" + self.level.id and self.level.AddRemoteLevelHistory(data, self.game.net.playerID):
 			if self.loadProgress:
 				self.loadProgress -= 1
 				self.game.progress.Value(self.loadProgress)
@@ -545,5 +545,5 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				prop.destination = data['destination']
 			else:
 				print "whoa, no such edit!"
-		else:
+		elif "debug" in argv:
 			print "dropped edit: ", data['editid'], "last:", self.level.LastEdit(), "historysize:", len(self.level.history), "levelid:", data['level'], "current:", "level" + self.level.id
