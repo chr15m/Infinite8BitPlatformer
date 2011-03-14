@@ -276,6 +276,9 @@ class BitLevel(Level, SVGLoader, Paintable):
 					self.startPoints["start"] = p
 		self.AddLayer(info[1], l)
 	
+	def SetName(self, name):
+		self.displayName = name
+	
 	def AddProp(self, prop):
 		self.layer.AddProp(prop)
 		prop.SetEditLayer(self.editLayer)

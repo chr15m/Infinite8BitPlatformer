@@ -125,7 +125,7 @@ class LevelManager:
 			self.levelHistory.append(history)
 	
 	def SetLevelName(self, name):
-		self.levels[self.level].displayName = name
+		self.levels[self.level].SetName(name)
 		self.hud.levelLabel.text = name
 	
 	###

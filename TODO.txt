@@ -6,6 +6,8 @@
 
 * BUG: level must be named before you can set it as a teleport dest
 
+* BUG: on locked levels do not allow level name change
+
 * don't send a chat every time you see a player (expire chat messages just like collects)
 
 * indicator that someone is typing a message
