@@ -264,7 +264,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return True
 	
 	def LastEdit(self):
-		return len(self.history)
+		return self.lastRemoteEdit and self.lastRemoteEdit['editid'] or len(self.history)
 	
 	def Layer_backgroundboxes(self, element, size, info, dom):
 		""" Legacy SVG level loading code. """
