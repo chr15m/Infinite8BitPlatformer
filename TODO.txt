@@ -1,8 +1,28 @@
+* BUG: simultaneous line drawing crash (are things being lost? check protocol)
+
+* fix join level LastEdit value (use last applied remote, or 0)
+
+* BUG: lockup/memory exhaustion when fill-painting again!
+
+* BUG: maximum level IDs (huh?)
+
+* show how many other players are on the current level (and total connected?)
+
+* some way to find other players (arrows pointing to them?)
+
+* some kind of chat history for other people's chats (show all chats on screen?)
+
+* custom avatar colour?
+
+* mouse over player lets you edit your name or shows other player's name
+
+* BUG: Shannon's USB/bluetooth bug (manifests as gamepad/joystick bug)
+
 * BUG: player dying bug is still happening when you join a level and the other player is updating
 
 * BUG: clear chatbox after speaking (buggy at the moment)
 
-* BUG: level must be named before you can set it as a teleport dest
+* BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
 
 * BUG: on locked levels do not allow level name change
 
