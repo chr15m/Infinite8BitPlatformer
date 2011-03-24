@@ -1,12 +1,12 @@
 * BUG: simultaneous line drawing crash (are things being lost? check protocol)
 
-* fix join level LastEdit value (use last applied remote, or 0)
-
 * BUG: lockup/memory exhaustion when fill-painting again!
 
-* BUG: maximum level IDs (huh?)
+* don't load all levels on startup - load them on demand
 
-* show how many other players are on the current level (and total connected?)
+* show how many other players are on the current level
+
+* BUG: maximum level IDs (huh?)
 
 * some way to find other players (arrows pointing to them?)
 
@@ -41,6 +41,8 @@
 * write server launch script (custom named python for ps display)
 
 --- RELEASE ---
+
++ fix join level LastEdit value (use last applied remote, or 0)
 
 + BUG: editing at the same time is fubar (conflicting edit numbers)
 
