@@ -358,7 +358,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 			if self.selected in ['platform', 'ladder', 'portal', 'item']:
 				self.rect = EditBox(e.pos, self.level.camera, Rectangle([float(x) / gfx.width for x in self.level.sizerect]))
 				self.Add(self.rect)
-			else:
+			elif self.level.camera:
 				p = self.level.camera.FromScreenCoordinates(e.pos)	
 				if self.selected == 'move':
 					self.currentSurface = self.GetPropUnderMouse(p)
