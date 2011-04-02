@@ -1,22 +1,26 @@
-* BUG: lockup/memory exhaustion when fill-painting again!
-
 * don't load all levels on startup - load them on demand
 
 * show how many other players are on the current level
 
 * show recent changes on screen
 
-* some way to find other players (arrows pointing to them?)
-
-* BUG: Shannon's USB/bluetooth bug (manifests as gamepad/joystick bug)
-
-* BUG: player dying bug is still happening when you join a level and the other player is updating
-
 * fix the levels to their final layout for release
 
 * splash screen
 
+* make builds for all platforms
+
+* update website
+
 --- RELEASE ---
+
+* BUG: player dying bug is still happening when you join a level and the other player is updating
+
+* BUG: Shannon's USB/bluetooth bug (manifests as gamepad/joystick bug)
+
+* some way to find other players (arrows pointing to them?)
+
+* BUG: lockup/memory exhaustion when fill-painting again!
 
 * BUG: make all line tools hide themselves before any line tool applies itself - store order of application
 
