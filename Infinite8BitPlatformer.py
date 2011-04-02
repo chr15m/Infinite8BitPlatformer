@@ -6,8 +6,16 @@ if platform == "win32" and (path[0].endswith(".exe") or path[0].endswith(".zip")
 else:
 	os.chdir(path[0])
 
+def debug(msg):
+	if "debug" in argv:
+		print msg
+
+debug("before buildfile")
+
 # this has to happen before psyco import because of some kind of bug
 from engine.BuildFile import buildfile
+
+debug("after buildfile")
 
 try:
 	import psyco           # psyco does not exist on 64 bit platforms
@@ -16,6 +24,8 @@ except ImportError:
 	print "Psyco not available"
 	pass
 
+debug("after psyco")
+
 import PodSix
 PodSix.engine = "pygame"
 from PodSix.Resource import *
@@ -23,9 +33,12 @@ from PodSix.Resource import *
 #from PodSix.SplashScreen import SplashScreen
 #s = SplashScreen()
 #s.Launch()
+debug("after podsix imports")
 
 from engine.Core import Core
 from engine.ExceptionHandler import ExceptionHandler
+
+debug("after all imports")
 
 try:
 	if platform == "win32":
