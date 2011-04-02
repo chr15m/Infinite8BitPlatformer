@@ -480,10 +480,11 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	# when another player edits this layer
 	def Network_edit(self, data):
 		if "debug" in argv:
+			print
 			print "edit data:", data
 		# only perform this edit if we haven't seen it before
 		# (test by trying to record it in our history)
-		if data['level'] == "level" + self.level.id and self.level.AddRemoteLevelHistory(data, self.game.net.playerID):
+		if data['level'] == "level" + self.level.id and self.level.AddRemoteLevelHistory(data, self.game.net.publicID, self.game.net.playerID):
 			if self.loadProgress:
 				self.loadProgress -= 1
 				self.game.progress.Value(self.loadProgress)
@@ -527,7 +528,12 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 					prop = self.level.PropFromId(data['objectid'])
 					self.networktools[data['id']].NetworkPenDown(data['pos'], prop, data['color'])
 				elif i == "penmove":
-					self.networktools[data['id']].NetworkPenMove(data['pos'])
+					# check for the special case where it's the line tool and it's a local edit which needs to be re-done
+					if data['tool'] == "LineTool" and data['id'] == self.game.net.publicID and self.selected == self.linetool and self.linetool.mouseDown:
+						self.selected.Redraw()
+					else:
+						# this means we want the line tool to redraw itself now
+						self.networktools[data['id']].NetworkPenMove(data['pos'])
 				elif i == "penup":
 					self.networktools[data['id']].NetworkPenUp()
 					del self.networktools[data['id']]

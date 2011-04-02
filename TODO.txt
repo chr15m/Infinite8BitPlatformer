@@ -1,146 +1,40 @@
-* BUG: simultaneous line drawing crash (are things being lost? check protocol)
-
 * BUG: lockup/memory exhaustion when fill-painting again!
 
 * don't load all levels on startup - load them on demand
 
 * show how many other players are on the current level
 
-* BUG: maximum level IDs (huh?)
+* show recent changes on screen
 
 * some way to find other players (arrows pointing to them?)
-
-* some kind of chat history for other people's chats (show all chats on screen?)
-
-* custom avatar colour?
-
-* mouse over player lets you edit your name or shows other player's name
 
 * BUG: Shannon's USB/bluetooth bug (manifests as gamepad/joystick bug)
 
 * BUG: player dying bug is still happening when you join a level and the other player is updating
 
-* BUG: clear chatbox after speaking (buggy at the moment)
-
-* BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
-
-* BUG: on locked levels do not allow level name change
-
-* don't send a chat every time you see a player (expire chat messages just like collects)
-
-* display some kind of indicator when someone is typing a message
-
 * fix the levels to their final layout for release
 
 * splash screen
 
-* menu with credits and website link
+--- RELEASE ---
+
+* BUG: make all line tools hide themselves before any line tool applies itself - store order of application
+
+* display some kind of indicator when someone is typing a message
 
 * show progress indicator on background paint
 
 * write server launch script (custom named python for ps display)
 
---- RELEASE ---
+* menu with credits and website link
 
-+ fix join level LastEdit value (use last applied remote, or 0)
+* BUG: on locked levels do not allow level name change
 
-+ BUG: editing at the same time is fubar (conflicting edit numbers)
+* BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
 
-+ catch all server exceptions and email them to admin
+* custom avatar colour?
 
-+ enable psyco in server
-
-+ set up live server online
-
-+ Put revision number in the crashdump report (create build.json file in build script?)
-
-+ BUG: if level takes a long time for client to build/refresh then the other clients will see them die a million times.
-
-+ BUG: if first action is line draw + drag something funky is going on (crash)
-
-+ BUG: make a new level, do some edits (e.g. lines), go back, teleport to level - edits are doubled up
-
-+ BUG: fill tool (probably others too) pass through back button
-
-+ BUG: receiving one update every single time, say what?
-
-+ BUG: create new level, teleport to the teleporter, one million messages sent to server
-
-+ BUG: are they being sent updates for all levels for some reason?
-
-+ BUG: levels should have transparent backgrounds
-
-+ BUG: permissions error message is wrapped all wrong
-
-+ BUG: clicking lock button without permissions should not cause a permissions error (send nothing)
-
-+ BUG: julian's level crash
-
-+ BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
-
-+ BUG: cursor position isn't correct on different sized texts e.g. level name change different lengths
-
-+ BUG: in collecting items - network sends collected message of 30 seconds no matter how old
-
-+ getting started on help page (how to create a new level and teleport to some good places)
-
-+ automatic crashdump reporting - catch all errors and throw a message screen
-
-+ fix ladder climbing keys - possible to just use up key for climb + jump?
-
-+ fix speech bubble/chat
-	+ word wrap
-
-+ BUG: on initial connect, send valid current player move (so new connected player isn't invisible)
-
-+ stack chat boxes vertically above players
-
-+ network server
-	+ keep track of all known player IDs and periodically save them out to disk
-	+ lock down permissions - only creator can edit own level if locked
-	+ item collects should be tied to levels
-	+ disconnect clients who have the wrong version number
-	+ periodically write level changes list to disk
-	+ mirror commands to all users on the same level
-		+ chat events
-		+ move events
-		+ level editing events
-	+ level store
-	+ accept 'new level' message - generate new level ID
-	+ network callback to check a level name is not taken
-
-+ network client
-	+ 'loading' spinner when updating a level
-	+ save and load unique client ID into local config file
-	+ send version number to server when connecting (throw special error to message screen if disconnected)
-	+ throw special message screen if disconnected/unable to connect to the server
-	+ check whether level name exists already before changing it
-	+ fix /teleport for levels we do not have
-	+ fix logic when switching levels if the destination level is completely unknown to us (no portals etc.)
-	+ check whether new level name is unique over network
-	+ send 'new level' message to the server - wait for ID
-	+ send 'collected item' message over the network
-	+ send 'landed on platform' event over the network
-	+ send name/object changes over the network
-		+ item description
-		+ level name
-		+ portal destination
-	+ make server side level modification work
-	+ send color information over the network
-	+ make tools work on level background
-	+ send chat events to the server
-	+ make the clone tool work over the network
-	+ don't allow LevelManager commands if not connected
-	+ send movements to the client
-	+ make the drag tool work
-	+ send level editing events to the server
-	+ make all LevelManager commands be proxied to the server
-	+ don't allow LevelManager commands if not connected
-	+ icon shows if a connection is made
-	+ send movements to the client
-
-Later
------
+* mouse over player lets you edit your name or shows other player's name
 
 * a way to move the camera without moving the player around
 
@@ -261,6 +155,108 @@ Later
 * parallax backgrounds
 
 * ability to crouch
+
+Done
+----
+
++ BUG: simultaneous line drawing crash (are things being lost? check protocol)
+
++ fix join level LastEdit value (use last applied remote, or 0)
+
++ BUG: editing at the same time is fubar (conflicting edit numbers)
+
++ catch all server exceptions and email them to admin
+
++ enable psyco in server
+
++ set up live server online
+
++ Put revision number in the crashdump report (create build.json file in build script?)
+
++ BUG: if level takes a long time for client to build/refresh then the other clients will see them die a million times.
+
++ BUG: if first action is line draw + drag something funky is going on (crash)
+
++ BUG: make a new level, do some edits (e.g. lines), go back, teleport to level - edits are doubled up
+
++ BUG: fill tool (probably others too) pass through back button
+
++ BUG: receiving one update every single time, say what?
+
++ BUG: create new level, teleport to the teleporter, one million messages sent to server
+
++ BUG: are they being sent updates for all levels for some reason?
+
++ BUG: levels should have transparent backgrounds
+
++ BUG: permissions error message is wrapped all wrong
+
++ BUG: clicking lock button without permissions should not cause a permissions error (send nothing)
+
++ BUG: julian's level crash
+
++ BUG: whatever tool you have selected when you click on the portal icon, it goes through (set trigger flag?)
+
++ BUG: cursor position isn't correct on different sized texts e.g. level name change different lengths
+
++ BUG: in collecting items - network sends collected message of 30 seconds no matter how old
+
++ getting started on help page (how to create a new level and teleport to some good places)
+
++ automatic crashdump reporting - catch all errors and throw a message screen
+
++ fix ladder climbing keys - possible to just use up key for climb + jump?
+
++ fix speech bubble/chat
+	+ word wrap
+
++ BUG: on initial connect, send valid current player move (so new connected player isn't invisible)
+
++ stack chat boxes vertically above players
+
++ network server
+	+ keep track of all known player IDs and periodically save them out to disk
+	+ lock down permissions - only creator can edit own level if locked
+	+ item collects should be tied to levels
+	+ disconnect clients who have the wrong version number
+	+ periodically write level changes list to disk
+	+ mirror commands to all users on the same level
+		+ chat events
+		+ move events
+		+ level editing events
+	+ level store
+	+ accept 'new level' message - generate new level ID
+	+ network callback to check a level name is not taken
+
++ network client
+	+ 'loading' spinner when updating a level
+	+ save and load unique client ID into local config file
+	+ send version number to server when connecting (throw special error to message screen if disconnected)
+	+ throw special message screen if disconnected/unable to connect to the server
+	+ check whether level name exists already before changing it
+	+ fix /teleport for levels we do not have
+	+ fix logic when switching levels if the destination level is completely unknown to us (no portals etc.)
+	+ check whether new level name is unique over network
+	+ send 'new level' message to the server - wait for ID
+	+ send 'collected item' message over the network
+	+ send 'landed on platform' event over the network
+	+ send name/object changes over the network
+		+ item description
+		+ level name
+		+ portal destination
+	+ make server side level modification work
+	+ send color information over the network
+	+ make tools work on level background
+	+ send chat events to the server
+	+ make the clone tool work over the network
+	+ don't allow LevelManager commands if not connected
+	+ send movements to the client
+	+ make the drag tool work
+	+ send level editing events to the server
+	+ make all LevelManager commands be proxied to the server
+	+ don't allow LevelManager commands if not connected
+	+ icon shows if a connection is made
+	+ send movements to the client
 
 + when a collected item disappears, make the edit layer take it incase the taker has left already
 

@@ -200,20 +200,21 @@ class BitLevel(Level, SVGLoader, Paintable):
 		#self.ApplyPalette()
 		self.AddLayer(self.name, self.layer)
 	
-	def AddRemoteLevelHistory(self, historyitem, playerID):
+	def AddRemoteLevelHistory(self, historyitem, publicID, playerID):
 		"""
 			Records a single item of level edit history.
-			Stuff *always* comes from the server in the correct order.
-			Local stuff may happen before it's supposed to, but this should ensure those premature items get re-applied.
+			Stuff always comes from the server in the correct order, but:
+			Local stuff may happen before it's supposed to.
+			This should ensure those premature local items get re-applied when neccessary.
 		"""
-		#print "HISTORYITEM:", historyitem
 		# cleaneditem used to check if we already have this edit in the history
 		cleaneditem = historyitem.copy()
 		# remove the network specific fields to make a clean comparison
 		del cleaneditem['editid']
 		del cleaneditem['level']
 		del cleaneditem['servertime']
-		cleaneditem['id'] = playerID
+		if publicID == cleaneditem['id']:
+			cleaneditem['id'] = playerID
 		
 		# assume we did not find the edit
 		pos = None
@@ -224,43 +225,59 @@ class BitLevel(Level, SVGLoader, Paintable):
 		except ValueError:
 			pass
 		
+		#print "POINTERS:", pos
+		#print "lastLocalEdit", self.lastLocalEdit and self.history.index(self.lastLocalEdit)
+		#print "lastAppliedEdit", self.lastAppliedEdit and self.history.index(self.lastAppliedEdit)
+		#print "lastRemoteEdit", self.lastRemoteEdit and self.history.index(self.lastRemoteEdit)
+		
 		if pos is None:
-			# item is not in our self-made history
-			# check if item is already in our history
+			# item is not in the history as one of our own edits
+			# check if item is already in our history 
 			if historyitem in self.history:
-				print "history item ignored - already in history: ", historyitem
+				# should this happen? probably never right?
+				#if "debug" in argv:
+				#	print "history item ignored - already in history: ", historyitem
+				#	pprint(self.history[-10:])
 				return None
 			else:
 				self.history.append(historyitem)
 				self.lastAppliedEdit = self.history[-1]
 				self.lastRemoteEdit = self.history[-1]
-				if "debug" in argv:
-					print 'unseen remote edit, applying', cleaneditem
+				#if "debug" in argv:
+				#	print 'unseen remote edit, applying', cleaneditem
+				#	pprint(self.history[-10:])
 				return True
 		else:
 			# if we get here, the cleaneditem was in our history
+			# this means it was a local edit that we haven't yet received from the server
 			if self.lastLocalEdit and pos == self.history.index(self.lastLocalEdit) and self.lastAppliedEdit and self.history.index(self.lastAppliedEdit) > self.history.index(self.lastLocalEdit):
+				# we got here because it was a local edit, but there has been a more recent remote edit
+				# so we move it to the top of the history stack (the remote history happened before)
+				# hmmm, couldn't this be better accomplished by checking servertimes?
 				del self.history[pos]
 				self.lastLocalEdit = None
 				self.history.append(historyitem)
 				self.lastAppliedEdit = self.history[-1]
 				self.lastRemoteEdit = self.history[-1]
-				if "debug" in argv:
-					print "Remote edit matches local edit - moved to the top of the stack: ", historyitem
+				#if "debug" in argv:
+				#	print "Remote edit matches local edit but there have been more recent remote edits - moved from %d to the top of the stack: " % pos, historyitem
+				#	pprint(self.history[-10:])
 				return True
 			else:
 				# replace our own edit with the network version
 				self.history[pos] = historyitem
 				self.lastRemoteEdit = self.history[pos]
-				if "debug" in argv:
-					print "Replaced local edit history with remote at position %d with %s" % (pos, str(historyitem))
+				#if "debug" in argv:
+				#	print "Replaced local edit history with remote at position %d with %s" % (pos, str(historyitem))
+				#	pprint(self.history[-10:])
 	
 	def AddLocalLevelHistory(self, historyitem):
 		# this is just a local edit, so just record and apply it no matter what
 		self.history.append(historyitem)
 		self.lastLocalEdit = self.history[-1]
-		if "debug" in argv:
-			print 'applying local edit', historyitem
+		#if "debug" in argv:
+		#	print 'applying local edit', self.history.index(historyitem), historyitem
+		#	#pprint(self.history[-10:])
 		return True
 	
 	def LastEdit(self):

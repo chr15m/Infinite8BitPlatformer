@@ -94,6 +94,9 @@ class LineTool(DrawTool):
 	def PenUp(self):
 		DrawTool.PenUp(self)
 		self.mouseDownPosition = None
+	
+	def Redraw(self):
+		self.PenMove(self.lastPos)
 
 class PenTool(DrawTool):
 	"""Pen drawing tool"""

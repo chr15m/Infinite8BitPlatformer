@@ -45,10 +45,10 @@ class TestClient(ConnectionListener):
 		if val < 0.5:
 			pass
 		elif val > 0.9:
-			self.SendWithID({'objectid': '2', 'color': (255, 255, 255), 'tool': 'LineTool', 'instruction': 'pendown', 'pos': [randint(450, 550), randint(175, 215)], 'action': 'edit'})
+			self.SendWithID({'objectid': '2', 'color': (255, 255, 255), 'tool': 'LineTool', 'instruction': 'pendown', 'pos': [randint(450, 550), randint(200, 300)], 'action': 'edit'})
 			self.pendown = True
 		elif self.pendown:
-			self.SendWithID({'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [randint(450, 550), randint(175, 215)]})
+			self.SendWithID({'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [randint(450, 550), randint(200, 300)]})
 		
 	
 	def Disconnect(self):
@@ -88,7 +88,7 @@ class TestClient(ConnectionListener):
 	
 	def Network_playerdump(self, data):
 		if data['progress'] == "end":
-			self.SendWithID({'action': 'move', 'velocity': [0, 0], 'move': 'StopRight', 'center': [0.25361501041192691, 0.51460409028957876]})
+			self.SendWithID({'action': 'move', 'velocity': [0, 0], 'move': 'StopRight', 'center': [0.71414136419120788, 0.29951459060388141]})
 			self.SendWithID({'action': 'activate'})
 	
 	def Network_error(self, data):
