@@ -26,7 +26,7 @@ class LevelNameLabel(Label):
 		Label.__init__(self, "Loading...", pos={"left": 0.1, "top": 0.02}, color=[255, 255, 255])
 	
 	def MouseOver(self, e):
-		if self.editLayer.mode:
+		if self.editLayer.mode and self.editLayer.lockButton.CanEdit():
 			self.parent.chatBox.ShowText(self.text, self.editLayer.UpdateLevelName)
 	
 	def MouseOut(self, e):

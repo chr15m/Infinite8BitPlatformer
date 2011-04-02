@@ -1,8 +1,8 @@
-* don't load all levels on startup - load them on demand
+* BUG: on locked levels do not allow level name change
 
 * show how many other players are on the current level
 
-* show recent changes on screen
+* don't load all levels on startup - load them on demand
 
 * fix the levels to their final layout for release
 
@@ -13,6 +13,8 @@
 * update website
 
 --- RELEASE ---
+
+* show recent changes on screen
 
 * BUG: player dying bug is still happening when you join a level and the other player is updating
 
@@ -31,8 +33,6 @@
 * write server launch script (custom named python for ps display)
 
 * menu with credits and website link
-
-* BUG: on locked levels do not allow level name change
 
 * BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
 
