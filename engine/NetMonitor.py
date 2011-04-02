@@ -26,6 +26,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 		# do we have a current connection with the server?
 		self.serverconnection = 0
 		self.playerID = config.Get("playerID", default=None)
+		self.publicID = 0
 		findarg = [a[9:] for a in sys.argv if a.startswith("playerid=")]
 		if findarg:
 			self.playerID = findarg[0]
@@ -98,6 +99,9 @@ class NetMonitor(ConnectionListener, Concurrent):
 			config.Set("playerID", self.playerID)
 		# if we have any network stuff queued up, send it again
 		self.ResendQueue()
+	
+	def Network_public_id(self, data):
+		self.publicID = data['public_id']
 	
 	def Network_player_entering(self, data):
 		if "debug" in sys.argv:

@@ -63,6 +63,7 @@ class I8BPChannel(Channel):
 	def SetID(self, ID):
 		# Set's my network ID, unique each time i connect (per session), known to other clients in the same level
 		self.ID = ID
+		self.Send({"action": "public_id", "public_id": self.ID})
 	
 	def SendToNeighbours(self, msg):
 		# always include my public session ID when sending to my neighbours
