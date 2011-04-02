@@ -1,7 +1,3 @@
-* BUG: on locked levels do not allow level name change
-
-* show how many other players are on the current level
-
 * don't load all levels on startup - load them on demand
 
 * fix the levels to their final layout for release
@@ -162,6 +158,10 @@
 
 Done
 ----
+
++ show how many other players are on the current level
+
++ BUG: on locked levels do not allow level name change
 
 + BUG: simultaneous line drawing crash (are things being lost? check protocol)
 

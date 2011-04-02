@@ -80,6 +80,8 @@ class LevelManager:
 		self.net.SendWithID({"action": "leavelevel"})
 		# we don't care about any other players now
 		self.players.Clear()
+		# update the number of players count
+		self.players.UpdatePlayercount()
 		if not back:
 			# add the source level to the history
 			self.AddHistory([self.level, (portal and portal.id) or (self.player.platform and self.player.platform.id) or (self.player.lastplatform and self.player.lastplatform.id) or "start"])

@@ -23,7 +23,7 @@ class LevelNameLabel(Label):
 	def __init__(self, parent):
 		self.parent = parent
 		self.editLayer = self.parent.game.editLayer
-		Label.__init__(self, "Loading...", pos={"left": 0.1, "top": 0.02}, color=[255, 255, 255])
+		Label.__init__(self, "Loading...", pos={"left": 0.1, "top": 0.01}, color=[255, 255, 255])
 	
 	def MouseOver(self, e):
 		if self.editLayer.mode and self.editLayer.lockButton.CanEdit():
@@ -33,10 +33,18 @@ class LevelNameLabel(Label):
 		if self.editLayer.mode:
 			self.parent.chatBox.RevertText()
 
+class NumPlayersLabel(Label):
+	def __init__(self, parent):
+		self.parent = parent
+		Label.__init__(self, "0 here", pos={"left": 0.1, "top": 0.03}, color=[255, 255, 255])
+	
+	def SetPlayers(self, num):
+		self.text = str(num + 1) + " here"
+
 class FeedbackLink(Label):
 	def __init__(self, parent):
 		self.parent = parent
-		Label.__init__(self, "bugs/feedback?", pos={"right": 0.85, "top": 0.02}, color=(255, 255, 255))
+		Label.__init__(self, "bugs/feedback?", pos={"right": 0.85, "top": 0.01}, color=(255, 255, 255))
 	
 	def MouseOver(self, e):
 		self.color = (255, 0, 0)
@@ -73,11 +81,13 @@ class Hud(Concurrent, EventMonitor, ConnectionListener):
 		self.backButton = BackButton(self)
 		self.chatBox = ChatBox(self, self.game.DoChatBox)
 		self.levelLabel = LevelNameLabel(self)
+		self.playersLabel = NumPlayersLabel(self)
 		self.feedbacklink = FeedbackLink(self)
 		# edit button turns on the other buttons
 		self.Add(self.backButton)
 		self.Add(self.chatBox)
 		self.Add(self.levelLabel)
+		self.Add(self.playersLabel)
 		self.Add(self.feedbacklink)
 		self.Add(self.disconnectedIcon)
 		self.priority = 1.5

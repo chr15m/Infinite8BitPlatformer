@@ -31,6 +31,7 @@ class PlayerManager(ConnectionListener):
 			p.SetLevel(self.GetLevel())
 			self.players[data['id']] = p
 			p.Pump()
+			self.UpdatePlayercount()
 		else:
 			print 'already have this player ID!'
 	
@@ -38,6 +39,10 @@ class PlayerManager(ConnectionListener):
 		if self.players.has_key(data['id']):
 			self.game.levels[self.game.level].RemoveCharacter(self.players[data['id']])
 			del self.players[data['id']]
+			self.UpdatePlayercount()
+	
+	def UpdatePlayercount(self):
+		self.game.hud.playersLabel.SetPlayers(len(self.players))
 	
 	# when a leveldump is received (new leveldata from the server if we just joined a level)
 	def Network_leveldump(self, data):
