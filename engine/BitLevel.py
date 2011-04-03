@@ -78,6 +78,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 		self.lastLocalEdit = None
 		self.lastRemoteEdit = None
 		self.lastAppliedEdit = None
+		self.loaded = False
 	
 	#def ApplyPalette(self):
 		#palette = palettes.all[self.palette]
@@ -180,6 +181,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 					self.lastLocalEdit = h
 			# NOTE: this might be incorrect, might have to actually figure out what the last applied remote was
 			self.lastAppliedEdit = self.lastRemoteEdit
+		self.loaded = True
 	
 	def Initialise(self):
 		""" Initialise a completely blank new level. """

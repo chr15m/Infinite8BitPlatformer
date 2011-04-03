@@ -1,6 +1,6 @@
-* don't load all levels on startup - load them on demand
-
 * fix the levels to their final layout for release
+
+* make sure the windows build runs without crashing
 
 * splash screen
 
@@ -33,6 +33,10 @@
 * BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
 
 * custom avatar colour?
+
+* implement server-unique player names (the following are john's ideas)
+	* /find PlayerName - This would tell what level that player is on.
+	* /join or /meet PlayerName - jump to the same level and platform the other player is on
 
 * mouse over player lets you edit your name or shows other player's name
 
@@ -158,6 +162,8 @@
 
 Done
 ----
+
++ don't load all levels on startup - load them on demand
 
 + show how many other players are on the current level
 

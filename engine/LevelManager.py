@@ -28,7 +28,6 @@ class LevelManager:
 		""" Run on LevelManager init to load all known levels into memory. """
 		# TODO: only load on demand
 		newlevel = BitLevel(name, self.editLayer)
-		newlevel.Load()
 		self.levels["level" + name] = newlevel
 	
 	def RequestNewLevel(self, callback):
@@ -59,6 +58,9 @@ class LevelManager:
 	
 	def SetLevel(self, level, start, portal=None, back=False):
 		""" Sets what level the current player is on. """
+		# make sure this level has been loaded
+		if level in self.levels.keys() and not self.levels[level].loaded:
+			self.levels[level].Load()
 		if level in self.levels.keys() and (start == "start" or start in self.levels[level].layer.names.keys()):
 			self.Remove(self.editLayer)
 			if self.level:
