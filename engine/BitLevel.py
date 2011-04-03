@@ -98,7 +98,7 @@ class BitLevel(Level, SVGLoader, Paintable):
 			self.scaledbitmap = self.bitmap.SubImage(box).Scale((box.Width() * config.zoom, box.Height() * config.zoom), self.scaledbitmap)
 			gfx.BlitImage(self.scaledbitmap, position=(-subPixOffset[0], -subPixOffset[1]))
 		Level.Draw(self)
-		
+	
 	def SubImage(self, corner1, corner2):
 		"""given two opposite corners of a box, return an image representing the subimage in that box"""
 		# turn corners into topleft and bottomright
@@ -112,9 +112,9 @@ class BitLevel(Level, SVGLoader, Paintable):
 		# this sub contains alpha. So lets fill those areas with the background colour
 		#sub.RemoveAlpha(self.bgColor)
 		sub.RemoveAlpha()
-				
-		return sub, topleft, bottomright
 		
+		return sub, topleft, bottomright
+	
 	def PasteSubImage(self, image, pos):
 		self.bitmap.Blit(image, pos)
 
@@ -131,11 +131,14 @@ class BitLevel(Level, SVGLoader, Paintable):
 		return len(objs) and objs[0] or None
 	
 	def PackSerial(self):
-		return {"level": {"name": self.displayName, "history": self.history, "entities": self.GetEntities(), "palette": self.palette, "background": self.bgColor, "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
+		return {"level": {"name": self.displayName, "history": self.history, "lastlocal": self.lastLocalEdit, "lastremote": self.lastRemoteEdit, "lastapplied": self.lastAppliedEdit, "entities": self.GetEntities(), "palette": self.palette, "background": self.bgColor, "startpoints": dict([(s, self.startPoints[s].id) for s in self.startPoints])}}
 	
 	def UnpackSerial(self, data):
 		self.displayName = data["level"].get("name", "level" + self.name)
 		self.history = data["level"]["history"]
+		self.lastLocalEdit = data["level"].get("lastlocal", None)
+		self.lastRemoteEdit = data["level"].get("lastremote", None)
+		self.lastAppliedEdit = data["level"].get("lastapplied", None)
 		self.palette = data["level"].get("palette", "NES")
 		for s in data['level']['entities']:
 			self.Create(s[0], s[1])
@@ -166,21 +169,22 @@ class BitLevel(Level, SVGLoader, Paintable):
 	
 	def Load(self):
 		self.FromString(file(self.basefilename + ".level.zip", "rb").read())
-		# find the correct indicies for local and remote applied
-		for h in self.history:
-			isRemoteEdit = h.has_key("servertime")
-			if isRemoteEdit:
-				if not self.lastRemoteEdit:
-					self.lastRemoteEdit = h
-				elif self.history.index(h) > self.history.index(self.lastRemoteEdit):
-					self.lastRemoteEdit = h
-			else:
-				if not self.lastLocalEdit:
-					self.lastLocalEdit = h
-				elif self.history.index(h) > self.history.index(self.lastLocalEdit):
-					self.lastLocalEdit = h
-			# NOTE: this might be incorrect, might have to actually figure out what the last applied remote was
-			self.lastAppliedEdit = self.lastRemoteEdit
+		if not (self.lastRemoteEdit and self.lastAppliedEdit):
+			# find the correct indicies for local and remote applied
+			for h in self.history:
+				isRemoteEdit = h.has_key("servertime")
+				if isRemoteEdit:
+					if not self.lastRemoteEdit:
+						self.lastRemoteEdit = h
+					elif self.history.index(h) > self.history.index(self.lastRemoteEdit):
+						self.lastRemoteEdit = h
+				else:
+					if not self.lastLocalEdit:
+						self.lastLocalEdit = h
+					elif self.history.index(h) > self.history.index(self.lastLocalEdit):
+						self.lastLocalEdit = h
+				# NOTE: this might be incorrect, might have to actually figure out what the last applied remote was
+				self.lastAppliedEdit = self.lastRemoteEdit
 		self.loaded = True
 	
 	def Initialise(self):

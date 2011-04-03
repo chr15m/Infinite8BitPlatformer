@@ -163,6 +163,8 @@
 Done
 ----
 
++ loading big levels is too slow
+
 + don't load all levels on startup - load them on demand
 
 + show how many other players are on the current level
