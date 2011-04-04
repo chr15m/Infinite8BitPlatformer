@@ -135,7 +135,7 @@ elif platform == "win32":
 	
 	# stuff for shrinking the final binary
 	# http://www.moviepartners.com/blog/2009/03/20/making-py2exe-play-nice-with-pygame/
-	INCLUDE_STUFF = ['encodings', "encodings.latin_1", "psyco", "pygame", "win32com.shell"]
+	INCLUDE_STUFF = ['encodings', "encodings.latin_1", "pygame", "win32com.shell"]
 	
 	MODULE_EXCLUDES =[
 		'email',
@@ -188,6 +188,7 @@ elif platform == "win32":
 				"includes": INCLUDE_STUFF,
 				"compressed": 1,
 				#"ascii": 1,
+				# whether all library files should be bundled into the exe
 				"bundle_files": 2,
 				"ignores": ['tcl', 'AppKit', 'Numeric', 'Foundation'],
 				"excludes": MODULE_EXCLUDES

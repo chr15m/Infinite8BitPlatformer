@@ -22,7 +22,10 @@ try:
 	psyco.full()
 except ImportError:
 	print "Psyco not available"
-	pass
+except ValueError:
+	print "No psyco due to import problems"
+except WindowsError:
+	print "No psyco in Windows binary"
 
 debug("after psyco")
 
