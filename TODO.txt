@@ -1,3 +1,5 @@
+* connecting to a level with a huge history leaves the screen in a weird state for a bit (until the update starts) - turn off the edit button or show a message or something
+
 * fix the levels to their final layout for release
 
 * make sure the windows build runs without crashing
