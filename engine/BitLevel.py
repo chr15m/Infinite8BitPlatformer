@@ -167,6 +167,9 @@ class BitLevel(Level, SVGLoader, Paintable):
 		out.write(self.ToString())
 		out.close()
 	
+	def HaveLevelFile(self):
+		return path.isfile(self.basefilename + ".level.zip")
+	
 	def Load(self):
 		self.FromString(file(self.basefilename + ".level.zip", "rb").read())
 		if not (self.lastRemoteEdit and self.lastAppliedEdit):

@@ -59,7 +59,7 @@ class LevelManager:
 	def SetLevel(self, level, start, portal=None, back=False):
 		""" Sets what level the current player is on. """
 		# make sure this level has been loaded
-		if level in self.levels.keys() and not self.levels[level].loaded:
+		if level in self.levels.keys() and not self.levels[level].loaded and self.levels[level].HaveLevelFile():
 			self.levels[level].Load()
 		if level in self.levels.keys() and (start == "start" or start in self.levels[level].layer.names.keys()):
 			self.Remove(self.editLayer)
