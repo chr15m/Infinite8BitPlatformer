@@ -385,7 +385,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 							if delprop == self.level.player.lastplatform:
 								self.level.player.lastplatform = None
 							# unset the player's current platform since it will no longer exist
-							if delprop == self.level.player.platform:
+							if self.level.player and delprop == self.level.player.platform:
 								self.level.player.platform = None
 							self.level.layer.RemoveProp(delprop)
 							self.RecordEdit({"action": "edit", "instruction": "delete", "objectid": str(delprop.id)})
@@ -507,10 +507,10 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 					if delprop == allplayers[p].platform:
 						allplayers[p].platform = None
 				# unset the player's last platform since it will no longer exist
-				if delprop == self.level.player.lastplatform:
+				if self.level.player and delprop == self.level.player.lastplatform:
 					self.level.player.lastplatform = None
 				# unset the player's current platform since it will no longer exist
-				if delprop == self.level.player.platform:
+				if self.level.player and delprop == self.level.player.platform:
 					self.level.player.platform = None
 				self.level.layer.RemoveProp(delprop)
 			# dragging objects around
