@@ -1,3 +1,160 @@
+Traceback (most recent call last):
+  File "Infinite8BitPlatformer.py", line 58, in <module>
+    c.Launch()
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Core.py", line 63, in Launch
+    Game.Launch(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Game.py", line 17, in Launch
+    self.Run()
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Core.py", line 98, in Run
+    Game.Run(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Game.py", line 27, in Run
+    Concurrent.Run(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Concurrent.py", line 39, in Run
+    self.Update()
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Core.py", line 102, in Update
+    Concurrent.Update(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Concurrent.py", line 50, in Update
+    [o.Update() for o in self.objects if hasattr(o, "Update") and not self.frame % o.frequency]
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Platformer/Level.py", line 81, in Update
+    Concurrent.Update(self)
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/PodSix/Concurrent.py", line 50, in Update
+    [o.Update() for o in self.objects if hasattr(o, "Update") and not self.frame % o.frequency]
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Player.py", line 94, in Update
+    self.Die()
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Player.py", line 50, in Die
+    self.game.PlayerDied()
+  File "/home/chrism/dev/games/Infinite8BitPlatformer/engine/Core.py", line 110, in PlayerDied
+    destination = self.player.lastplatform and self.player.lastplatform.id or self.levels[self.level].layer.platforms[0].id
+AttributeError: 'bool' object has no attribute 'id'
+
+
+John: "Chris, I created a portal on that bob level and then shortly after tried to delete it."
+Traceback (most recent call last):
+  File "./Infinite8BitPlatformer.py", line 55, in <module>
+    c.Launch()
+  File "/home/john/ip8f/Infinite8BitPlatformer/engine/Core.py", line 63, in Launch
+    Game.Launch(self)
+  File "/home/john/ip8f/Infinite8BitPlatformer/PodSix/Game.py", line 17, in Launch
+    self.Run()
+  File "/home/john/ip8f/Infinite8BitPlatformer/engine/Core.py", line 98, in Run
+    Game.Run(self)
+  File "/home/john/ip8f/Infinite8BitPlatformer/PodSix/Game.py", line 27, in Run
+    Concurrent.Run(self)
+  File "/home/john/ip8f/Infinite8BitPlatformer/PodSix/Concurrent.py", line 38, in Run
+    self.Pump()
+  File "/home/john/ip8f/Infinite8BitPlatformer/engine/Core.py", line 92, in Pump
+    Game.Pump(self)
+  File "/home/john/ip8f/Infinite8BitPlatformer/PodSix/Concurrent.py", line 45, in Pump
+    [o.Pump() for o in self.objects if hasattr(o, "Pump") and not self.frame % o.frequency]
+  File "/home/john/ip8f/Infinite8BitPlatformer/engine/EditLayer.py", line 303, in Pump
+    ConnectionListener.Pump(self)
+  File "/home/john/ip/PodSixNet/PodSixNet/Connection.py", line 29, in Pump
+    [getattr(self, n)(data) for n in ("Network_" + data['action'], "Network") if hasattr(self, n)]
+  File "/home/john/ip8f/Infinite8BitPlatformer/engine/EditLayer.py", line 515, in Network_edit
+    self.level.layer.RemoveProp(delprop)
+  File "/home/john/ip8f/Infinite8BitPlatformer/PodSix/Platformer/Layer.py", line 30, in RemoveProp
+    del self.names[prop.id]
+KeyError: 'prop-8426b3e8-5eb4-11e0-9c82-001e643d40c6'
+
+
+shanon - Edit with line tool, colouring in a ladder - Close the tool to test the ladder with character
+-Traceback (most recent call last):
+  File "Infinite8BitPlatformer.py", line 58, in <module>
+  File "engine\Core.pyo", line 63, in Launch
+  File "PodSix\Game.pyo", line 17, in Launch
+  File "engine\Core.pyo", line 98, in Run
+  File "PodSix\Game.pyo", line 27, in Run
+  File "PodSix\Concurrent.pyo", line 38, in Run
+  File "engine\Core.pyo", line 92, in Pump
+  File "PodSix\Concurrent.pyo", line 45, in Pump
+  File "engine\EditLayer.pyo", line 309, in Pump
+  File "PodSix\EventHandlerPygame.pyo", line 68, in Pump
+  File "PodSix\SelfCallMixin.pyo", line 8, in CallMethod
+  File "engine\EditLayer.pyo", line 60, in newfn
+  File "engine\EditLayer.pyo", line 359, in MouseDown
+  File "engine\EditLayer.pyo", line 23, in __init__
+AttributeError: 'NoneType' object has no attribute 'FromScreenCoordinates'
+
+
+
+item inside an item + delete:
+Traceback (most recent call last):
+  File "Infinite8BitPlatformer.py", line 58, in <module>
+    c.Launch()
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Core.py", line 63, in Launch
+    Game.Launch(self)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Game.py", line 17, in Launch
+    self.Run()
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Core.py", line 98, in Run
+    Game.Run(self)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Game.py", line 27, in Run
+    Concurrent.Run(self)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Concurrent.py", line 38, in Run
+    self.Pump()
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Core.py", line 92, in Pump
+    Game.Pump(self)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Concurrent.py", line 45, in Pump
+    [o.Pump() for o in self.objects if hasattr(o, "Pump") and not self.frame % o.frequency]
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/EditLayer.py", line 303, in Pump
+    ConnectionListener.Pump(self)
+  File "/home/james/infinite/PodSixNet/PodSixNet/Connection.py", line 29, in Pump
+    [getattr(self, n)(data) for n in ("Network_" + data['action'], "Network") if hasattr(self, n)]
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/EditLayer.py", line 515, in Network_edit
+    self.level.layer.RemoveProp(delprop)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Platformer/Layer.py", line 30, in
++RemoveProp
+    del self.names[prop.id]
+KeyError: 'prop-1bfbd006-5eb8-11e0-beb0-940c6dc4bedd'
+	Build info JSON:
+	{'developer': True, 'platform': 'linux2', 'revno': 307}
+
+
+Traceback (most recent call last):
+  File "/usr/lib/python2.6/asynchat.py", line 110, in handle_read
+    data = self.recv (self.ac_in_buffer_size)
+  File "/usr/lib/python2.6/asyncore.py", line 387, in recv
+    raise
+  File "/usr/lib/python2.6/asyncore.py", line 373, in recv
+    data = self.socket.recv(buffer_size)
+error: [Errno 110] Connection timed out
+
+
+Traceback (most recent call last):
+  File "Infinite8BitPlatformer.py", line 58, in <module>
+    c.Launch()
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Core.py", line 63, in Launch
+    Game.Launch(self)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Game.py", line 17, in Launch
+    self.Run()
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Core.py", line 98, in Run
+    Game.Run(self)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Game.py", line 27, in Run
+    Concurrent.Run(self)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Concurrent.py", line 38, in Run
+    self.Pump()
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Core.py", line 92, in Pump
+    Game.Pump(self)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/Concurrent.py", line 45, in Pump
+    [o.Pump() for o in self.objects if hasattr(o, "Pump") and not self.frame % o.frequency]
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/EditLayer.py", line 303, in Pump
+    ConnectionListener.Pump(self)
+  File "/home/james/infinite/PodSixNet/PodSixNet/Connection.py", line 29, in Pump
+    [getattr(self, n)(data) for n in ("Network_" + data['action'], "Network") if hasattr(self, n)]
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/EditLayer.py", line 529, in Network_edit
+    self.networktools[data['id']].NetworkPenDown(data['pos'], prop, data['color'])
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Tools.py", line 35, in NetworkPenDown
+    self.PenDown(pos, surface, color)
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Tools.py", line 125, in PenDown
+    self.currentSurface.Fill(pos, color, self.currentSurface == self.parent.level)
+  File "/home/james/infinite/Infinite8BitPlatformer/engine/Paintable.py", line 34, in Fill
+    self.bitmap.FloodFill(self.GetOffset(pos), color)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/ImagePygame.py", line 96, in FloodFill
+    oldColor = self.Pixel(pos)
+  File "/home/james/infinite/Infinite8BitPlatformer/PodSix/ImagePygame.py", line 62, in Pixel
+    return self.surface.get_at(pos)
+IndexError: pixel index out of range
+
+
 * sound effects lag on vista 32 bit (ask jack casey) also on ubuntu (pulse audio?)
 	(seems to be fixed on ubuntu by installing pulseaudio sdl drivers)
 

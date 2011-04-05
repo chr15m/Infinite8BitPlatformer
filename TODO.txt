@@ -1,9 +1,3 @@
-* connecting to a level with a huge history leaves the screen in a weird state for a bit (until the update starts) - turn off the edit button or show a message or something
-
-* fix the levels to their final layout for release
-
-* make sure the windows build runs without crashing
-
 * splash screen
 
 * make builds for all platforms
@@ -12,19 +6,39 @@
 
 --- RELEASE ---
 
-* show recent changes on screen
+* BUG: shanon - cannot delete graffiti  / spray-over of objects (see email with images)
+
+* BUG: shanon FromScreenCoordinates bug EditLayer.py 23
+
+* BUG: john - created a portal on that bob level and then shortly after tried to delete it - crash
+
+* BUG: drawing an item inside an item and then deleting it crashes
+
+* BUG: server bug - connection timed out should be caught and user deleted
+
+* BUG: connecting to a level with a huge history leaves the screen in a weird state for a bit (until the update starts) - turn off the edit button or show a message or something
+
+* BUG: ImagePygame.py 61 - pixel index out of range
+
+* BUG: Core.py 110 AttributeError: 'bool' object has no attribute 'id'
+
+* BUG: drawing lines at the same time makes them go all funny (bad redraw)
 
 * BUG: player dying bug is still happening when you join a level and the other player is updating
 
 * BUG: Shannon's USB/bluetooth bug (manifests as gamepad/joystick bug)
 
-* some way to find other players (arrows pointing to them?)
-
 * BUG: lockup/memory exhaustion when fill-painting again!
 
 * BUG: make all line tools hide themselves before any line tool applies itself - store order of application
 
+* BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
+
+* some way to find other players (arrows pointing to them?)
+
 * display some kind of indicator when someone is typing a message
+
+* play a sound effect for chat
 
 * show progress indicator on background paint
 
@@ -32,7 +46,7 @@
 
 * menu with credits and website link
 
-* BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
+* do not play the teleport noise if a portal leads nowhere, and post a message
 
 * custom avatar colour?
 
@@ -164,6 +178,10 @@
 
 Done
 ----
+
++ EditLayer.py 510 AttributeError: 'NoneType' object has no attribute 'lastplatform'
+
++ make sure the windows build runs without crashing
 
 + loading big levels is too slow
 
