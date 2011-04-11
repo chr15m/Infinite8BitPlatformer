@@ -1,3 +1,5 @@
+* not all local edits should be network re-applied (e.g. create new platform, delete platform)
+
 * splash screen
 
 * make builds for all platforms
