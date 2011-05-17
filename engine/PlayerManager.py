@@ -1,3 +1,5 @@
+from PodSix.Config import config
+
 from PodSixNet.Connection import ConnectionListener
 
 from engine.Player import Player
@@ -24,7 +26,7 @@ class PlayerManager(ConnectionListener):
 		return self.game.levels[self.game.level]
 	
 	def Network_player_entering(self, data):
-		print 'PlayerManager Got player', data
+		config.debug('PlayerManager Got player ' + data)
 		if not self.players.has_key(data['id']):
 			p = Player(self.game, data['id'])
 			self.GetLevel().AddCharacter(p)

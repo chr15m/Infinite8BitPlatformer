@@ -1,5 +1,5 @@
 from random import randint
-from sys import maxint, argv
+from sys import maxint
 from os import path
 from uuid import uuid1
 
@@ -479,9 +479,7 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 	
 	# when another player edits this layer
 	def Network_edit(self, data):
-		if "debug" in argv:
-			print
-			print "edit data:", data
+		config.debug("edit data: " + str(data))
 		# only perform this edit if we haven't seen it before
 		# (test by trying to record it in our history)
 		if data['level'] == "level" + self.level.id and self.level.AddRemoteLevelHistory(data, self.game.net.publicID, self.game.net.playerID):
@@ -550,6 +548,6 @@ class EditLayer(Concurrent, EventMonitor, ConnectionListener):
 				prop = self.level.PropFromId(data['objectid'])
 				prop.destination = data['destination']
 			else:
-				print "whoa, no such edit!"
-		elif "debug" in argv:
-			print "dropped edit: ", data['editid'], "last:", self.level.LastEdit(), "historysize:", len(self.level.history), "levelid:", data['level'], "current:", "level" + self.level.id
+				debug("whoa, no such edit instruction! " + str(i))
+		else:
+			config.debug("dropped edit: " + str(data['editid']) + " last: " + str(self.level.LastEdit()) + " historysize: " + str(len(self.level.history)) + " levelid: " + str(data['level']) + " current: " + " level" + str(self.level.id))

@@ -79,8 +79,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 			data = self.queued[a]
 			data.update({"id": self.playerID})
 			self.Send(self.queued[a])
-			if "debug" in sys.argv:
-				print "NetMonitor QUEUED:", self.queued[a]
+			config.debug("NetMonitor QUEUED:" + str(self.queued[a]))
 		self.queued = {}
 	
 	#######################################
@@ -88,8 +87,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 	#######################################
 	
 	def Network(self, data):
-		if "debug" in sys.argv:
-			print "NetMonitor Received:", data
+		config.debug("NetMonitor Received:" + str(data))
 	
 	def Network_playerid(self, data):
 		# got my player ID, now send a new level i want to be on
@@ -104,8 +102,7 @@ class NetMonitor(ConnectionListener, Concurrent):
 		self.publicID = data['public_id']
 	
 	def Network_player_entering(self, data):
-		if "debug" in sys.argv:
-			print "NetMonitor", self.playerID, "Saw player with ID %d" % data['id']
+		config.debug("NetMonitor - " + str(self.playerID) + " Saw player with ID " + str(data['id']))
 	
 	# built in stuff
 	

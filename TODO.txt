@@ -1,4 +1,4 @@
-* not all local edits should be network re-applied (e.g. create new platform, delete platform)
+* BUG: server bug - connection timed out should be caught and user deleted
 
 * splash screen
 
@@ -8,6 +8,8 @@
 
 --- RELEASE ---
 
+* don't pick up things unless you are player or the pickup comes from the network
+
 * BUG: shanon - cannot delete graffiti  / spray-over of objects (see email with images)
 
 * BUG: shanon FromScreenCoordinates bug EditLayer.py 23
@@ -15,8 +17,6 @@
 * BUG: john - created a portal on that bob level and then shortly after tried to delete it - crash
 
 * BUG: drawing an item inside an item and then deleting it crashes
-
-* BUG: server bug - connection timed out should be caught and user deleted
 
 * BUG: connecting to a level with a huge history leaves the screen in a weird state for a bit (until the update starts) - turn off the edit button or show a message or something
 
@@ -297,4 +297,6 @@ Done
 + add a history to the editing of a level
 
 + make tooltips appear after a second, not instantly
+
++ not all local edits should be network re-applied (e.g. create new platform, delete platform)
 

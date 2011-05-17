@@ -48,9 +48,10 @@ try:
 		gfx.SetIcon(os.path.join("resources", "icon.gif"))
 	
 	from PodSix.Config import config
+	config.debug = debug
 	config.SetFilename("Infinite8BitPlatformer.cfg")
 	
-	c = Core((len(argv) >= 2 and argv[1] != "profile") and argv[1] or "i8bp.infiniteplatformer.com")
+	c = Core((len(argv) >= 2 and not argv[1] in ["profile", "debug"]) and argv[1] or "i8bp.infiniteplatformer.com")
 	if "profile" in argv:
 		import cProfile as profile
 		profile.run('c.Launch()')
