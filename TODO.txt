@@ -15,31 +15,37 @@
 
 --- RELEASE ---
 
+* the player's last level and position should be remembered between sessions and taken back there when they start up
+
 * add key variables to exception sent - (e.g. level name, number of other players)
+
+* BUG: (joe) EditLayer.py 515 -> Layer.py 29 -> AttributeError: 'NoneType' object has no attribute 'type'
+
+* BUG: (joe) EditLayer.py 536 -> KeyError: 13
+
+* BUG: teleport to level 'bob' - Tools.py 125 -> Paintable.py 34 -> PodSix/ImagePygame.py 101 -> ImagePygame.py 62 -> IndexError: pixel index out of range
+* BUG: ImagePygame.py 61 - pixel index out of range
 
 * BUG: shanon - cannot delete graffiti  / spray-over of objects (see email with images)
 
 * BUG: shanon FromScreenCoordinates bug EditLayer.py 23
 
-* BUG: john - created a portal on that bob level and then shortly after tried to delete it - crash
+* BUG: john - created a portal on that bob level and then shortly after tried to delete it - crash (delete crash, fixed?)
 
-* BUG: drawing an item inside an item and then deleting it crashes
+* BUG: drawing an item inside an item and then deleting it crashes (delete crash, fixed?)
 
 * BUG: connecting to a level with a huge history leaves the screen in a weird state for a bit (until the update starts) - turn off the edit button or show a message or something
-
-* BUG: ImagePygame.py 61 - pixel index out of range
 
 * BUG: Core.py 110 AttributeError: 'bool' object has no attribute 'id'
 
 * BUG: drawing lines at the same time makes them go all funny (bad redraw)
+* BUG: make all line tools hide themselves before any line tool applies itself - store order of application
 
 * BUG: player dying bug is still happening when you join a level and the other player is updating
 
 * BUG: Shannon's USB/bluetooth bug (manifests as gamepad/joystick bug)
 
 * BUG: lockup/memory exhaustion when fill-painting again!
-
-* BUG: make all line tools hide themselves before any line tool applies itself - store order of application
 
 * BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
 
@@ -78,8 +84,6 @@
 * 'like' button lets you like a particular place on a particular level
 
 * 'share' button lets you share a particular location on social media
-
-* the player's last level and position should be remembered between sessions and taken back there when they start up
 
 * pixel collisions after bounding box collisions
 
