@@ -33,9 +33,6 @@ import PodSix
 PodSix.engine = "pygame"
 from PodSix.Resource import *
 
-#from PodSix.SplashScreen import SplashScreen
-#s = SplashScreen()
-#s.Launch()
 debug("after podsix imports")
 
 from engine.Core import Core
@@ -49,6 +46,7 @@ try:
 	
 	from PodSix.Config import config
 	config.debug = debug
+	config.debugmode = "debug" in argv
 	config.SetFilename("Infinite8BitPlatformer.cfg")
 	
 	c = Core((len(argv) >= 2 and not argv[1] in ["profile", "debug"]) and argv[1] or "i8bp.infiniteplatformer.com")

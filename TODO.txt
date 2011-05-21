@@ -1,6 +1,13 @@
 * BUG: server bug - connection timed out should be caught and user deleted
-
-* splash screen
+	*** Reproduce it by backgrounding the game when connected 
+	Traceback (most recent call last):
+	  File "/usr/lib/python2.6/asynchat.py", line 110, in handle_read
+	    data = self.recv (self.ac_in_buffer_size)
+	  File "/usr/lib/python2.6/asyncore.py", line 387, in recv
+	    raise
+	  File "/usr/lib/python2.6/asyncore.py", line 373, in recv
+	    data = self.socket.recv(buffer_size)
+	error: [Errno 110] Connection timed out
 
 * make builds for all platforms
 
@@ -8,7 +15,7 @@
 
 --- RELEASE ---
 
-* don't pick up things unless you are player or the pickup comes from the network
+* add key variables to exception sent - (e.g. level name, number of other players)
 
 * BUG: shanon - cannot delete graffiti  / spray-over of objects (see email with images)
 
@@ -35,6 +42,8 @@
 * BUG: make all line tools hide themselves before any line tool applies itself - store order of application
 
 * BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
+
+* don't pick up things unless you are player or the pickup comes from the network
 
 * some way to find other players (arrows pointing to them?)
 
@@ -299,4 +308,7 @@ Done
 + make tooltips appear after a second, not instantly
 
 + not all local edits should be network re-applied (e.g. create new platform, delete platform)
+
++ splash screen
+  + write *beta* on the splash screen
 

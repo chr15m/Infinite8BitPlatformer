@@ -17,6 +17,7 @@ from engine.LevelManager import LevelManager
 from engine.NetMonitor import NetMonitor
 from engine.PlayerManager import PlayerManager
 from engine.Progress import Progress
+from engine.Splash import Splash
 
 class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	def __init__(self, server="mccormick.cx"):
@@ -33,37 +34,49 @@ class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 		sfx.LoadSound("portal")
 		sfx.LoadSound("die")
 		sfx.LoadSound("jump")
+		self.level = None
 		Game.__init__(self)
 		EventMonitor.__init__(self)
 		# connection to the network
 		self.net = NetMonitor(self)
-		self.Add(self.net)
 		# The editLayer user interface (hud for editing levels)
 		self.editLayer = EditLayer(self)
-		self.Add(self.editLayer)
 		# The other hud stuff
 		self.hud = Hud(self)
-		self.Add(self.hud)
-		# global tooltip singleton
-		self.Add(tooltip)
 		# progress bar should go above everything else
 		self.progress = Progress()
-		self.Add(self.progress)
-		# set tooltip font
-		#tooltip.font = "tiny"
 		# Create player and camera and put some text on the screen
-		#self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", self.Instructions, 1.0)
-		self.Setup("Infinite 8-bit Platformer\n\na game\nby Chris McCormick", None, 3.0)
 		# Give us the methods for manipulating level collections
 		self.players = PlayerManager(self)
+		# splash screen rock
+		self.splash = None
+		if not config.debugmode:
+			self.splash = Splash(self)
+			self.Add(self.splash)
+		else:
+			self.StartGame()
+	
+	def StartGame(self):
+		# get rid of the splash screen
+		if self.splash:
+			self.Remove(self.splash)
+			del self.splash
+		# get the player and camera into the game
+		self.Setup()
+		# add the network management code
+		self.Add(self.net)
+		# global tooltip singleton
+		self.Add(tooltip)
+		# add the layer for editing levels
+		self.Add(self.editLayer)
+		# add the game's heads-up-display
+		self.Add(self.hud)
+		# add the progress meter for loading etc.
+		self.Add(self.progress)
+		# initialise the level manager
 		LevelManager.__init__(self)
-	
-	def Launch(self):
+		# connect to the server
 		self.net.Connect()
-		Game.Launch(self)
-	
-	#def Instructions(self):
-	#	self.AddMessage("arrow keys move you\nenter key uses a portal\nescape key quits", None, 5.0)
 	
 	def Setup(self, message="", callback=None, time=None):
 		# create our main player with id 0
