@@ -21,6 +21,8 @@ SAVEAFTER = 30
 SERVER_EMAIL_EXCEPTIONS = False
 # the address where the email should be sent
 ADMIN_EMAIL = 'chrism@infiniteplatformer.com'
+# the address where the email should come from
+FROM_EMAIL = 'infinite@dor.cx'
 # email server configuration options
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25

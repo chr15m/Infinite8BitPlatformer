@@ -1,3 +1,25 @@
+* first time running offer to go to help automatically or put a graphic pointing to /help
+
+* tell the player the controls on the help page
+
+* getting started on help page (basic concepts, how to move, how to create a new level and teleport to some good places)
+
+* make tooltips appear in the same place every time immediately (top center)
+
+* automatically reverse-link a portal if it does not yet have a portal destination
+
+* server console
+
+* ability to pan view in edit mode (middle mouse?)
+
+* basic avatar colouring
+
+* avatar colouring next to chat lines
+
+* last 5 chat lines pop up on chatbox entering
+
+* add inventory
+
 * BUG: server bug - connection timed out should be caught and user deleted
 	*** Reproduce it by backgrounding the game when connected 
 	Traceback (most recent call last):
@@ -9,11 +31,28 @@
 	    data = self.socket.recv(buffer_size)
 	error: [Errno 110] Connection timed out
 
-* make builds for all platforms
-
-* update website
-
---- RELEASE ---
+* BUG: server bug:
+	2011-05-25 01:54:25 [1306288465.22] VERSION: Player 53 has ID eaf108e6-8671-11e0-89f1-aa000031490f
+	Traceback (most recent call last):
+	  File "/usr/lib/python2.6/asyncore.py", line 78, in read
+	    obj.handle_read_event()
+	  File "/usr/lib/python2.6/asyncore.py", line 428, in handle_read_event
+	    self.handle_read()
+	  File "/usr/lib/python2.6/asynchat.py", line 158, in handle_read
+	    self.found_terminator()
+	  File "/home/infinite/Infinite8BitPlatformer/PodSixNet/Channel.py", line 24, in found_terminator
+	    [getattr(self, n)(data) for n in ('Network', 'Network_' + data['action']) if hasattr(self, n)]
+	  File "/home/infinite/Infinite8BitPlatformer/server/I8BPServer.py", line 26, in RequireIDFn
+	    fn(self, data)
+	  File "/home/infinite/Infinite8BitPlatformer/server/I8BPServer.py", line 157, in Network_item
+	    self.SendToNeighbours(self.Level().Collect(data))
+	  File "/home/infinite/Infinite8BitPlatformer/server/I8BPServer.py", line 95, in Level
+	    return self._server.Level(self.level)
+	  File "/home/infinite/Infinite8BitPlatformer/server/I8BPServer.py", line 438, in Level
+	    return self.levels[name]
+	KeyError: None
+	2011-05-25 01:54:25 [1306288465.86] EMAIL: server exception sender launched to email 'chrism@infinit
+	eplatformer.com'
 
 * the player's last level and position should be remembered between sessions and taken back there when they start up
 
@@ -105,7 +144,6 @@
 
 * network server
 	* check for data corruption in saved files - e.g. if a PenDown has no matching PenUp yet (someone was mid-draw when the level saved)
-	* make the server email any exceptions to the admin
 	* hold a lockfile when writing levels to disk
 	* special server connection allows full admin access
 	* WNF: keep a copy of the level server side and make local modifications to it
@@ -194,6 +232,8 @@
 Done
 ----
 
++ server exception emails was not sending
+
 + EditLayer.py 510 AttributeError: 'NoneType' object has no attribute 'lastplatform'
 
 + make sure the windows build runs without crashing
@@ -247,8 +287,6 @@ Done
 + BUG: cursor position isn't correct on different sized texts e.g. level name change different lengths
 
 + BUG: in collecting items - network sends collected message of 30 seconds no matter how old
-
-+ getting started on help page (how to create a new level and teleport to some good places)
 
 + automatic crashdump reporting - catch all errors and throw a message screen
 

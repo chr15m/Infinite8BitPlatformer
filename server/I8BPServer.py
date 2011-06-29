@@ -357,7 +357,7 @@ class I8BPServer(Server):
 		# add this to our pool of known clients
 		self.clients.append(client)
 		self.Log("CONNECT: Channel %d connected, %d online" % (client.ID, len(self.clients)))
-		
+	
 	def NewSessionID(self):
 		# Gets a new non-secret per-session ID for a new client
 		self.ids += 1
@@ -556,11 +556,11 @@ def SendExceptionEmail(message=None, logger=None):
 			# create the full text of the actual email to sent
 			fulltext = (
 				"From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n" %
-				(settings.ADMIN_EMAIL, settings.ADMIN_EMAIL, "Infinite8BitPlatformerServer crash")
+				(settings.FROM_EMAIL, settings.ADMIN_EMAIL, "Infinite8BitPlatformerServer crash")
 			) + msg
 			
 			# try to send it, and we're done
-			s.sendmail(settings.ADMIN_EMAIL, [settings.ADMIN_EMAIL], fulltext)
+			s.sendmail(settings.FROM_EMAIL, [settings.ADMIN_EMAIL], fulltext)
 			s.quit()
 		
 	DoLog("EMAIL: server exception sender launched to email '%s'" % settings.ADMIN_EMAIL)
