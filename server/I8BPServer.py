@@ -108,6 +108,7 @@ class I8BPChannel(Channel):
 		return self._server.Level(self.level)
 	
 	def Error(self, err):
+		self._server.Log("CLENT/SOCKET: error")
 		SendExceptionEmail(logger=self._server.Log)
 	
 	##################################

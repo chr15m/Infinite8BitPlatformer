@@ -4,13 +4,9 @@
 
 * getting started on help page (basic concepts, how to move, how to create a new level and teleport to some good places)
 
-* make tooltips appear in the same place every time immediately (top center)
-
 * ability to teleport to levels that are still just called a number
 
 * automatically reverse-link a portal if it does not yet have a portal destination
-
-* server console
 
 * ability to pan view in edit mode (middle mouse?)
 
@@ -20,7 +16,11 @@
 
 * last 5 chat lines pop up on chatbox entering
 
-* add inventory
+* the player's last level and position should be remembered between sessions and taken back there when they start up
+
+* add key variables to exception sent - (e.g. level name, number of other players)
+
+* message/sign object which displays text to the user (JOHN RATKE HAS DONE, MERGE)
 
 * BUG: server bug - connection timed out should be caught and user deleted
 	*** Reproduce it by backgrounding the game when connected 
@@ -56,10 +56,6 @@
 	2011-05-25 01:54:25 [1306288465.86] EMAIL: server exception sender launched to email 'chrism@infinit
 	eplatformer.com'
 
-* the player's last level and position should be remembered between sessions and taken back there when they start up
-
-* add key variables to exception sent - (e.g. level name, number of other players)
-
 * BUG: (joe) EditLayer.py 515 -> Layer.py 29 -> AttributeError: 'NoneType' object has no attribute 'type'
 
 * BUG: (joe) EditLayer.py 536 -> KeyError: 13
@@ -72,8 +68,6 @@
 * BUG: shanon FromScreenCoordinates bug EditLayer.py 23
 
 * BUG: john - created a portal on that bob level and then shortly after tried to delete it - crash (delete crash, fixed?)
-
-* BUG: drawing an item inside an item and then deleting it crashes (delete crash, fixed?)
 
 * BUG: connecting to a level with a huge history leaves the screen in a weird state for a bit (until the update starts) - turn off the edit button or show a message or something
 
@@ -90,6 +84,8 @@
 
 * BUG: level must be named before you can set it as a teleport dest (stored as ints server side)
 
+* add inventory
+
 * don't pick up things unless you are player or the pickup comes from the network
 
 * some way to find other players (arrows pointing to them?)
@@ -99,8 +95,6 @@
 * play a sound effect for chat
 
 * show progress indicator on background paint
-
-* write server launch script (custom named python for ps display)
 
 * menu with credits and website link
 
@@ -115,8 +109,6 @@
 * mouse over player lets you edit your name or shows other player's name
 
 * a way to move the camera without moving the player around
-
-* message/sign object which displays text to the user (JOHN RATKE HAS DONE, MERGE)
 
 * unknown command message for slash commands that we do not know
 
@@ -137,8 +129,6 @@
 * store items collected server side
 
 * make clients accept the i8bp://levelname/portal and i8bp://levelname/x/y format to launch the game and teleport
-
-* automatic updates - use esky?
 
 * make background fill happen incrementally across frames
 	* OR: use spinner?
@@ -233,6 +223,14 @@
 
 Done
 ----
+
++ write server launch script (custom named python for ps display)
+
++ CNR - BUG: drawing an item inside an item and then deleting it crashes (delete crash, fixed?)
+
++ server console
+
++ make tooltips appear in the same place every time immediately (top center)
 
 + server exception emails was not sending
 
