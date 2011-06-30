@@ -481,7 +481,7 @@ class I8BPServer(Server):
 				# get the level ID number out of the filename
 				lID = int(f[len("level"):-len(".json")])
 				# create a new level
-				levels[f[:-len(".json")]] = ServerLevel(lID, leveldata['history'], leveldata['name'], leveldata['owner'], leveldata['locked'])
+				levels[f[:-len(".json")]] = ServerLevel(lID, leveldata['history'], str(leveldata['name']), leveldata['owner'], leveldata['locked'])
 				# make sure our highestLevelID is still valid
 				if lID > self.lastLevelID:
 					self.lastLevelID = lID

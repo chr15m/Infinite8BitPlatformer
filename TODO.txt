@@ -4,8 +4,6 @@
 
 * getting started on help page (basic concepts, how to move, how to create a new level and teleport to some good places)
 
-* ability to teleport to levels that are still just called a number
-
 * automatically reverse-link a portal if it does not yet have a portal destination
 
 * ability to pan view in edit mode (middle mouse?)
@@ -223,6 +221,8 @@
 
 Done
 ----
+
++ ability to teleport to levels that are still just called a number
 
 + write server launch script (custom named python for ps display)
 
