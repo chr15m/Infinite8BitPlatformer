@@ -1,4 +1,4 @@
-* first time running offer to go to help automatically or put a graphic pointing to /help
+* first time running offer to go to help and tell them about /help
 
 * tell the player the controls on the help page
 
@@ -6,17 +6,7 @@
 
 * automatically reverse-link a portal if it does not yet have a portal destination
 
-* ability to pan view in edit mode (middle mouse?)
-
-* basic avatar colouring
-
-* avatar colouring next to chat lines
-
-* last 5 chat lines pop up on chatbox entering
-
-* the player's last level and position should be remembered between sessions and taken back there when they start up
-
-* add key variables to exception sent - (e.g. level name, number of other players)
+* add key variables to exception sent - (e.g. level name, character pos, number of other players)
 
 * message/sign object which displays text to the user (JOHN RATKE HAS DONE, MERGE)
 
@@ -30,6 +20,22 @@
 	  File "/usr/lib/python2.6/asyncore.py", line 373, in recv
 	    data = self.socket.recv(buffer_size)
 	error: [Errno 110] Connection timed out
+
+* BUG: connecting to a level with a huge history leaves the screen in a weird state for a bit (until the update starts) - turn off the edit button or show a message or something
+
+--- RELEASE ---
+
+* ability to pan view in edit mode (middle mouse?)
+
+* basic avatar colouring
+
+* avatar colouring next to chat lines
+
+* the player's last level and position should be remembered between sessions and taken back there when they start up
+
+* chatbox mouseover - see last 5 chat lines
+
+--- RELEASE ---
 
 * BUG: server bug:
 	2011-05-25 01:54:25 [1306288465.22] VERSION: Player 53 has ID eaf108e6-8671-11e0-89f1-aa000031490f
@@ -64,10 +70,6 @@
 * BUG: shanon - cannot delete graffiti  / spray-over of objects (see email with images)
 
 * BUG: shanon FromScreenCoordinates bug EditLayer.py 23
-
-* BUG: john - created a portal on that bob level and then shortly after tried to delete it - crash (delete crash, fixed?)
-
-* BUG: connecting to a level with a huge history leaves the screen in a weird state for a bit (until the update starts) - turn off the edit button or show a message or something
 
 * BUG: Core.py 110 AttributeError: 'bool' object has no attribute 'id'
 
@@ -221,6 +223,8 @@
 
 Done
 ----
+
++ BUG: john - created a portal on that bob level and then shortly after tried to delete it - crash (delete crash, fixed?)
 
 + ability to teleport to levels that are still just called a number
 
