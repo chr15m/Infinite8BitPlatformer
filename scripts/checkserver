@@ -1,0 +1,7 @@
+#!/bin/bash
+
+result=`ps auxwww | grep Infinite8BitPlatformerServer.py | grep -vc grep`
+if [ "$result" == "0" ]
+then
+	echo 'Infinite8BitPlatformer server died!'
+fi

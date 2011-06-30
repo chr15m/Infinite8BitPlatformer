@@ -1,0 +1,3 @@
+#!/bin/bash
+
+killall i8bp

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tail -f Infinite8BitPlatformer/server.log -n 200

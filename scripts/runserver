@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd Infinite8BitPlatformer
+ln -s `which python` i8bp
+./i8bp Infinite8BitPlatformerServer.py 2>&1 > server.log &
