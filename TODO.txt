@@ -6,6 +6,8 @@
 
 * make tooltips appear in the same place every time immediately (top center)
 
+* ability to teleport to levels that are still just called a number
+
 * automatically reverse-link a portal if it does not yet have a portal destination
 
 * server console
