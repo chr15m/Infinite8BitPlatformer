@@ -36,6 +36,14 @@ def RequirePermissions(fn):
 			self.NoPermissionError()
 	return RequirePermissionsFn
 
+def RequireAdmin(fn):
+	def RequireAdminFn(self, data):
+		if data.has_key("id") and data['id'] == settings.ADMIN_KEY:
+			fn(self, data)
+		else:
+			self.NoAdminError(data)
+	return RequireAdminFn
+
 class I8BPChannel(Channel):
 	"""
 	This is the server representation of a single connected client.
@@ -90,6 +98,11 @@ class I8BPChannel(Channel):
 		#self.close_when_done()
 		self._server.Log("ERROR: Permission error: Client %d (%s)" % (self.ID, self.playerID))
 	
+	def NoAdminError(self, data):
+		# this client tried to do admin actions without permission t do so
+		self.Send({"action": "permission", "permission": "You are not admin."})
+		self._server.Log("ERROR: Bad admin access: %s" % (str(data)))
+	
 	# shortcut to get the level object corresponding to my current level
 	def Level(self):
 		return self._server.Level(self.level)
@@ -127,6 +140,22 @@ class I8BPChannel(Channel):
 		else:
 			self._server.Log("VERSION: Player %d has ID %s" % (self.ID, self.playerID))
 			self.Send({"action": "playerid", "id": self.playerID, "version": VERSION})
+	
+	@RequireAdmin
+	def Network_console(self, data):
+		self._server.Log("ADMIN: Running %s" % data['command'])
+		# redirect stdin and sterr for collection
+		catchall = cStringIO.StringIO()
+		oldstd = [sys.stdout, sys.stderr]
+		sys.stdout = catchall
+		sys.stderr = catchall
+		try:
+			exec data['command']
+		except:
+			traceback.print_exc()
+		sys.stdout = oldstd[0]
+		sys.stderr = oldstd[1]
+		self.Send({"action": "result", "result": catchall.getvalue()})
 	
 	@RequirePermissions
 	@RequireID

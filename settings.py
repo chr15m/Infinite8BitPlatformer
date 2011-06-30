@@ -30,6 +30,9 @@ EMAIL_USE_SSL = False
 EMAIL_USERNAME = ''
 EMAIL_PASSWORD = ''
 
+# the key of the admin user
+ADMIN_KEY = "xxxxx-xxxx-xxxx-xxxx"
+
 ### Items ###
 
 # how long items should disappear for
