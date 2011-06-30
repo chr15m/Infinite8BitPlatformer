@@ -4,7 +4,6 @@ from PodSix.Resource import *
 from PodSix.Game import Game
 from PodSix.Concurrent import Concurrent
 from PodSix.Config import config
-from PodSix.GUI.ToolTip import tooltip
 
 from PodSixNet.Connection import ConnectionListener
 
@@ -18,6 +17,7 @@ from engine.NetMonitor import NetMonitor
 from engine.PlayerManager import PlayerManager
 from engine.Progress import Progress
 from engine.Splash import Splash
+from engine.ToolTip import tooltip
 
 class Core(Game, EventMonitor, LevelManager, ConnectionListener):
 	def __init__(self, server="mccormick.cx"):
