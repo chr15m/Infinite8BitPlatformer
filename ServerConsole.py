@@ -1,6 +1,10 @@
 import sys
 from time import sleep
 from sys import stdin, exit
+import code
+import readline
+import atexit
+import os
 
 from PodSixNet.Connection import connection, ConnectionListener
 from PodSix.Config import config
@@ -13,8 +17,28 @@ from Queue import Queue
 
 config.SetFilename("Infinite8BitPlatformer.cfg")
 
+# console based on Python's interactive console which supports history
+class HistoryConsole(code.InteractiveConsole):
+	def __init__(self, locals=None, filename="<console>",
+				 histfile=os.path.expanduser("~/.I8BP-ServerConsole")):
+		code.InteractiveConsole.__init__(self, locals, filename)
+		self.init_history(histfile)
+	
+	def init_history(self, histfile):
+		readline.parse_and_bind("tab: complete")
+		if hasattr(readline, "read_history_file"):
+			try:
+				readline.read_history_file(histfile)
+			except IOError:
+				pass
+			atexit.register(self.save_history, histfile)
+	
+	def save_history(self, histfile):
+		readline.write_history_file(histfile)
+
 class Console(ConnectionListener):
 	def __init__(self, host, port):
+		self.hostname = host
 		self.Connect((host, port))
 		print "I8BP console started"
 		# fetch the player ID from infinite platformer config
@@ -36,17 +60,18 @@ class Console(ConnectionListener):
 			sys.exit()
 	
 	def InputLoop(self, q):
+		console = HistoryConsole(locals())
 		# horrid threaded input loop
 		# continually reads from stdin and sends whatever is typed to the server
 		quit = False
 		while not quit:
 			print q.get(block=True),
-			print "> ",
-			sendcommand = stdin.readline().rstrip("\n")
-			if len(sendcommand) == 0:
-				quit = True
-			else:
+			try:
+				sendcommand = console.raw_input("I8BP:" + self.hostname + "> ")
 				connection.Send({"action": "console", "command": sendcommand, "id": self.playerid})
+			except EOFError:
+				print
+				quit = True
 	
 	#######################################
 	### Network event/message callbacks ###
