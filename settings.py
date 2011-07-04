@@ -4,7 +4,7 @@
 
 import os
 
-# TODO: try loading this from ~/.i8bp_settings.py and also /etc/i8bpsettings.py
+# TODO: try loading this from ~/.i8bp_settings.py and also /etc/i8bpsettings.py too
 
 ### Saving server side ###
 
@@ -32,6 +32,9 @@ EMAIL_PASSWORD = ''
 
 # the key of the admin user
 ADMIN_KEY = "xxxxx-xxxx-xxxx-xxxx"
+
+# server host
+SERVER_HOST = "i8bp.infiniteplatformer.com"
 
 ### Items ###
 

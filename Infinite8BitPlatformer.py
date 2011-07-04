@@ -38,6 +38,8 @@ debug("after podsix imports")
 from engine.Core import Core
 from engine.ExceptionHandler import ExceptionHandler
 
+import settings
+
 debug("after all imports")
 
 try:
@@ -49,7 +51,7 @@ try:
 	config.debugmode = "debug" in argv
 	config.SetFilename("Infinite8BitPlatformer.cfg")
 	
-	c = Core((len(argv) >= 2 and not argv[1] in ["profile", "debug"]) and argv[1] or "i8bp.infiniteplatformer.com")
+	c = Core((len(argv) >= 2 and not argv[1] in ["profile", "debug"]) and argv[1] or settings.SERVER_HOST)
 	if "profile" in argv:
 		import cProfile as profile
 		profile.run('c.Launch()')

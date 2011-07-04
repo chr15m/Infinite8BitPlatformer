@@ -15,6 +15,8 @@ from PodSix.Config import config
 from threading import Thread
 from Queue import Queue
 
+import settings
+
 config.SetFilename("Infinite8BitPlatformer.cfg")
 
 # console based on Python's interactive console which supports history
@@ -97,7 +99,7 @@ class Console(ConnectionListener):
 		print 'Server disconnected\n'
 		exit()
 
-host = len(sys.argv) >= 2 and sys.argv[1] or "i8bp.infiniteplatformer.com"
+host = len(sys.argv) >= 2 and sys.argv[1] or settings.SERVER_HOST
 port = len(sys.argv) >= 3 and sys.argv[1] or 31415
 c = Console(host, int(port))
 while 1:
