@@ -1,3 +1,16 @@
+* make a video talkthrough of the features
+
+* tweet for new level - ant c
+
+* more colours - at least grey shades - ant c
+
+* make floodfill less expensive
+  http://www.koders.com/python/fid9CF1238AB348F93F43A98579F7217A642CC0591A.aspx?s=gtk
+  http://archives.seul.org/pygame/users/Nov-2005/msg00179.html
+  http://lodev.org/cgtutor/floodfill.html
+
+* make a 'palette' of nice platforms to start with
+
 * first time running offer to go to help and tell them about /help
 
 * tell the player the controls on the help page
@@ -37,6 +50,15 @@
 
 --- RELEASE ---
 
+* check out restricted python for in-game scripting
+
+* ant carriero ideas
+	* pets!
+	* 8-Bit sound
+	* animated images
+
+* ability to upload images directly into the game?
+
 * BUG: server bug:
 	2011-05-25 01:54:25 [1306288465.22] VERSION: Player 53 has ID eaf108e6-8671-11e0-89f1-aa000031490f
 	Traceback (most recent call last):
@@ -66,6 +88,7 @@
 
 * BUG: teleport to level 'bob' - Tools.py 125 -> Paintable.py 34 -> PodSix/ImagePygame.py 101 -> ImagePygame.py 62 -> IndexError: pixel index out of range
 * BUG: ImagePygame.py 61 - pixel index out of range
+* BUG: Level unloquer
 
 * BUG: shanon - cannot delete graffiti  / spray-over of objects (see email with images)
 

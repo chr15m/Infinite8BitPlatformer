@@ -1,5 +1,6 @@
 PodSix
-.DS_Store
-InfinitePlatformerWebsite
-resources/build.json
 PodSixNet
+InfinitePlatformerWebsite
+.DS_Store
+resources/build.json
+server/history/*
