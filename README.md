@@ -1,5 +1,7 @@
 A user-created-content pixel-aesthetic multiplayer game written in the late 2000s using Python and Pygame.
 
+![2011 Build #252 screenshot](./infiniteplatformer-252-feb-2011.png)
+
 Here's the old trailer which demonstrates the basic concepts (portals, items, level editing) in just under two minutes:
 
 [![Infinite 8-Bit Platformer Trailer](./video-thumb-1.png)](https://www.youtube.com/watch?v=PnDV1vm7hgY)
