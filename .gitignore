@@ -1,0 +1,11 @@
+.bzr
+*.pyc
+.*.swp
+PodSix
+PodSixNet
+InfinitePlatformerWebsite
+resources/build.json
+server/history/*
+*.~*~
+settings_local.py
+junk

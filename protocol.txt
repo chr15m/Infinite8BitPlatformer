@@ -1,0 +1,33 @@
+Server received:
+{'action': 'playerid', 'version': 3, 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'setlevel', 'level': 'level1', 'id': 'ecebf354-48be-11e0-beae-001aee00c094', 'editid': 0}
+{'action': 'move', 'velocity': [0, 0], 'move': 'StopRight', 'center': [0.25361501041192691, 0.51460409028957876], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'move', 'velocity': [0, 0], 'move': 'StopRight', 'center': [0.25361501041192691, 0.51460409028957876], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'activate', 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+
+
+{'action': 'socketConnect'}
+{'action': 'setlevel', 'id': 'ecebf354-48be-11e0-beae-001aee00c094', 'editid': 0, 'level': 'level1'}
+{'center': [0.25361501041192691, 0.51460409028957876], 'action': 'move', 'velocity': [0, 0], 'move': 'StopRight', 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'connected'}
+{'action': 'playerid', 'version': 3, 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'leveldump', 'progress': 'start', 'servertime': 1300585170.4113829, 'size': 0}
+{'action': 'leveldump', 'progress': 'end', 'servertime': 1300585170.4116709, 'size': 0}
+{'action': 'playerdump', 'progress': 'end', 'servertime': 1300585170.411845}
+{'action': 'editor', 'locked': True, 'servertime': 1300585170.4123809, 'editor': False}
+
+
+
+
+{'objectid': '9', 'color': (255, 255, 255), 'tool': 'LineTool', 'instruction': 'pendown', 'pos': [356, 399], 'action': 'edit', 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [356, 399], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 399], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 399], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 399], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 399], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 398], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 398], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 398], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 398], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+{'action': 'edit', 'tool': 'LineTool', 'instruction': 'penmove', 'pos': [355, 398], 'id': 'ecebf354-48be-11e0-beae-001aee00c094'}
+
