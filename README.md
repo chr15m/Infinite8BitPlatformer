@@ -4,9 +4,15 @@ Here's the old trailer which demonstrates the basic concepts (portals, items, le
 
 [![Infinite 8-Bit Platformer Trailer](./video-thumb-1.png)](https://www.youtube.com/watch?v=PnDV1vm7hgY)
 
+[Here are some old blog posts about the development](https://mccormick.cx/news/tags/infiniteplatformer).
+
+[Here's the old website from The Internet Archive](https://web.archive.org/web/20140111112904/http://infiniteplatformer.com/).
+
 Here's a talk I gave at PyCon AU in 2011 about the game:
 
 [![PyCon 2011 talk - Infinite 8-Bit Platformer](./video-thumb-2.png)](https://www.youtube.com/watch?v=qv-BGCFRP4Q)
+
+I'm no longer working on this so I've put the code up here in case it is useful to somebody else. Enjoy!
 
 ## Running ##
 
