@@ -1,10 +1,10 @@
 A user-created-content pixel-aesthetic multiplayer game written in the late 2000s using Python and Pygame.
 
-![2011 Build #252 screenshot](./infiniteplatformer-252-feb-2011.png)
+![2011 Build #252 screenshot](./screenshots/infiniteplatformer-252-feb-2011.png)
 
 Here's the old trailer which demonstrates the basic concepts (portals, items, level editing) in just under two minutes:
 
-[![Infinite 8-Bit Platformer Trailer](./video-thumb-1.png)](https://www.youtube.com/watch?v=PnDV1vm7hgY)
+[![Infinite 8-Bit Platformer Trailer](./screenshots/video-thumb-1.png)](https://www.youtube.com/watch?v=PnDV1vm7hgY)
 
 [Here are some old blog posts about the development](https://mccormick.cx/news/tags/infiniteplatformer).
 
@@ -12,9 +12,11 @@ Here's the old trailer which demonstrates the basic concepts (portals, items, le
 
 Here's a talk I gave at PyCon AU in 2011 about the game:
 
-[![PyCon 2011 talk - Infinite 8-Bit Platformer](./video-thumb-2.png)](https://www.youtube.com/watch?v=qv-BGCFRP4Q)
+[![PyCon 2011 talk - Infinite 8-Bit Platformer](./screenshots/video-thumb-2.png)](https://www.youtube.com/watch?v=qv-BGCFRP4Q)
 
 I'm no longer working on this so I've put the code up here in case it is useful to somebody else. Enjoy!
+
+![Crispin's World](./screenshots/crispins-world-1-thumb.png)
 
 ## Running ##
 
